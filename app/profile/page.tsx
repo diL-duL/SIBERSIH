@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Key, Bell, Camera, ShieldCheck, Edit, LogOut } from 'lucide-react';
+import { User, Mail, Key, Bell, Camera, ShieldCheck, Edit, LogOut, X } from 'lucide-react';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
@@ -13,14 +13,10 @@ export default function ProfilePage() {
         
         {/* Header Section */}
         <div className="bg-white rounded-xl p-8 border border-zinc-200 shadow-sm flex flex-col md:flex-row items-center gap-8 transition-colors hover:border-zinc-300">
-          <div className="relative group cursor-pointer">
+          <div className="relative">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-50 shadow-sm relative">
               <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-900 text-4xl font-bold">
                 S
-              </div>
-              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <Camera className="text-white w-8 h-8 mb-1" />
-                <span className="text-white text-xs font-medium">Ubah</span>
               </div>
             </div>
             <div className="absolute bottom-2 right-2 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
@@ -33,17 +29,12 @@ export default function ProfilePage() {
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">SIBERSIH Admin</h1>
             <p className="text-zinc-500 flex items-center justify-center md:justify-start gap-2 text-sm">
-              <MapPin className="w-4 h-4" />
-              Jakarta, Indonesia
+              <Mail className="w-4 h-4" />
+              admin@sibersih.com
             </p>
           </div>
           
-          <div className="flex gap-3 mt-4 md:mt-0">
-            <button className="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-medium transition-colors duration-300 flex items-center gap-2 text-sm shadow-sm">
-              <Edit className="w-4 h-4" />
-              Edit Profil
-            </button>
-          </div>
+
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -64,6 +55,13 @@ export default function ProfilePage() {
                 >
                   <Key className="w-4 h-4" />
                   Pengaturan Akun
+                </button>
+                <button 
+                  onClick={() => setActiveTab('edit')}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-sm font-medium ${activeTab === 'edit' ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'}`}
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Profil
                 </button>
                 
                 <div className="h-px bg-zinc-100 my-2"></div>
@@ -88,7 +86,7 @@ export default function ProfilePage() {
                     Informasi Pribadi
                   </h2>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-100 hover:border-zinc-200 transition-colors duration-300">
                       <p className="text-xs text-zinc-500 font-medium mb-1 uppercase tracking-wider">Nama Lengkap</p>
                       <p className="text-zinc-900 font-semibold text-sm">Admin SIBERSIH</p>
@@ -101,19 +99,16 @@ export default function ProfilePage() {
                         <p className="text-zinc-900 font-semibold text-sm">admin@sibersih.com</p>
                       </div>
                     </div>
-                    
+
                     <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-100 hover:border-zinc-200 transition-colors duration-300">
-                      <p className="text-xs text-zinc-500 font-medium mb-1 uppercase tracking-wider">No. Telepon</p>
+                      <p className="text-xs text-zinc-500 font-medium mb-1 uppercase tracking-wider">Peran (Role)</p>
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-zinc-400" />
-                        <p className="text-zinc-900 font-semibold text-sm">+62 812 3456 7890</p>
+                        <ShieldCheck className="w-4 h-4 text-zinc-400" />
+                        <p className="text-zinc-900 font-semibold text-sm">Administrator</p>
                       </div>
                     </div>
                     
-                    <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-100 hover:border-zinc-200 transition-colors duration-300">
-                      <p className="text-xs text-zinc-500 font-medium mb-1 uppercase tracking-wider">Alamat</p>
-                      <p className="text-zinc-900 font-semibold text-sm">Jl. Kebersihan No. 1, Jakarta</p>
-                    </div>
+
                   </div>
                 </div>
               )}
@@ -161,6 +156,50 @@ export default function ProfilePage() {
                       </button>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Edit Profile Tab */}
+              {activeTab === 'edit' && (
+                <div className="animate-in fade-in duration-500">
+                  <h2 className="text-xl font-bold tracking-tight text-zinc-900 mb-6 flex items-center gap-2">
+                    <Edit className="w-5 h-5 text-zinc-700" />
+                    Edit Profil
+                  </h2>
+                  
+                  <form className="space-y-4 max-w-md">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-700 mb-1">Nama Lengkap</label>
+                      <input type="text" placeholder="Admin SIBERSIH" className="w-full px-4 py-2 rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition-all text-sm placeholder:text-zinc-500 text-zinc-900" />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-700 mb-1">Email</label>
+                      <input type="email" defaultValue="admin@sibersih.com" disabled className="w-full px-4 py-2 rounded-lg border border-zinc-200 bg-zinc-100 text-zinc-500 cursor-not-allowed focus:outline-none transition-all text-sm" />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-700 mb-1">Peran</label>
+                      <div className="relative">
+                        <select disabled className="w-full px-4 py-2 rounded-lg border border-zinc-200 bg-zinc-100 text-zinc-500 cursor-not-allowed focus:outline-none transition-all appearance-none text-sm">
+                          <option value="admin">Administrator</option>
+                          <option value="user">User</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                          <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 mt-8 pt-4">
+                      <button type="button" onClick={() => setActiveTab('personal')} className="flex-1 px-4 py-2.5 rounded-lg border border-zinc-200 text-zinc-700 font-medium hover:bg-zinc-50 transition-colors text-sm">
+                        Batal
+                      </button>
+                      <button type="button" onClick={() => setActiveTab('personal')} className="flex-1 px-4 py-2.5 rounded-lg bg-zinc-900 text-white font-medium hover:bg-zinc-800 transition-colors text-sm shadow-sm">
+                        Simpan Perubahan
+                      </button>
+                    </div>
+                  </form>
                 </div>
               )}
 
