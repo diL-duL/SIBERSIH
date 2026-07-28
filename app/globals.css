@@ -10,6 +10,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* SIBERSIH Custom Palette */
+  --color-sibersih-bg: #FAFAFA;
+  --color-sibersih-surface: #E8F1F5;
+  --color-sibersih-primary: #005691;
+  --color-sibersih-dark: #004A7C;
 }
 
 body {
