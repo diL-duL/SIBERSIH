@@ -1,65 +1,49 @@
-import Image from "next/image";
+import Link from "next/link";
+import { User, ShieldCheck, Briefcase } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen flex flex-col items-center bg-zinc-50 px-6 pt-20 pb-40">
+      <div className="max-w-xl w-full flex flex-col items-center text-center mb-10">
+        <div className="inline-flex items-center justify-center p-3 bg-zinc-900 rounded-xl mb-6">
+          <ShieldCheck size={28} className="text-white" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-3">
+          SiBersih
+        </h1>
+        <p className="text-base text-zinc-500 font-medium">
+          Sistem Informasi Kebersihan yang transparan dan efisien. Silakan pilih peran Anda.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl mb-20">
+        {/* Card Pelapor */}
+        <Link href="/reporter" className="flex flex-col items-center p-6 bg-white rounded-xl border border-zinc-200 hover:border-zinc-400 transition-colors shadow-sm">
+          <div className="w-12 h-12 rounded-lg bg-zinc-100 flex items-center justify-center mb-4">
+            <User size={24} className="text-zinc-700" />
+          </div>
+          <h2 className="text-lg font-semibold text-zinc-900 mb-1">Pelapor</h2>
+          <p className="text-xs text-zinc-500 text-center">Laporkan masalah kebersihan</p>
+        </Link>
+
+        {/* Card Petugas */}
+        <Link href="/staff" className="flex flex-col items-center p-6 bg-white rounded-xl border border-zinc-200 hover:border-zinc-400 transition-colors shadow-sm">
+          <div className="w-12 h-12 rounded-lg bg-zinc-100 flex items-center justify-center mb-4">
+            <Briefcase size={24} className="text-zinc-700" />
+          </div>
+          <h2 className="text-lg font-semibold text-zinc-900 mb-1">Petugas</h2>
+          <p className="text-xs text-zinc-500 text-center">Lihat dan kerjakan tugas</p>
+        </Link>
+
+        {/* Card Pimpinan */}
+        <Link href="/executive" className="flex flex-col items-center p-6 bg-white rounded-xl border border-zinc-200 hover:border-zinc-400 transition-colors shadow-sm">
+          <div className="w-12 h-12 rounded-lg bg-zinc-100 flex items-center justify-center mb-4">
+            <ShieldCheck size={24} className="text-zinc-700" />
+          </div>
+          <h2 className="text-lg font-semibold text-zinc-900 mb-1">Pimpinan</h2>
+          <p className="text-xs text-zinc-500 text-center">Validasi kinerja</p>
+        </Link>
+      </div>
     </div>
   );
 }
