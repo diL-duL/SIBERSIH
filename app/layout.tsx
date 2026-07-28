@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="bg-zinc-50 text-zinc-900 font-sans min-h-screen">
+      <body className="bg-sibersih-bg text-sibersih-primary font-sans min-h-screen">
         {children}
         <BottomNav />
       </body>

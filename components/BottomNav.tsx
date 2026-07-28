@@ -7,6 +7,12 @@ import { Home, FileText, User } from "lucide-react";
 export default function BottomNav() {
     const pathname = usePathname();
 
+    // Sembunyikan navbar di halaman otentikasi
+    const hiddenPaths = ["/login", "/register", "/forgot-password"];
+    if (hiddenPaths.includes(pathname || "")) {
+        return null;
+    }
+
     // Logika cerdas untuk mendeteksi halaman aktif berdasarkan role
     const isHome = pathname === "/" || pathname === "/reporter" || pathname === "/staff" || pathname === "/executive";
     const isReport = pathname?.includes("/reporter/report") || pathname?.includes("/[id]");
@@ -21,7 +27,7 @@ export default function BottomNav() {
             {/* Tombol Home (Kiri) */}
             <Link
                 href="/reporter"
-                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isHome ? "text-blue-600" : "text-zinc-400 hover:text-zinc-600"}`}
+                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isHome ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
                 <Home size={24} className={isHome ? "stroke-[2.5]" : "stroke-2"} />
             </Link>
@@ -29,7 +35,7 @@ export default function BottomNav() {
             {/* Tombol Report (Tengah) */}
             <Link
                 href="/reporter/report"
-                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isReport ? "text-blue-600" : "text-zinc-400 hover:text-zinc-600"}`}
+                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isReport ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
                 <FileText size={24} className={isReport ? "stroke-[2.5]" : "stroke-2"} />
             </Link>
@@ -37,7 +43,7 @@ export default function BottomNav() {
             {/* Tombol Profile (Kanan) */}
             <Link
                 href="/profile"
-                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isProfile ? "text-blue-600" : "text-zinc-400 hover:text-zinc-600"}`}
+                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isProfile ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
                 <User size={24} className={isProfile ? "stroke-[2.5]" : "stroke-2"} />
             </Link>

@@ -8,7 +8,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950 font-sans">
+    <div className="flex min-h-screen bg-sibersih-bg font-sans">
       {/* Left side - Image */}
       <div className="relative hidden w-1/2 lg:block">
         <Image
@@ -18,14 +18,14 @@ export default function LoginPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-sibersih-primary/40 backdrop-blur-[1px]" />
         
         {/* Subtle gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-sibersih-primary/90 via-sibersih-primary/30 to-transparent" />
         
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-zinc-900 font-bold text-xl shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sibersih-primary font-bold text-xl shadow-lg">
               S
             </div>
             <span className="text-xl font-bold tracking-tight">SIBERSIH</span>
@@ -33,39 +33,39 @@ export default function LoginPage() {
           
           <div className="space-y-5 pb-8">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl max-w-lg leading-tight">
-              Bersih, Nyaman,<br/>dan Terpercaya.
+              Selamat<br/>Datang.
             </h1>
-            <p className="max-w-lg text-lg text-zinc-200 font-medium">
-              Sistem Informasi Kebersihan terpadu untuk memantau dan mengelola lingkungan yang lebih baik.
+            <p className="max-w-lg text-lg text-sibersih-bg font-medium opacity-90">
+              Silakan masuk ke akun Anda untuk melanjutkan akses ke SIBERSIH.
             </p>
           </div>
         </div>
       </div>
 
       {/* Right side - Form */}
-      <div className="flex w-full flex-col justify-center px-8 sm:px-12 lg:w-1/2 xl:px-24">
+      <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 xl:px-24">
         <div className="mx-auto w-full max-w-sm space-y-8">
           <div className="space-y-2 text-center lg:text-left">
             <div className="flex items-center justify-center gap-3 lg:hidden mb-8">
-               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold text-2xl shadow-md">
+               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sibersih-primary text-white font-bold text-2xl shadow-md">
                 S
               </div>
-              <span className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">SIBERSIH</span>
+              <span className="text-2xl font-bold tracking-tight text-sibersih-primary">SIBERSIH</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              Selamat Datang
+            <h2 className="text-3xl font-bold tracking-tight text-sibersih-primary">
+              Masuk
             </h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Silakan masukkan detail Anda untuk masuk.
+            <p className="text-sm text-sibersih-primary/60">
+              Masukkan detail Anda untuk masuk ke SIBERSIH.
             </p>
           </div>
 
           <form className="space-y-6">
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <label
                   htmlFor="email"
-                  className="text-sm font-semibold leading-none text-zinc-900 dark:text-zinc-50"
+                  className="text-sm font-semibold leading-none text-sibersih-primary"
                 >
                   Email
                 </label>
@@ -74,20 +74,21 @@ export default function LoginPage() {
                   type="email"
                   placeholder="nama@contoh.com"
                   required
-                  className="flex h-12 w-full rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-500 dark:focus-visible:ring-zinc-300 transition-all duration-200"
+                  className="flex h-12 w-full rounded-xl border border-sibersih-primary/20 bg-white px-4 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-sibersih-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
                 />
               </div>
-              <div className="space-y-2">
+
+              <div className="space-y-2 text-left">
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
-                    className="text-sm font-semibold leading-none text-zinc-900 dark:text-zinc-50"
+                    className="text-sm font-semibold leading-none text-sibersih-primary"
                   >
                     Kata Sandi
                   </label>
                   <Link
                     href="/forgot-password"
-                    className="text-sm font-medium text-zinc-600 underline-offset-4 hover:underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
+                    className="text-sm font-medium text-sibersih-primary/70 underline-offset-4 hover:underline hover:text-sibersih-primary transition-colors"
                   >
                     Lupa kata sandi?
                   </Link>
@@ -97,12 +98,12 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="flex h-12 w-full rounded-xl border border-zinc-200 bg-white px-4 py-2 pr-10 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-500 dark:focus-visible:ring-zinc-300 transition-all duration-200"
+                    className="flex h-12 w-full rounded-xl border border-sibersih-primary/20 bg-white px-4 py-2 pr-10 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-sibersih-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sibersih-primary/50 hover:text-sibersih-primary transition-colors"
                   >
                     {showPassword ? (
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
@@ -117,17 +118,17 @@ export default function LoginPage() {
 
             <button
               type="button"
-              className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-zinc-900 px-8 text-sm font-semibold text-zinc-50 shadow-md transition-all hover:bg-zinc-900/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 dark:focus-visible:ring-zinc-300 dark:focus-visible:ring-offset-zinc-950 active:scale-[0.98] duration-200"
+              className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-sibersih-primary px-8 text-sm font-semibold text-white shadow-md transition-all hover:bg-sibersih-primary/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] duration-200"
             >
               Masuk
             </button>
           </form>
 
-          <div className="text-center text-sm text-zinc-500 dark:text-zinc-400">
+          <div className="text-center text-sm text-sibersih-primary/60">
             Belum punya akun?{" "}
             <Link
               href="/register"
-              className="font-semibold text-zinc-900 hover:underline hover:text-zinc-950 dark:text-zinc-50 dark:hover:text-white transition-colors"
+              className="font-semibold text-sibersih-primary hover:underline hover:text-sibersih-primary/80 transition-colors"
             >
               Daftar
             </Link>
