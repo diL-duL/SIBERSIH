@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Bell, CheckSquare, Hourglass, Megaphone, Plus } from "lucide-react";
+import { CheckSquare, Hourglass, Megaphone, Plus } from "lucide-react";
+import NotificationMenu from "@/components/NotificationMenu";
 
 export default function PelaporDashboard() {
     return (
@@ -11,10 +12,7 @@ export default function PelaporDashboard() {
                     <p className="text-sm text-sibersih-primary/60 mt-1">Civitas Akademik</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="p-2 text-sibersih-primary/70 hover:bg-sibersih-primary/10 rounded-lg relative transition-colors">
-                        <Bell size={20} />
-                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-sibersih-bg"></span>
-                    </button>
+                    <NotificationMenu />
                     <Link href="/reporter/report" className="hidden sm:flex items-center gap-2 bg-sibersih-primary text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition">
                         <Plus size={16} /> Buat Laporan
                     </Link>
