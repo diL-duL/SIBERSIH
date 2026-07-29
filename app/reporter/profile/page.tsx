@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, Mail, Key, Bell, Camera, ShieldCheck, Edit, LogOut, X } from 'lucide-react';
+import { User, Mail, Key, Bell, ShieldCheck, Edit, LogOut } from 'lucide-react';
 
-export default function ProfilePage() {
+export default function ReporterProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
@@ -16,7 +16,7 @@ export default function ProfilePage() {
           <div className="relative">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-sibersih-bg shadow-sm relative">
               <div className="w-full h-full bg-sibersih-primary/5 flex items-center justify-center text-sibersih-primary text-4xl font-bold">
-                S
+                A
               </div>
             </div>
             <div className="absolute bottom-2 right-2 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
@@ -25,12 +25,12 @@ export default function ProfilePage() {
           <div className="flex-1 text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sibersih-primary/5 text-sibersih-primary text-xs font-semibold tracking-wide mb-3">
               <ShieldCheck className="w-4 h-4" />
-              Administrator
+              Civitas Akademik
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-sibersih-primary mb-2">SIBERSIH Admin</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-sibersih-primary mb-2">Andi (Mahasiswa)</h1>
             <p className="text-sibersih-primary/60 flex items-center justify-center md:justify-start gap-2 text-sm">
               <Mail className="w-4 h-4" />
-              admin@sibersih.com
+              andi@mahasiswa.com
             </p>
           </div>
           
@@ -89,14 +89,14 @@ export default function ProfilePage() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="p-4 rounded-xl bg-sibersih-bg border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300">
                       <p className="text-xs text-sibersih-primary/60 font-medium mb-1 uppercase tracking-wider">Nama Lengkap</p>
-                      <p className="text-sibersih-primary font-semibold text-sm">Admin SIBERSIH</p>
+                      <p className="text-sibersih-primary font-semibold text-sm">Andi (Mahasiswa)</p>
                     </div>
                     
                     <div className="p-4 rounded-xl bg-sibersih-bg border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300">
                       <p className="text-xs text-sibersih-primary/60 font-medium mb-1 uppercase tracking-wider">Email</p>
                       <div className="flex items-center gap-2">
                         <Mail className="w-4 h-4 text-sibersih-primary/40" />
-                        <p className="text-sibersih-primary font-semibold text-sm">admin@sibersih.com</p>
+                        <p className="text-sibersih-primary font-semibold text-sm">andi@mahasiswa.com</p>
                       </div>
                     </div>
 
@@ -104,7 +104,7 @@ export default function ProfilePage() {
                       <p className="text-xs text-sibersih-primary/60 font-medium mb-1 uppercase tracking-wider">Peran (Role)</p>
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-sibersih-primary/40" />
-                        <p className="text-sibersih-primary font-semibold text-sm">Administrator</p>
+                        <p className="text-sibersih-primary font-semibold text-sm">Civitas Akademik / Pelapor</p>
                       </div>
                     </div>
                     
@@ -170,20 +170,19 @@ export default function ProfilePage() {
                   <form className="space-y-4 max-w-md">
                     <div>
                       <label className="block text-sm font-medium text-sibersih-primary/80 mb-1">Nama Lengkap</label>
-                      <input type="text" placeholder="Admin SIBERSIH" className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/60 text-sibersih-primary" />
+                      <input type="text" placeholder="Andi (Mahasiswa)" className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/60 text-sibersih-primary" />
                     </div>
                     
                     <div>
                       <label className="block text-sm font-medium text-sibersih-primary/80 mb-1">Email</label>
-                      <input type="email" defaultValue="admin@sibersih.com" disabled className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 bg-sibersih-primary/5 text-sibersih-primary/60 cursor-not-allowed focus:outline-none transition-all text-sm" />
+                      <input type="email" defaultValue="andi@mahasiswa.com" disabled className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 bg-sibersih-primary/5 text-sibersih-primary/60 cursor-not-allowed focus:outline-none transition-all text-sm" />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-sibersih-primary/80 mb-1">Peran</label>
                       <div className="relative">
                         <select disabled className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 bg-sibersih-primary/5 text-sibersih-primary/60 cursor-not-allowed focus:outline-none transition-all appearance-none text-sm">
-                          <option value="admin">Administrator</option>
-                          <option value="user">User</option>
+                          <option value="reporter">Civitas Akademik / Pelapor</option>
                         </select>
                         <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
                           <svg className="w-4 h-4 text-sibersih-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>

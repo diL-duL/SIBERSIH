@@ -87,7 +87,7 @@ export default function LoginPage() {
                     Kata Sandi
                   </label>
                   <Link
-                    href="/forgot-password"
+                    href="/login/forgot-password"
                     className="text-sm font-medium text-sibersih-primary/70 underline-offset-4 hover:underline hover:text-sibersih-primary transition-colors"
                   >
                     Lupa kata sandi?
@@ -127,7 +127,7 @@ export default function LoginPage() {
           <div className="text-center text-sm text-sibersih-primary/60">
             Belum punya akun?{" "}
             <Link
-              href="/register"
+              href="/login/register"
               className="font-semibold text-sibersih-primary hover:underline hover:text-sibersih-primary/80 transition-colors"
             >
               Daftar

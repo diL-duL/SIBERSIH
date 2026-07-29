@@ -1,70 +1,77 @@
-import { MapPin, User, Check, X } from "lucide-react";
+import Link from "next/link";
+import { Bell, CheckSquare, Hourglass, CheckCircle, XCircle } from "lucide-react";
 
 export default function PimpinanDashboard() {
-    const butuhApproval = [
-        { id: "1", lokasi: "Belakang Gedung Dekanat FT", pelapor: "Andi (Mahasiswa)", petugas: "Pak Joko" }
-    ];
-
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <header className="mb-8 border-b border-sibersih-primary/10 pb-4">
-                <h1 className="text-2xl font-semibold text-sibersih-primary">Validasi Pekerjaan</h1>
-                <p className="text-sm text-sibersih-primary/60 mt-1">Laporan yang membutuhkan persetujuan Anda</p>
+            {/* HEADER */}
+            <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
+                <div>
+                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, Bapak Budi</h1>
+                    <p className="text-sm text-sibersih-primary/60 mt-1">Pimpinan / Executive</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <button className="p-2 text-sibersih-primary/70 hover:bg-sibersih-primary/10 rounded-lg relative transition-colors">
+                        <Bell size={20} />
+                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-sibersih-bg"></span>
+                    </button>
+                    <Link href="/executive/validations" className="hidden sm:flex items-center gap-2 bg-sibersih-primary text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition">
+                        <CheckCircle size={16} /> Validasi Laporan
+                    </Link>
+                </div>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {butuhApproval.map((item) => (
-                    <div key={item.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
-                        <div className="p-5 border-b border-sibersih-primary/5 flex justify-between items-start">
-                            <div>
-                                <h3 className="font-semibold text-lg text-sibersih-primary mb-2">
-                                    {item.lokasi}
-                                </h3>
-                                <div className="flex flex-col gap-1 mt-2">
-                                    <p className="text-sm text-sibersih-primary/70 flex items-start sm:items-center gap-2">
-                                        <User size={14} className="text-sibersih-primary/40 mt-0.5 sm:mt-0 shrink-0" />
-                                        <span className="text-sibersih-primary/60 w-20 shrink-0">Dilaporkan:</span>
-                                        <span className="font-medium text-sibersih-primary break-words">{item.pelapor}</span>
-                                    </p>
-                                    <p className="text-sm text-sibersih-primary/70 flex items-start sm:items-center gap-2">
-                                        <User size={14} className="text-sibersih-primary/40 mt-0.5 sm:mt-0 shrink-0" />
-                                        <span className="text-sibersih-primary/60 w-20 shrink-0">Petugas:</span>
-                                        <span className="font-medium text-sibersih-primary break-words">{item.petugas}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <span className="inline-flex items-center text-xs font-semibold text-orange-700 bg-orange-100 px-2.5 py-1 rounded">
-                                Menunggu Review
-                            </span>
-                        </div>
-
-                        {/* Komparasi Foto Sebelum vs Sesudah */}
-                        <div className="p-5 grid grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Kondisi Awal</span>
-                                <div className="w-full h-32 bg-sibersih-primary/5 border border-sibersih-primary/10 rounded-lg flex items-center justify-center text-sm text-sibersih-primary/50">
-                                    [Foto Awal]
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Hasil Kerja</span>
-                                <div className="w-full h-32 bg-sibersih-primary/5 border border-sibersih-primary/10 rounded-lg flex items-center justify-center text-sm text-sibersih-primary/50">
-                                    [Foto Bukti]
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Tombol Aksi Pimpinan */}
-                        <div className="p-5 bg-sibersih-bg/50 border-t border-sibersih-primary/10 flex gap-3">
-                            <button className="flex-1 bg-sibersih-primary hover:bg-sibersih-primary/90 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
-                                <Check size={16} /> Setujui
-                            </button>
-                            <button className="px-6 bg-white hover:bg-sibersih-bg text-red-600 font-medium py-2.5 rounded-lg border border-sibersih-primary/20 transition-colors flex items-center justify-center gap-2 text-sm">
-                                <X size={16} /> Tolak
-                            </button>
+            {/* KONTEN UTAMA */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+                {/* PETA */}
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col min-h-[400px]">
+                    <div className="p-4 border-b border-sibersih-primary/5">
+                        <h2 className="text-sm font-semibold text-sibersih-primary">Peta Pengawasan</h2>
+                    </div>
+                    <div className="flex-1 bg-sibersih-bg flex items-center justify-center text-sm text-sibersih-primary/40 p-4">
+                        <div className="w-full max-w-[256px] h-32 border-4 border-dashed border-sibersih-primary/20 bg-white rounded-2xl flex items-center justify-center text-sibersih-primary/40 font-bold">
+                            Area Peta Interaktif
                         </div>
                     </div>
-                ))}
+                </div>
+
+                {/* STATISTIK */}
+                <div className="lg:col-span-1 flex flex-col gap-6">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10">
+                        <div className="p-4 border-b border-sibersih-primary/5 flex items-center justify-between">
+                            <h2 className="text-sm font-semibold text-sibersih-primary">Ringkasan Validasi</h2>
+                            <Link href="/executive/history" className="text-xs font-medium text-sibersih-primary hover:underline">Riwayat</Link>
+                        </div>
+                        <div className="p-4 flex flex-col gap-3">
+                            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100">
+                                <div className="flex items-center gap-3 text-orange-800">
+                                    <Hourglass size={18} className="text-orange-500" />
+                                    <span className="text-sm font-medium">Menunggu Review</span>
+                                </div>
+                                <span className="font-semibold text-orange-900">1</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 bg-sibersih-accent/20 rounded-lg border border-sibersih-accent/30">
+                                <div className="flex items-center gap-3 text-sibersih-primary">
+                                    <CheckSquare size={18} className="text-sibersih-primary" />
+                                    <span className="text-sm font-medium">Telah Disetujui</span>
+                                </div>
+                                <span className="font-semibold text-sibersih-primary">12</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
+                                <div className="flex items-center gap-3 text-red-800">
+                                    <XCircle size={18} className="text-red-500" />
+                                    <span className="text-sm font-medium">Ditolak</span>
+                                </div>
+                                <span className="font-semibold text-red-900">2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tombol Lapor Cepat di Mobile */}
+                    <Link href="/executive/validations" className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-medium text-sm hover:bg-sibersih-primary/90 transition">
+                        <CheckCircle size={16} /> Cek Validasi Pekerjaan
+                    </Link>
+                </div>
             </div>
         </div>
     );
