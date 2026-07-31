@@ -12,16 +12,16 @@ export default function LoginPage() {
       {/* Left side - Image */}
       <div className="relative hidden w-1/2 lg:block">
         <Image
-          src="/login-bg.png"
+          src="/dekanat_upscaled.webp"
           alt="SIBERSIH Background"
           fill
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-sibersih-primary/40 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]" />
         
         {/* Subtle gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-sibersih-primary/90 via-sibersih-primary/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
           <div className="flex items-center gap-3">
