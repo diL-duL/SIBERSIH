@@ -1,11 +1,21 @@
 "use client";
 
-import { UploadCloud, ArrowLeft } from "lucide-react";
+import { UploadCloud, ArrowLeft, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function ReportPage() {
     const [fileName, setFileName] = useState("");
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [mapPinSelected, setMapPinSelected] = useState(false);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFileName(file.name);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
 
     return (
         <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-32">
@@ -24,7 +34,34 @@ export default function ReportPage() {
 
                     <form className="p-6 space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-sibersih-primary/80">Lokasi</label>
+                            <label className="text-sm font-medium text-sibersih-primary/80">Tandai Lokasi di Peta</label>
+                            <div 
+                                className="w-full h-48 bg-gray-100 rounded-lg border border-sibersih-primary/20 relative overflow-hidden cursor-pointer"
+                                onClick={() => setMapPinSelected(true)}
+                                style={{
+                                    backgroundImage: "url('data:image/svg+xml,%3Csvg width=\\'20\\' height=\\'20\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cpath d=\\'M20 0L0 0L0 20L20 20L20 0ZM19 1L19 19L1 19L1 1L19 1Z\\' fill=\\'%231F4B2C\\' fill-opacity=\\'0.1\\'/%3E%3C/svg%3E')",
+                                    backgroundSize: "20px 20px"
+                                }}
+                            >
+                                {!mapPinSelected ? (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px]">
+                                        <p className="text-sm font-medium text-sibersih-primary bg-white px-4 py-2 rounded-full shadow-sm border border-sibersih-primary/10 transition-transform hover:scale-105">
+                                            Klik untuk menandai lokasi
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center animate-in zoom-in duration-200">
+                                        <div className="relative">
+                                            <MapPin className="text-red-500 w-10 h-10 drop-shadow-md -mt-5" />
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-1 bg-black/20 rounded-[100%] blur-[1px]"></div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-sibersih-primary/80">Detail Lokasi</label>
                             <input 
                                 type="text" 
                                 placeholder="Contoh: Samping Gedung Perpustakaan" 
@@ -43,20 +80,32 @@ export default function ReportPage() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-sibersih-primary/80">Foto Bukti</label>
-                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-sibersih-primary/20 border-dashed rounded-lg bg-sibersih-bg hover:bg-sibersih-primary/5 transition-colors">
-                                <div className="space-y-1 text-center">
-                                    <UploadCloud className="mx-auto h-12 w-12 text-sibersih-primary/40" />
-                                    <div className="flex text-sm text-sibersih-primary/70 justify-center">
-                                        <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-sibersih-primary hover:text-sibersih-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sibersih-accent">
-                                            <span>Unggah file</span>
-                                            <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={(e) => { if (e.target.files?.[0]) setFileName(e.target.files[0].name) }} />
-                                        </label>
-                                        <p className="pl-1">atau tarik dan lepas</p>
+                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-sibersih-primary/20 border-dashed rounded-lg bg-sibersih-bg hover:bg-sibersih-primary/5 transition-colors overflow-hidden">
+                                {previewUrl ? (
+                                    <div className="relative w-full h-48 rounded-lg overflow-hidden group">
+                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <label htmlFor="file-upload" className="cursor-pointer px-4 py-2 bg-white rounded-lg text-sm font-medium text-sibersih-primary shadow-sm hover:bg-sibersih-bg transition-colors">
+                                                Ganti Foto
+                                            </label>
+                                        </div>
+                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={handleImageChange} />
                                     </div>
-                                    <p className="text-xs text-sibersih-primary/60">
-                                        {fileName || "PNG, JPG hingga 5MB"}
-                                    </p>
-                                </div>
+                                ) : (
+                                    <div className="space-y-1 text-center">
+                                        <UploadCloud className="mx-auto h-12 w-12 text-sibersih-primary/40" />
+                                        <div className="flex text-sm text-sibersih-primary/70 justify-center">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-sibersih-primary hover:text-sibersih-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sibersih-accent">
+                                                <span>Unggah file</span>
+                                                <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={handleImageChange} />
+                                            </label>
+                                            <p className="pl-1">atau tarik dan lepas</p>
+                                        </div>
+                                        <p className="text-xs text-sibersih-primary/60">
+                                            PNG, JPG hingga 5MB
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
