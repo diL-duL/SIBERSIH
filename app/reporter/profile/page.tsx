@@ -7,6 +7,17 @@ export default function ReporterProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+
+  const handleDeleteAccount = () => {
+    if (deletePassword !== 'password') {
+      setDeleteError('Kata sandi yang Anda masukkan salah.');
+      return;
+    }
+    window.location.href = '/';
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-6 pt-20 pb-40">
@@ -155,7 +166,14 @@ export default function ReporterProfilePage() {
                     <div className="mt-8 p-4 rounded-xl border border-red-100 bg-red-50/50 hover:bg-red-50 transition-colors duration-300">
                       <h3 className="text-red-700 font-semibold text-sm mb-1">Zona Bahaya</h3>
                       <p className="text-xs text-red-600 mb-4">Sekali Anda menghapus akun Anda, tidak ada jalan kembali.</p>
-                      <button className="px-4 py-2 bg-white text-red-600 border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm">
+                      <button 
+                        onClick={() => {
+                          setIsDeleteModalOpen(true);
+                          setDeletePassword('');
+                          setDeleteError('');
+                        }}
+                        className="px-4 py-2 bg-white text-red-600 border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm"
+                      >
                         Hapus Akun
                       </button>
                     </div>
@@ -233,6 +251,54 @@ export default function ReporterProfilePage() {
                 className="flex-1 px-4 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors text-sm shadow-sm"
               >
                 Ya, Keluar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-red-600 mb-2">Hapus Akun</h3>
+            <p className="text-sm text-sibersih-primary/70 mb-4">
+              Tindakan ini tidak dapat dibatalkan. Silakan masukkan kata sandi Anda untuk mengonfirmasi.
+            </p>
+            <div className="mb-6">
+              <input 
+                type="password" 
+                placeholder="Kata Sandi Anda" 
+                value={deletePassword}
+                onChange={(e) => {
+                  setDeletePassword(e.target.value);
+                  setDeleteError('');
+                }}
+                className={`w-full px-4 py-2 rounded-lg border ${deleteError ? 'border-red-500 focus:ring-red-500' : 'border-sibersih-primary/10 focus:ring-red-500'} focus:outline-none focus:ring-2 focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary`} 
+              />
+              {deleteError && (
+                <p className="mt-2 text-xs text-red-600 animate-in fade-in flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  {deleteError}
+                </p>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setDeletePassword('');
+                  setDeleteError('');
+                }}
+                className="flex-1 px-4 py-2.5 rounded-lg border border-sibersih-primary/10 text-sibersih-primary/80 font-medium hover:bg-sibersih-primary/5 transition-colors text-sm"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={handleDeleteAccount}
+                className="flex-1 px-4 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors text-sm shadow-sm"
+              >
+                Hapus Akun
               </button>
             </div>
           </div>
