@@ -6,7 +6,7 @@ export default function PelaporDashboard() {
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             {/* HEADER */}
-            <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
+            <header className="flex flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
                 <div>
                     <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, bang</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">Civitas Akademik</p>
@@ -18,8 +18,6 @@ export default function PelaporDashboard() {
                     </Link>
                 </div>
             </header>
-
-            {/* KONTEN UTAMA */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
                 {/* PETA */}
                 <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col min-h-[400px]">

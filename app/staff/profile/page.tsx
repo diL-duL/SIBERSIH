@@ -10,6 +10,41 @@ export default function StaffProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changePasswordError, setChangePasswordError] = useState('');
+  const [changePasswordSuccess, setChangePasswordSuccess] = useState('');
+
+  const handleChangePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setChangePasswordError('');
+    setChangePasswordSuccess('');
+    
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setChangePasswordError('Harap isi semua kolom kata sandi.');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      setChangePasswordError('Kata sandi baru tidak cocok.');
+      return;
+    }
+    
+    // Simulate API call
+    setTimeout(() => {
+      setChangePasswordSuccess('Kata sandi berhasil diubah!');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => {
+        setIsChangePasswordModalOpen(false);
+        setChangePasswordSuccess('');
+      }, 2000);
+    }, 500);
+  };
 
   const handleDeleteAccount = () => {
     if (deletePassword !== 'password') {
@@ -142,7 +177,10 @@ export default function StaffProfilePage() {
                         <h3 className="text-sibersih-primary font-semibold text-sm">Ubah Kata Sandi</h3>
                         <p className="text-xs text-sibersih-primary/60 mt-1">Perbarui kata sandi secara berkala</p>
                       </div>
-                      <button className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm">
+                      <button 
+                        onClick={() => setIsChangePasswordModalOpen(true)}
+                        className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm"
+                      >
                         Ubah
                       </button>
                     </div>
@@ -253,6 +291,87 @@ export default function StaffProfilePage() {
                 Ya, Keluar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Password Modal */}
+      {isChangePasswordModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-sibersih-primary mb-2">Ubah Kata Sandi</h3>
+            <p className="text-sm text-sibersih-primary/70 mb-4">
+              Masukkan kata sandi lama Anda dan kata sandi baru yang diinginkan.
+            </p>
+            
+            <form onSubmit={handleChangePassword}>
+              <div className="space-y-3 mb-6">
+                <div>
+                  <input 
+                    type="password" 
+                    placeholder="Kata Sandi Lama" 
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
+                  />
+                </div>
+                <div>
+                  <input 
+                    type="password" 
+                    placeholder="Kata Sandi Baru" 
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
+                  />
+                </div>
+                <div>
+                  <input 
+                    type="password" 
+                    placeholder="Konfirmasi Kata Sandi Baru" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
+                  />
+                </div>
+                
+                {changePasswordError && (
+                  <p className="text-xs text-red-600 animate-in fade-in flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    {changePasswordError}
+                  </p>
+                )}
+                
+                {changePasswordSuccess && (
+                  <p className="text-xs text-green-600 animate-in fade-in flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    {changePasswordSuccess}
+                  </p>
+                )}
+              </div>
+              
+              <div className="flex gap-3">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setIsChangePasswordModalOpen(false);
+                    setOldPassword('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    setChangePasswordError('');
+                    setChangePasswordSuccess('');
+                  }}
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-sibersih-primary/10 text-sibersih-primary/80 font-medium hover:bg-sibersih-primary/5 transition-colors text-sm"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-sibersih-primary text-white font-medium hover:bg-sibersih-primary/90 transition-colors text-sm shadow-sm"
+                >
+                  Simpan
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
