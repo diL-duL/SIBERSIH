@@ -6,6 +6,7 @@ import { User, Mail, Key, Bell, ShieldCheck, Edit, LogOut } from 'lucide-react';
 export default function ReporterProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-6 pt-20 pb-40">
@@ -66,7 +67,10 @@ export default function ReporterProfilePage() {
                 
                 <div className="h-px bg-sibersih-primary/5 my-2"></div>
                 
-                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-300 text-sm font-medium">
+                <button 
+                  onClick={() => setIsLogoutModalOpen(true)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-300 text-sm font-medium"
+                >
                   <LogOut className="w-4 h-4" />
                   Keluar
                 </button>
@@ -206,6 +210,34 @@ export default function ReporterProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-sibersih-primary mb-2">Konfirmasi Keluar</h3>
+            <p className="text-sm text-sibersih-primary/70 mb-6">
+              Apakah Anda yakin ingin keluar dari akun ini?
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setIsLogoutModalOpen(false)}
+                className="flex-1 px-4 py-2.5 rounded-lg border border-sibersih-primary/10 text-sibersih-primary/80 font-medium hover:bg-sibersih-primary/5 transition-colors text-sm"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={() => {
+                  window.location.href = '/';
+                }}
+                className="flex-1 px-4 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors text-sm shadow-sm"
+              >
+                Ya, Keluar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
