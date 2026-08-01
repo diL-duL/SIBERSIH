@@ -1,39 +1,24 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useTransition } from "react";
 import { Bell, CheckCircle2, AlertCircle, Info, X } from "lucide-react";
+import { markAsRead, markAllAsRead } from "@/app/actions/notification";
+import { formatDistanceToNow } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
 
-export default function NotificationMenu() {
+type NotificationItem = {
+    id: string;
+    title: string;
+    message: string;
+    type: string;
+    isRead: boolean;
+    createdAt: Date;
+};
+
+export default function NotificationMenu({ notifications = [] }: { notifications?: NotificationItem[] }) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-
-    // Sample notifications
-    const notifications = [
-        {
-            id: 1,
-            title: "Laporan Baru Masuk",
-            message: "Terdapat laporan sampah di Area Parkir Fakultas Teknik.",
-            time: "5 menit yang lalu",
-            type: "alert",
-            isRead: false,
-        },
-        {
-            id: 2,
-            title: "Validasi Diterima",
-            message: "Laporan kebersihan di Gedung Rektorat telah disetujui.",
-            time: "1 jam yang lalu",
-            type: "success",
-            isRead: true,
-        },
-        {
-            id: 3,
-            title: "Pengingat Jadwal",
-            message: "Jangan lupa jadwal piket rutin besok pagi.",
-            time: "Kemarin",
-            type: "info",
-            isRead: true,
-        }
-    ];
+    const [isPending, startTransition] = useTransition();
 
     // Handle click outside to close
     useEffect(() => {
@@ -55,6 +40,20 @@ export default function NotificationMenu() {
             case "info":
             default: return <Info size={18} className="text-blue-500" />;
         }
+    };
+
+    const handleMarkAsRead = (id: string, isRead: boolean) => {
+        if (isRead) return;
+        startTransition(() => {
+            markAsRead(id);
+        });
+    };
+
+    const handleMarkAllRead = () => {
+        if (unreadCount === 0) return;
+        startTransition(() => {
+            markAllAsRead();
+        });
     };
 
     return (
@@ -85,7 +84,11 @@ export default function NotificationMenu() {
                         {notifications.length > 0 ? (
                             <div className="flex flex-col">
                                 {notifications.map((notif) => (
-                                    <div key={notif.id} className={`p-4 border-b border-sibersih-primary/5 hover:bg-sibersih-primary/5 transition-colors flex gap-3 ${!notif.isRead ? 'bg-sibersih-primary/[0.02]' : ''}`}>
+                                    <div 
+                                        key={notif.id} 
+                                        onClick={() => handleMarkAsRead(notif.id, notif.isRead)}
+                                        className={`p-4 border-b border-sibersih-primary/5 hover:bg-sibersih-primary/5 transition-colors flex gap-3 cursor-pointer ${!notif.isRead ? 'bg-sibersih-primary/[0.02]' : ''}`}
+                                    >
                                         <div className="mt-0.5 shrink-0">
                                             {getIcon(notif.type)}
                                         </div>
@@ -94,7 +97,9 @@ export default function NotificationMenu() {
                                                 <h4 className={`text-sm ${!notif.isRead ? 'font-semibold text-sibersih-primary' : 'font-medium text-sibersih-primary/80'}`}>
                                                     {notif.title}
                                                 </h4>
-                                                <span className="text-[10px] text-sibersih-primary/50 shrink-0 whitespace-nowrap">{notif.time}</span>
+                                                <span className="text-[10px] text-sibersih-primary/50 shrink-0 whitespace-nowrap">
+                                                    {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: idLocale })}
+                                                </span>
                                             </div>
                                             <p className="text-xs text-sibersih-primary/60 leading-snug">
                                                 {notif.message}
@@ -113,7 +118,11 @@ export default function NotificationMenu() {
                     
                     {notifications.length > 0 && (
                         <div className="p-3 border-t border-sibersih-primary/10 bg-sibersih-bg/50 text-center">
-                            <button className="text-xs font-medium text-sibersih-primary hover:underline">
+                            <button 
+                                onClick={handleMarkAllRead}
+                                disabled={isPending || unreadCount === 0}
+                                className="text-xs font-medium text-sibersih-primary hover:underline disabled:opacity-50"
+                            >
                                 Tandai semua dibaca
                             </button>
                         </div>
