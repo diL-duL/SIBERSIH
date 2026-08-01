@@ -53,7 +53,7 @@ export default function BottomNav() {
                 href={homeUrl}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isHome ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
-                <Home size={24} className={isHome ? "stroke-[2.5]" : "stroke-2"} />
+                <Home size={24} className={`pointer-events-none ${isHome ? "stroke-[2.5]" : "stroke-2"}`} />
             </Link>
 
             {/* Tombol Aksi Utama (Tengah) */}
@@ -61,7 +61,7 @@ export default function BottomNav() {
                 href={centerUrl}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isCenter ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
-                <CenterIcon size={24} className={isCenter ? "stroke-[2.5]" : "stroke-2"} />
+                <CenterIcon size={24} className={`pointer-events-none ${isCenter ? "stroke-[2.5]" : "stroke-2"}`} />
             </Link>
 
             {/* Tombol Profile (Kanan) */}
@@ -69,7 +69,7 @@ export default function BottomNav() {
                 href={`/${role}/profile`}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isProfile ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
-                <User size={24} className={isProfile ? "stroke-[2.5]" : "stroke-2"} />
+                <User size={24} className={`pointer-events-none ${isProfile ? "stroke-[2.5]" : "stroke-2"}`} />
             </Link>
 
         </div>
