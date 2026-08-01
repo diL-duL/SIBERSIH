@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SiBersih
 
-## Getting Started
+Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan, penugasan, dan pengawasan dalam satu platform terpusat yang transparan dan akuntabel.
 
-First, run the development server:
+## Tech Stack
+- **Framework Utama:** Next.js 16 (App Router) dengan Server Actions
+- **Styling & UI:** Tailwind CSS v4, shadcn/ui, Lucide Icons
+- **Database:** Supabase (PostgreSQL)
+- **ORM:** Prisma
+- **Autentikasi & Otorisasi:** Auth.js (NextAuth v5)
+- **Penyimpanan Gambar (Storage):** Cloudinary
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Fitur Utama
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Role-based Dashboard**: Tampilan dan fitur yang disesuaikan untuk Pelapor, Petugas, dan Pimpinan.
+- **Sistem Pelaporan Real-time**: Pelapor dapat mengajukan laporan kebersihan lengkap dengan foto dan lokasi.
+- **Manajemen Tugas**: Petugas dapat melihat daftar laporan baru, dan mengunggah bukti foto jika tugas telah diselesaikan.
+- **Sistem Approval (Validasi)**: Pimpinan dapat melihat komparasi "Sebelum dan Sesudah" dan menyetujui laporan.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Cara Instalasi
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone repositori**
+   ```bash
+   git clone https://github.com/username/sibersih.git
+   cd sibersih
+   ```
 
-## Learn More
+2. **Instal dependensi**
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Siapkan Environment Variables**
+   Buat file `.env` berdasarkan `.env.example`:
+   ```bash
+   cp .env.example .env
+   ```
+   Isi file `.env` dengan konfigurasi Supabase (DATABASE_URL, DIRECT_URL), NextAuth (AUTH_SECRET), dan Cloudinary (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Inisialisasi Database**
+   Jalankan migrasi database ke Supabase:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. **Tambahkan Pengguna Default (SQL Editor Supabase)**
+   Jalankan perintah SQL berikut pada menu SQL Editor di *dashboard* Supabase Anda untuk menambahkan tiga pengguna dengan *role* berbeda (Password untuk semuanya adalah `password123`):
+   ```sql
+   INSERT INTO "User" ("id", "nama", "email", "password", "role", "createdAt", "updatedAt")
+   VALUES 
+     (gen_random_uuid()::text, 'Andi Pelapor', 'pelapor@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PELAPOR'::"Role", NOW(), NOW()),
+     (gen_random_uuid()::text, 'Joko Petugas', 'petugas@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PETUGAS'::"Role", NOW(), NOW()),
+     (gen_random_uuid()::text, 'Budi Pimpinan', 'pimpinan@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PIMPINAN'::"Role", NOW(), NOW());
+   ```
 
-## Deploy on Vercel
+6. **Jalankan Server Development**
+   ```bash
+   npm run dev
+   ```
+   Aplikasi dapat diakses melalui `http://localhost:3000`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Arsitektur Aplikasi (App Router)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Aplikasi ini menggunakan fitur Next.js terbaru:
+- **Server Actions (`lib/actions.ts`)**: Digunakan untuk menangani pengiriman formulir dan mutasi data (tanpa perlu membuat API routes secara manual).
+- **Middleware (`middleware.ts`)**: Mengamankan rute dasbor secara otomatis agar tidak dapat diakses oleh peran yang tidak sesuai.
+- **Server Components**: Dasbor secara langsung memuat data dari database (Prisma) tanpa *loading states* (Skeleton UI) di sisi klien.
