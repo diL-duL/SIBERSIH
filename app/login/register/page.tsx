@@ -2,11 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { registerAction } from "@/app/actions/auth";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, dispatch] = useActionState(registerAction, undefined);
 
   return (
     <div className="flex min-h-screen bg-sibersih-bg font-sans">
@@ -61,7 +64,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form action={dispatch} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2 text-left">
                 <label
@@ -72,6 +75,7 @@ export default function RegisterPage() {
                 </label>
                 <input
                   id="name"
+                  name="name"
                   type="text"
                   placeholder="Nama"
                   required
@@ -88,6 +92,7 @@ export default function RegisterPage() {
                 </label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="nama@contoh.com"
                   required
@@ -105,6 +110,7 @@ export default function RegisterPage() {
                 <div className="relative">
                   <input
                     id="password"
+                    name="password"
                     type={showPassword ? "text" : "password"}
                     required
                     className="flex h-12 w-full rounded-xl border border-sibersih-primary/20 bg-white px-4 py-2 pr-10 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-sibersih-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
@@ -119,21 +125,21 @@ export default function RegisterPage() {
                     ) : (
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     )}
-                    <span className="sr-only">{showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}</span>
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2 text-left">
                 <label
-                  htmlFor="confirm-password"
+                  htmlFor="confirmPassword"
                   className="text-sm font-semibold leading-none text-sibersih-primary"
                 >
                   Konfirmasi Kata Sandi
                 </label>
                 <div className="relative">
                   <input
-                    id="confirm-password"
+                    id="confirmPassword"
+                    name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     required
                     className="flex h-12 w-full rounded-xl border border-sibersih-primary/20 bg-white px-4 py-2 pr-10 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-sibersih-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
@@ -148,18 +154,16 @@ export default function RegisterPage() {
                     ) : (
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     )}
-                    <span className="sr-only">{showConfirmPassword ? "Sembunyikan konfirmasi kata sandi" : "Tampilkan konfirmasi kata sandi"}</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-sibersih-primary px-8 text-sm font-semibold text-white shadow-md transition-all hover:bg-sibersih-primary/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] duration-200"
-            >
-              Daftar
-            </button>
+            {errorMessage && (
+              <p className="text-sm text-red-500">{errorMessage}</p>
+            )}
+
+            <SubmitButton>Daftar</SubmitButton>
           </form>
 
           <div className="text-center text-sm text-sibersih-primary/60">
