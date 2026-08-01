@@ -4,6 +4,7 @@ import NotificationMenu from "@/components/NotificationMenu";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import DeleteReportButton from "@/components/DeleteReportButton";
 
 export default async function PelaporDashboard() {
     const session = await auth();
@@ -82,8 +83,13 @@ export default async function PelaporDashboard() {
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-sibersih-primary line-clamp-1">{report.lokasi}</h3>
                                         <p className="text-sm text-sibersih-primary/60 mt-1 line-clamp-2">{report.deskripsi}</p>
-                                        <div className="mt-2 text-xs font-medium px-2 py-1 bg-sibersih-primary/5 text-sibersih-primary rounded w-max">
-                                            {report.status.replace('_', ' ')}
+                                        <div className="mt-2 flex items-center gap-2">
+                                            <div className="text-xs font-medium px-2 py-1 bg-sibersih-primary/5 text-sibersih-primary rounded w-max">
+                                                {report.status.replace('_', ' ')}
+                                            </div>
+                                            {report.status === "LAPORAN_MASUK" && (
+                                                <DeleteReportButton reportId={report.id} />
+                                            )}
                                         </div>
                                     </div>
                                 </div>

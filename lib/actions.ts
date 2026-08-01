@@ -78,3 +78,25 @@ export async function approveLaporan(reportId: string) {
   revalidatePath("/executive");
   revalidatePath("/executive/history");
 }
+
+export async function hapusLaporan(reportId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (session.user.role !== "PELAPOR") throw new Error("Forbidden");
+
+  const report = await prisma.report.findUnique({ where: { id: reportId } });
+  if (!report || report.pelaporId !== session.user.id) {
+    throw new Error("Laporan tidak ditemukan atau Anda tidak berhak menghapusnya.");
+  }
+
+  if (report.status !== "LAPORAN_MASUK") {
+    throw new Error("Laporan yang sudah diproses tidak dapat dihapus.");
+  }
+
+  await prisma.report.delete({
+    where: { id: reportId },
+  });
+
+  revalidatePath("/reporter");
+  revalidatePath("/reporter/history");
+}
