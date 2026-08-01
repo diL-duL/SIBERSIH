@@ -20,19 +20,14 @@ export default function LoginPage() {
           fill
           className="object-cover"
           priority
+          sizes="50vw"
         />
         <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]" />
         
         {/* Subtle gradient overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
-        <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sibersih-primary font-bold text-xl shadow-lg">
-              S
-            </div>
-            <span className="text-xl font-bold tracking-tight">SIBERSIH</span>
-          </div>
+        <div className="absolute inset-0 flex flex-col justify-end p-12 text-white">
           
           <div className="space-y-5 pb-8">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl max-w-lg leading-tight">
@@ -47,14 +42,13 @@ export default function LoginPage() {
 
       {/* Right side - Form */}
       <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 xl:px-24">
+        <div className="mx-auto w-full max-w-md flex justify-center -mb-6">
+           <div className="relative h-48 w-full max-w-[420px]">
+             <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="(max-width: 768px) 100vw, 420px" />
+           </div>
+        </div>
         <div className="mx-auto w-full max-w-sm space-y-8">
           <div className="space-y-2 text-center lg:text-left">
-            <div className="flex items-center justify-center gap-3 lg:hidden mb-8">
-               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sibersih-primary text-white font-bold text-2xl shadow-md">
-                S
-              </div>
-              <span className="text-2xl font-bold tracking-tight text-sibersih-primary">SIBERSIH</span>
-            </div>
             <h2 className="text-3xl font-bold tracking-tight text-sibersih-primary">
               Masuk
             </h2>
