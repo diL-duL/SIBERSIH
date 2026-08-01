@@ -14,6 +14,8 @@ export async function buatLaporan(formData: FormData) {
   const lokasi = formData.get("lokasi") as string;
   const deskripsi = formData.get("deskripsi") as string;
   const file = formData.get("file-upload") as File;
+  const latStr = formData.get("latitude") as string | null;
+  const lngStr = formData.get("longitude") as string | null;
 
   if (!lokasi || !deskripsi || !file || file.size === 0) {
     throw new Error("Data tidak lengkap");
@@ -21,14 +23,25 @@ export async function buatLaporan(formData: FormData) {
 
   const imageUrl = await uploadImageToCloudinary(file);
 
+  const dataToSave: any = {
+    lokasi,
+    deskripsi,
+    fotoLaporanUrl: imageUrl,
+    pelaporId: session.user.id,
+    status: "LAPORAN_MASUK",
+  };
+
+  if (latStr && lngStr) {
+    const lat = parseFloat(latStr);
+    const lng = parseFloat(lngStr);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      dataToSave.latitude = lat;
+      dataToSave.longitude = lng;
+    }
+  }
+
   await prisma.report.create({
-    data: {
-      lokasi,
-      deskripsi,
-      fotoLaporanUrl: imageUrl,
-      pelaporId: session.user.id,
-      status: "LAPORAN_MASUK",
-    },
+    data: dataToSave,
   });
 
   revalidatePath("/reporter");

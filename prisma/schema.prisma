@@ -29,6 +29,8 @@ model Report {
   deskripsi       String
   fotoLaporanUrl  String
   fotoBuktiUrl    String?
+  latitude        Float?
+  longitude       Float?
   status          Status   @default(LAPORAN_MASUK)
   pelaporId       String
   pelapor         User     @relation(fields: [pelaporId], references: [id])
