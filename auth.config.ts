@@ -10,7 +10,15 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       const path = nextUrl.pathname;
 
-      if (path === '/') return true; 
+      if (path === '/') {
+        if (isLoggedIn) {
+           const role = auth.user.role;
+           if (role === 'PELAPOR') return Response.redirect(new URL('/reporter', nextUrl));
+           if (role === 'PETUGAS') return Response.redirect(new URL('/staff', nextUrl));
+           if (role === 'PIMPINAN') return Response.redirect(new URL('/executive', nextUrl));
+        }
+        return Response.redirect(new URL('/login', nextUrl));
+      }
       if (path === '/login') {
         if (isLoggedIn) {
            const role = auth.user.role;
