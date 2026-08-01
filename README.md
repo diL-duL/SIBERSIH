@@ -13,7 +13,7 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 ## Fitur Utama
 
 - **Role-based Dashboard**: Tampilan dan fitur yang disesuaikan untuk Pelapor, Petugas, dan Pimpinan.
-- **Sistem Pelaporan Real-time**: Pelapor dapat mengajukan laporan kebersihan lengkap dengan foto dan lokasi.
+- **Sistem Pelaporan Real-time**: Pelapor dapat mengajukan laporan kebersihan lengkap dengan foto dan lokasi koordinat presisi berkat integrasi peta interaktif (*Leaflet*).
 - **Manajemen Tugas**: Petugas dapat melihat daftar laporan baru, dan mengunggah bukti foto jika tugas telah diselesaikan.
 - **Sistem Approval (Validasi)**: Pimpinan dapat melihat komparasi "Sebelum dan Sesudah" dan menyetujui laporan.
 
