@@ -16,14 +16,19 @@ export default async function PimpinanDashboard() {
         orderBy: { createdAt: 'desc' }
     });
 
-    const pending = reports.filter(r => r.status === "MENUNGGU_APPROVAL").length;
-    const completed = reports.filter(r => r.status === "SELESAI").length;
+    const currentUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { nama: true }
+    });
+
+    const pending = reports.filter((r: any) => r.status === "MENUNGGU_APPROVAL").length;
+    const completed = reports.filter((r: any) => r.status === "SELESAI").length;
 
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <header className="flex flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
                 <div>
-                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {session.user.name || 'Pimpinan'}</h1>
+                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {currentUser?.nama || 'Pimpinan'}</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">Pimpinan / Executive</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -59,12 +64,12 @@ export default async function PimpinanDashboard() {
                             <h2 className="text-sm font-semibold text-sibersih-primary">Daftar Menunggu Validasi</h2>
                         </div>
                         <div className="flex-1 bg-sibersih-bg flex flex-col gap-4 p-4 overflow-y-auto max-h-[500px]">
-                         {reports.filter(r => r.status === "MENUNGGU_APPROVAL").length === 0 ? (
+                         {reports.filter((r: any) => r.status === "MENUNGGU_APPROVAL").length === 0 ? (
                              <div className="flex-1 flex items-center justify-center text-sm text-sibersih-primary/40 font-bold">
                                 Tidak ada laporan yang menunggu validasi.
                              </div>
                         ) : (
-                            reports.filter(r => r.status === "MENUNGGU_APPROVAL").slice(0, 5).map(report => (
+                            reports.filter((r: any) => r.status === "MENUNGGU_APPROVAL").slice(0, 5).map((report: any) => (
                                 <div key={report.id} className="bg-white p-4 rounded-xl border border-sibersih-primary/10 shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                                     <div className="w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                                         <img src={report.fotoBuktiUrl || report.fotoLaporanUrl} alt="Laporan" className="w-full h-full object-cover" />

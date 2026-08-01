@@ -16,6 +16,11 @@ export default async function PetugasDashboard() {
         orderBy: { createdAt: 'desc' }
     });
 
+    const currentUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { nama: true }
+    });
+
     const newTasks = reports.filter(r => r.status === "LAPORAN_MASUK").length;
     const processing = reports.filter(r => r.status === "MENUNGGU_APPROVAL").length;
     const completed = reports.filter(r => r.status === "SELESAI").length;
@@ -24,7 +29,7 @@ export default async function PetugasDashboard() {
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <header className="flex flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
                 <div>
-                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {session.user.name || 'Petugas'}</h1>
+                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {currentUser?.nama || 'Petugas'}</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">Petugas Kebersihan</p>
                 </div>
                 <div className="flex items-center gap-3">

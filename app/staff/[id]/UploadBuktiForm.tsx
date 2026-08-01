@@ -2,7 +2,7 @@
 
 import { UploadCloud, ArrowLeft, CheckCircle, ImageIcon, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useState, useActionState } from "react";
+import { useState, useActionState, useRef } from "react";
 import { ajukanPenyelesaian } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
 
@@ -20,6 +20,8 @@ async function formAction(prevState: any, formData: FormData) {
 export default function UploadBuktiForm({ report }: { report: any }) {
     const [fileName, setFileName] = useState("");
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +29,29 @@ export default function UploadBuktiForm({ report }: { report: any }) {
         if (file) {
             setFileName(file.name);
             setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+            if (fileInputRef.current) {
+                fileInputRef.current.files = files;
+            }
+            setFileName(files[0].name);
+            setPreviewUrl(URL.createObjectURL(files[0]));
         }
     };
 
@@ -80,7 +105,12 @@ export default function UploadBuktiForm({ report }: { report: any }) {
                                     <img src={report.fotoBuktiUrl} alt="Bukti" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
-                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-sibersih-primary/20 border-dashed rounded-lg bg-sibersih-bg hover:bg-sibersih-primary/5 transition-colors overflow-hidden">
+                                <div 
+                                    className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg transition-colors overflow-hidden ${isDragging ? 'border-sibersih-accent bg-sibersih-accent/10' : 'border-sibersih-primary/20 bg-sibersih-bg hover:bg-sibersih-primary/5'}`}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                >
                                     {previewUrl ? (
                                         <div className="relative w-full h-48 rounded-lg overflow-hidden group">
                                             <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
@@ -89,15 +119,15 @@ export default function UploadBuktiForm({ report }: { report: any }) {
                                                     Ganti Foto
                                                 </label>
                                             </div>
-                                            <input id="file-upload" name="file-upload" type="file" required className="sr-only" accept="image/*" onChange={handleImageChange} disabled={isSubmitted} />
+                                            <input ref={fileInputRef} id="file-upload" name="file-upload" type="file" required className="sr-only" accept="image/*" onChange={handleImageChange} disabled={isSubmitted} />
                                         </div>
                                     ) : (
-                                        <div className="space-y-1 text-center">
-                                            <UploadCloud className="mx-auto h-12 w-12 text-sibersih-primary/40" />
+                                        <div className="space-y-1 text-center pointer-events-none">
+                                            <UploadCloud className={`mx-auto h-12 w-12 transition-colors ${isDragging ? 'text-sibersih-accent' : 'text-sibersih-primary/40'}`} />
                                             <div className="flex text-sm text-sibersih-primary/70 justify-center">
-                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-sibersih-primary hover:text-sibersih-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sibersih-accent">
+                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-sibersih-primary hover:text-sibersih-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sibersih-accent pointer-events-auto">
                                                     <span>Unggah file</span>
-                                                    <input id="file-upload" name="file-upload" type="file" required className="sr-only" accept="image/*" onChange={handleImageChange} disabled={isSubmitted} />
+                                                    <input ref={fileInputRef} id="file-upload" name="file-upload" type="file" required className="sr-only" accept="image/*" onChange={handleImageChange} disabled={isSubmitted} />
                                                 </label>
                                                 <p className="pl-1">atau tarik dan lepas</p>
                                             </div>

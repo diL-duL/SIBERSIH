@@ -1,0 +1,35 @@
+app/actions/auth.ts(4,27): error TS2307: Cannot find module 'next-auth' or its corresponding type declarations.
+app/actions/auth.ts(11,15): error TS18046: 'error' is of type 'unknown'.
+app/actions/auth.ts(22,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+app/actions/user.ts(6,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+app/executive/history/page.tsx(36,45): error TS7006: Parameter 'tugas' implicitly has an 'any' type.
+app/reporter/history/page.tsx(66,42): error TS7006: Parameter 'item' implicitly has an 'any' type.
+app/reporter/page.tsx(22,39): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/reporter/page.tsx(23,38): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/reporter/page.tsx(72,41): error TS7006: Parameter 'report' implicitly has an 'any' type.
+app/staff/history/page.tsx(36,45): error TS7006: Parameter 'tugas' implicitly has an 'any' type.
+app/staff/page.tsx(19,37): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/staff/page.tsx(20,39): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/staff/page.tsx(21,38): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/staff/page.tsx(63,41): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/staff/page.tsx(68,44): error TS7006: Parameter 'r' implicitly has an 'any' type.
+app/staff/page.tsx(68,95): error TS7006: Parameter 'report' implicitly has an 'any' type.
+app/staff/tasks/page.tsx(33,37): error TS7006: Parameter 'tugas' implicitly has an 'any' type.
+auth.config.ts(1,37): error TS2307: Cannot find module 'next-auth' or its corresponding type declarations.
+auth.config.ts(9,18): error TS7031: Binding element 'auth' implicitly has an 'any' type.
+auth.config.ts(9,35): error TS7031: Binding element 'nextUrl' implicitly has an 'any' type.
+auth.config.ts(37,11): error TS7031: Binding element 'token' implicitly has an 'any' type.
+auth.config.ts(37,18): error TS7031: Binding element 'user' implicitly has an 'any' type.
+auth.config.ts(44,15): error TS7031: Binding element 'session' implicitly has an 'any' type.
+auth.config.ts(44,24): error TS7031: Binding element 'token' implicitly has an 'any' type.
+auth.ts(1,22): error TS2307: Cannot find module 'next-auth' or its corresponding type declarations.
+auth.ts(3,25): error TS2307: Cannot find module 'next-auth/providers/credentials' or its corresponding type declarations.
+auth.ts(5,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+auth.ts(11,23): error TS7006: Parameter 'credentials' implicitly has an 'any' type.
+components/NotificationMenu.tsx(6,37): error TS2307: Cannot find module 'date-fns' or its corresponding type declarations.
+components/NotificationMenu.tsx(7,32): error TS2307: Cannot find module 'date-fns/locale' or its corresponding type declarations.
+lib/prisma.ts(1,30): error TS2307: Cannot find module '../app/generated/prisma/client' or its corresponding type declarations.
+lib/prisma.ts(2,26): error TS2307: Cannot find module '@prisma/adapter-pg' or its corresponding type declarations.
+lib/prisma.ts(3,22): error TS2307: Cannot find module 'pg' or its corresponding type declarations.
+prisma.config.ts(4,30): error TS2307: Cannot find module 'prisma/config' or its corresponding type declarations.
+proxy.ts(1,22): error TS2307: Cannot find module 'next-auth' or its corresponding type declarations.

@@ -32,7 +32,7 @@ export default async function PimpinanValidations() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {butuhApproval.map((item) => (
+                {butuhApproval.map((item: any) => (
                     <div key={item.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
                         <div className="p-5 border-b border-sibersih-primary/5 flex justify-between items-start">
                             <div>
