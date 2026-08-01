@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id       String   @id @default(uuid())
+  nama     String
+  email    String   @unique
+  password String
+  role     Role     @default(PELAPOR)
+  laporan      Report[] 
+  notifications Notification[]
+}
+
+enum Role {
+  PELAPOR
+  PETUGAS
+  PIMPINAN
+}
+
+model Report {
+  id              String   @id @default(uuid())
+  lokasi          String
+  deskripsi       String
+  fotoLaporanUrl  String
+  fotoBuktiUrl    String?
+  status          Status   @default(LAPORAN_MASUK)
+  pelaporId       String
+  pelapor         User     @relation(fields: [pelaporId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum Status {
+  LAPORAN_MASUK
+  MENUNGGU_APPROVAL
+  SELESAI
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
