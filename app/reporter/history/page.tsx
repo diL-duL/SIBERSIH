@@ -1,46 +1,33 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, CheckCircle, Hourglass, XCircle } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, CheckCircle, Hourglass, XCircle, Megaphone } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function ReporterHistoryPage() {
-    const historyData = [
-        {
-            id: "RPT-003",
-            lokasi: "Samping Gedung Perpustakaan",
-            waktu: "12 Okt 2026, 14:30",
-            status: "menunggu",
-            deskripsi: "Ada tumpukan sampah plastik yang belum diangkut sejak kemarin sore."
-        },
-        {
-            id: "RPT-002",
-            lokasi: "Kantin Fakultas Teknik",
-            waktu: "10 Okt 2026, 09:15",
-            status: "diproses",
-            deskripsi: "Wastafel tersumbat dan air meluap ke lantai."
-        },
-        {
-            id: "RPT-001",
-            lokasi: "Taman Rektorat",
-            waktu: "05 Okt 2026, 08:00",
-            status: "selesai",
-            deskripsi: "Daun kering berserakan di sekitar bangku taman."
-        }
-    ];
+export default async function ReporterHistoryPage() {
+    const session = await auth();
+    if (!session?.user) redirect("/login");
+
+    const historyData = await prisma.report.findMany({
+        where: { pelaporId: session.user.id },
+        orderBy: { createdAt: "desc" }
+    });
 
     const getStatusConfig = (status: string) => {
         switch (status) {
-            case "menunggu":
+            case "LAPORAN_MASUK":
                 return {
                     label: "Menunggu",
                     icon: <Clock size={14} />,
                     classes: "bg-gray-100 text-gray-700 border-gray-200"
                 };
-            case "diproses":
+            case "MENUNGGU_APPROVAL":
                 return {
                     label: "Diproses",
                     icon: <Hourglass size={14} />,
                     classes: "bg-orange-100 text-orange-700 border-orange-200"
                 };
-            case "selesai":
+            case "SELESAI":
                 return {
                     label: "Selesai",
                     icon: <CheckCircle size={14} />,
@@ -48,9 +35,9 @@ export default function ReporterHistoryPage() {
                 };
             default:
                 return {
-                    label: "Ditolak",
-                    icon: <XCircle size={14} />,
-                    classes: "bg-red-100 text-red-700 border-red-200"
+                    label: "Menunggu",
+                    icon: <Clock size={14} />,
+                    classes: "bg-gray-100 text-gray-700 border-gray-200"
                 };
         }
     };
@@ -70,30 +57,36 @@ export default function ReporterHistoryPage() {
                 </header>
 
                 <div className="flex flex-col gap-4">
-                    {historyData.map((item) => {
-                        const statusConfig = getStatusConfig(item.status);
-                        return (
-                            <div key={item.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 p-5 flex flex-col gap-3">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <h3 className="font-semibold text-sibersih-primary text-lg">{item.lokasi}</h3>
-                                        <p className="text-sm text-sibersih-primary/70 mt-1">{item.deskripsi}</p>
+                    {historyData.length === 0 ? (
+                        <div className="py-12 flex flex-col items-center justify-center text-sibersih-primary/40 font-medium">
+                            <Megaphone size={48} className="mb-4 opacity-50" />
+                            Belum ada riwayat laporan.
+                        </div>
+                    ) : (
+                        historyData.map((item) => {
+                            const statusConfig = getStatusConfig(item.status);
+                            return (
+                                <div key={item.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 p-5 flex flex-col gap-3 hover:border-sibersih-accent transition-colors">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div>
+                                            <h3 className="font-semibold text-sibersih-primary text-lg">{item.lokasi}</h3>
+                                            <p className="text-sm text-sibersih-primary/70 mt-1">{item.deskripsi}</p>
+                                        </div>
+                                        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-md border ${statusConfig.classes} shrink-0`}>
+                                            {statusConfig.icon} {statusConfig.label}
+                                        </span>
                                     </div>
-                                    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-md border ${statusConfig.classes} shrink-0`}>
-                                        {statusConfig.icon} {statusConfig.label}
-                                    </span>
+                                    <div className="mt-2 flex items-center gap-4 text-xs text-sibersih-primary/60 font-medium">
+                                        <span className="flex items-center gap-1.5">
+                                            <Clock size={14} /> {new Date(item.createdAt).toLocaleDateString("id-ID", {
+                                                day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                                            })}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="mt-2 flex items-center gap-4 text-xs text-sibersih-primary/60 font-medium">
-                                    <span className="flex items-center gap-1.5">
-                                        <MapPin size={14} /> ID: {item.id}
-                                    </span>
-                                    <span className="flex items-center gap-1.5">
-                                        <Clock size={14} /> {item.waktu}
-                                    </span>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })
+                    )}
                 </div>
             </div>
         </div>
