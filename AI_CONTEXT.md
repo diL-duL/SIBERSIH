@@ -1,3 +1,4 @@
+AICONTEXT.md baru
 # SiBersih - AI Assistant Context Guide
 
 *Dokumen ini dirancang khusus untuk diberikan sebagai **prompt awal** kepada AI Assistant (seperti Claude, ChatGPT, Windsurf, Cursor) di masa mendatang agar AI dapat langsung memahami seluruh arsitektur, teknologi, dan logika bisnis aplikasi SiBersih tanpa perlu meraba-raba.*
@@ -39,9 +40,10 @@ Terdapat 3 entitas utama:
 - **Report (Laporan):** Memiliki `id`, `lokasi`, `deskripsi`, `fotoLaporanUrl` (awal laporan), `fotoBuktiUrl` (setelah dikerjakan petugas), `status` (LAPORAN_MASUK, MENUNGGU_APPROVAL, SELESAI), dan `pelaporId`.
 - **Notification (Notifikasi):** Memiliki `id`, `title`, `message`, `type` (success, info, alert), `isRead`, dan `userId` (sistem *cascade* saat User dihapus).
 
-## 6. Integrasi Eksternal (Maps & Gambar)
-- **Minimap:** *Dashboard* menggunakan iFrame Google Maps standar yang diarahkan ke "Fakultas Teknik Universitas Tadulako".
+## 6. Integrasi Eksternal (Maps, Gambar, & Branding)
+- **Peta Interaktif (Leaflet):** Aplikasi kini menggunakan `react-leaflet` (`components/MapPicker.tsx`) untuk fitur pemilihan lokasi secara dinamis *(draggable marker)* pada formulir pelaporan. Koordinat `latitude` dan `longitude` presisi disimpan ke dalam database Prisma. Dashboard saat ini masih memuat *minimap* statis, namun dipersiapkan untuk beralih ke Leaflet di masa mendatang.
 - **Upload Gambar:** Ditangani secara *client-side* ke endpoint spesifik Cloudinary, lalu URL dari Cloudinary dikirimkan ke *Server Actions* untuk direkam di database Prisma.
+- **Branding & Logo:** Aset logo resmi aplikasi tersimpan di direktori `/public` (contoh: `newlogowithtext.png` dan `sibersih-logowithouttext.png`). Logo ini diimplementasikan menggunakan komponen `<Image>` Next.js pada halaman otentikasi dengan manajemen rasio yang responsif dan tersentralisasi.
 
 ---
 **Instruksi untuk AI:**

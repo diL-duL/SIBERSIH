@@ -66,9 +66,9 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
         <MapEvents />
         <Marker
           draggable={true}
-          eventHandlers={eventHandlers}
+          {...({ eventHandlers } as any)}
           position={position}
-          ref={markerRef}
+          ref={markerRef as any}
           icon={customIcon}
         />
       </MapContainer>
