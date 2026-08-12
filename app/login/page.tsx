@@ -15,12 +15,12 @@ export default function LoginPage() {
       {/* Left side - Image */}
       <div className="relative hidden w-1/2 lg:block">
         <Image
-          src="/dekanat_upscaled.webp"
+          src="/fatek.jpg"
           alt="SIBERSIH Background"
           fill
           className="object-cover"
           priority
-          sizes="50vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]" />
         
@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 xl:px-24">
         <div className="mx-auto w-full max-w-md flex justify-center -mb-6">
            <div className="relative h-48 w-full max-w-[420px]">
-             <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="(max-width: 768px) 100vw, 420px" />
+             <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority quality={100} sizes="(max-width: 768px) 100vw, 420px" />
            </div>
         </div>
         <div className="mx-auto w-full max-w-sm space-y-8">

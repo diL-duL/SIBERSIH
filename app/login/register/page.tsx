@@ -16,7 +16,7 @@ export default function RegisterPage() {
       {/* Left side - Image */}
       <div className="relative hidden w-1/2 lg:block">
         <Image
-          src="/dekanat_upscaled.webp"
+          src="/fatek.jpg"
           alt="SIBERSIH Background"
           fill
           className="object-cover"
