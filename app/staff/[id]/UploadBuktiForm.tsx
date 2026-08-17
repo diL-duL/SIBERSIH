@@ -1,24 +1,27 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, CheckCircle, ImageIcon, MapPin } from "lucide-react";
+import { UploadCloud, ArrowLeft, MapPin } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useActionState, useRef } from "react";
 import { ajukanPenyelesaian } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
 
-async function formAction(prevState: any, formData: FormData) {
+type ActionState = { message: string | null; error: string | null };
+
+async function formAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
     try {
         const reportId = formData.get("reportId") as string;
         await ajukanPenyelesaian(reportId, formData);
         return { message: "Bukti berhasil diajukan", error: null };
-    } catch (e: any) {
-        if (e.message === "NEXT_REDIRECT") throw e;
-        return { message: null, error: e.message || "Gagal mengajukan bukti" };
+    } catch (e: unknown) {
+        const error = e as Error;
+        if (error.message === "NEXT_REDIRECT") throw error;
+        return { message: null, error: error.message || "Gagal mengajukan bukti" };
     }
 }
 
-export default function UploadBuktiForm({ report }: { report: any }) {
-    const [fileName, setFileName] = useState("");
+export default function UploadBuktiForm({ report }: { report: { id: string; lokasi: string; deskripsi: string; fotoLaporanUrl: string; fotoBuktiUrl: string | null; status: string; } }) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +30,6 @@ export default function UploadBuktiForm({ report }: { report: any }) {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setFileName(file.name);
             setPreviewUrl(URL.createObjectURL(file));
         }
     };
@@ -50,7 +52,6 @@ export default function UploadBuktiForm({ report }: { report: any }) {
             if (fileInputRef.current) {
                 fileInputRef.current.files = files;
             }
-            setFileName(files[0].name);
             setPreviewUrl(URL.createObjectURL(files[0]));
         }
     };
@@ -77,8 +78,8 @@ export default function UploadBuktiForm({ report }: { report: any }) {
 
                     <div className="p-6 border-b border-sibersih-primary/5">
                         <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider mb-2">Kondisi Awal (Sebelum Dibersihkan)</h2>
-                        <div className="w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center mb-6 relative overflow-hidden">
-                            <img src={report.fotoLaporanUrl} alt="Laporan" className="w-full h-full object-cover" />
+                        <div className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center mb-6 overflow-hidden">
+                            <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                         </div>
 
                         <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider mb-2">Lokasi Pembersihan</h2>
@@ -101,8 +102,8 @@ export default function UploadBuktiForm({ report }: { report: any }) {
                             </label>
                             
                             {isSubmitted && report.fotoBuktiUrl ? (
-                                <div className="w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center relative overflow-hidden">
-                                    <img src={report.fotoBuktiUrl} alt="Bukti" className="w-full h-full object-cover" />
+                                <div className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center overflow-hidden">
+                                    <Image src={report.fotoBuktiUrl} alt="Bukti" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                                 </div>
                             ) : (
                                 <div 
@@ -113,7 +114,7 @@ export default function UploadBuktiForm({ report }: { report: any }) {
                                 >
                                     {previewUrl ? (
                                         <div className="relative w-full h-48 rounded-lg overflow-hidden group">
-                                            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                            <Image src={previewUrl} alt="Preview" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                 <label htmlFor="file-upload" className="cursor-pointer px-4 py-2 bg-white rounded-lg text-sm font-medium text-sibersih-primary shadow-sm hover:bg-sibersih-bg transition-colors">
                                                     Ganti Foto

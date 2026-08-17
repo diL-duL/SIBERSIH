@@ -1,20 +1,24 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, MapPin } from "lucide-react";
+import { UploadCloud, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useActionState, useRef } from "react";
 import dynamic from "next/dynamic";
 import { buatLaporan } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
 
 // Wrapper for the action to catch errors
-async function formAction(prevState: any, formData: FormData) {
+type ActionState = { message: string | null; error: string | null };
+
+async function formAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
     try {
         await buatLaporan(formData);
         return { message: "Laporan berhasil dikirim", error: null };
-    } catch (e: any) {
-        if (e.message === "NEXT_REDIRECT") throw e; // Let Next.js handle redirect
-        return { message: null, error: e.message || "Gagal mengirim laporan" };
+    } catch (e: unknown) {
+        const error = e as Error;
+        if (error.message === "NEXT_REDIRECT") throw error; // Let Next.js handle redirect
+        return { message: null, error: error.message || "Gagal mengirim laporan" };
     }
 }
 
@@ -24,7 +28,6 @@ const MapPicker = dynamic(() => import('@/components/MapPicker'), {
 });
 
 export default function ReportPage() {
-    const [fileName, setFileName] = useState("");
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [latitude, setLatitude] = useState<number | null>(null);
     const [longitude, setLongitude] = useState<number | null>(null);
@@ -35,7 +38,6 @@ export default function ReportPage() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setFileName(file.name);
             setPreviewUrl(URL.createObjectURL(file));
         }
     };
@@ -58,7 +60,6 @@ export default function ReportPage() {
             if (fileInputRef.current) {
                 fileInputRef.current.files = files;
             }
-            setFileName(files[0].name);
             setPreviewUrl(URL.createObjectURL(files[0]));
         }
     };
@@ -126,7 +127,7 @@ export default function ReportPage() {
                             >
                                 {previewUrl ? (
                                     <div className="relative w-full h-48 rounded-lg overflow-hidden group">
-                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                        <Image src={previewUrl} alt="Preview" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <label htmlFor="file-upload" className="cursor-pointer px-4 py-2 bg-white rounded-lg text-sm font-medium text-sibersih-primary shadow-sm hover:bg-sibersih-bg transition-colors">
                                                 Ganti Foto

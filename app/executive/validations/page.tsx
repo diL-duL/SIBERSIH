@@ -1,4 +1,5 @@
-import { User, Check, X, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { User, Check } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
@@ -32,7 +33,7 @@ export default async function PimpinanValidations() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {butuhApproval.map((item: any) => (
+                {butuhApproval.map((item) => (
                     <div key={item.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
                         <div className="p-5 border-b border-sibersih-primary/5 flex justify-between items-start">
                             <div>
@@ -55,14 +56,14 @@ export default async function PimpinanValidations() {
                         <div className="p-5 grid grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
                                 <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Kondisi Awal</span>
-                                <div className="w-full h-32 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center gap-2 relative overflow-hidden">
-                                    <img src={item.fotoLaporanUrl} alt="Awal" className="w-full h-full object-cover" />
+                                <div className="relative w-full h-32 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center gap-2 overflow-hidden">
+                                    <Image src={item.fotoLaporanUrl} alt="Awal" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Hasil Kerja</span>
-                                <div className="w-full h-32 bg-gray-100 border border-green-200 rounded-lg flex flex-col items-center justify-center gap-2 relative overflow-hidden">
-                                    <img src={item.fotoBuktiUrl!} alt="Akhir" className="w-full h-full object-cover" />
+                                <div className="relative w-full h-32 bg-gray-100 border border-green-200 rounded-lg flex flex-col items-center justify-center gap-2 overflow-hidden">
+                                    <Image src={item.fotoBuktiUrl!} alt="Akhir" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                                 </div>
                             </div>
                         </div>

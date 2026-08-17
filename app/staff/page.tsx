@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CheckSquare, Hourglass, ClipboardList } from "lucide-react";
 import NotificationMenu from "@/components/NotificationMenu";
 import { auth } from "@/auth";
@@ -72,8 +73,8 @@ export default async function PetugasDashboard() {
                         ) : (
                             reports.filter(r => r.status === "LAPORAN_MASUK").slice(0, 5).map(report => (
                                 <div key={report.id} className="bg-white p-4 rounded-xl border border-sibersih-primary/10 shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                                    <div className="w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                                        <img src={report.fotoLaporanUrl} alt="Laporan" className="w-full h-full object-cover" />
+                                    <div className="relative w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+                                        <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 640px) 100vw, 96px" className="object-cover" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-sibersih-primary line-clamp-1">{report.lokasi}</h3>

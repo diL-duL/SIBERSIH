@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CheckSquare, Hourglass, CheckCircle, XCircle } from "lucide-react";
+import Image from "next/image";
+import { CheckSquare, Hourglass, CheckCircle } from "lucide-react";
 import NotificationMenu from "@/components/NotificationMenu";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -21,8 +22,8 @@ export default async function PimpinanDashboard() {
         select: { nama: true }
     });
 
-    const pending = reports.filter((r: any) => r.status === "MENUNGGU_APPROVAL").length;
-    const completed = reports.filter((r: any) => r.status === "SELESAI").length;
+    const pending = reports.filter((r) => r.status === "MENUNGGU_APPROVAL").length;
+    const completed = reports.filter((r) => r.status === "SELESAI").length;
 
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -64,15 +65,15 @@ export default async function PimpinanDashboard() {
                             <h2 className="text-sm font-semibold text-sibersih-primary">Daftar Menunggu Validasi</h2>
                         </div>
                         <div className="flex-1 bg-sibersih-bg flex flex-col gap-4 p-4 overflow-y-auto max-h-[500px]">
-                         {reports.filter((r: any) => r.status === "MENUNGGU_APPROVAL").length === 0 ? (
+                         {reports.filter((r) => r.status === "MENUNGGU_APPROVAL").length === 0 ? (
                              <div className="flex-1 flex items-center justify-center text-sm text-sibersih-primary/40 font-bold">
                                 Tidak ada laporan yang menunggu validasi.
                              </div>
                         ) : (
-                            reports.filter((r: any) => r.status === "MENUNGGU_APPROVAL").slice(0, 5).map((report: any) => (
+                            reports.filter((r) => r.status === "MENUNGGU_APPROVAL").slice(0, 5).map((report) => (
                                 <div key={report.id} className="bg-white p-4 rounded-xl border border-sibersih-primary/10 shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                                    <div className="w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                                        <img src={report.fotoBuktiUrl || report.fotoLaporanUrl} alt="Laporan" className="w-full h-full object-cover" />
+                                    <div className="relative w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+                                        <Image src={report.fotoBuktiUrl || report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 640px) 100vw, 96px" className="object-cover" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-sibersih-primary line-clamp-1">{report.lokasi}</h3>

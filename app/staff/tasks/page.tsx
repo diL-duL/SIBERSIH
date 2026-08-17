@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Clock, AlertCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
@@ -32,8 +33,8 @@ export default async function PetugasTasks() {
                 ) : (
                     tugasMasuk.map((tugas) => (
                         <div key={tugas.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col overflow-hidden">
-                            <div className="w-full h-32 bg-gray-100 overflow-hidden">
-                                <img src={tugas.fotoLaporanUrl} alt="Laporan" className="w-full h-full object-cover" />
+                            <div className="relative w-full h-32 bg-gray-100 overflow-hidden">
+                                <Image src={tugas.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
                             </div>
 
                             <div className="p-4 flex flex-col flex-1">

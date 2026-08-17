@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, CheckCircle, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Clock, MapPin, CheckCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
@@ -35,8 +36,8 @@ export default async function ExecutiveHistoryPage() {
                     ) : (
                         completedTasks.map((tugas) => (
                             <div key={tugas.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex flex-col sm:flex-row hover:border-sibersih-accent transition-colors">
-                                <div className="w-full sm:w-40 h-32 sm:h-auto bg-gray-100 flex flex-col items-center justify-center shrink-0 border-b sm:border-b-0 sm:border-r border-sibersih-primary/10 overflow-hidden relative">
-                                    <img src={tugas.fotoBuktiUrl || tugas.fotoLaporanUrl} alt="Bukti" className="w-full h-full object-cover" />
+                                <div className="relative w-full sm:w-40 h-32 sm:h-auto bg-gray-100 flex flex-col items-center justify-center shrink-0 border-b sm:border-b-0 sm:border-r border-sibersih-primary/10 overflow-hidden">
+                                    <Image src={tugas.fotoBuktiUrl || tugas.fotoLaporanUrl} alt="Bukti" fill sizes="(max-width: 640px) 100vw, 160px" className="object-cover" />
                                 </div>
                                 
                                 <div className="p-5 flex flex-col justify-center flex-1">
