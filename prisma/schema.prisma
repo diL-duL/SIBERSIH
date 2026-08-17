@@ -36,6 +36,9 @@ model Report {
   pelapor         User     @relation(fields: [pelaporId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([pelaporId])
 }
 
 enum Status {
@@ -53,4 +56,6 @@ model Notification {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([userId])
 }
