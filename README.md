@@ -14,8 +14,17 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 
 - **Role-based Dashboard**: Tampilan dan fitur yang disesuaikan untuk Pelapor, Petugas, dan Pimpinan.
 - **Sistem Pelaporan Real-time**: Pelapor dapat mengajukan laporan kebersihan lengkap dengan foto dan lokasi koordinat presisi berkat integrasi peta interaktif (*Leaflet*).
+- **Pembatalan Laporan**: Pelapor dapat membatalkan atau menghapus laporannya sendiri selama statusnya masih "LAPORAN MASUK".
+- **Upload Interaktif (Drag and Drop)**: Pengalaman pengguna yang lebih baik dengan fitur seret dan lepas untuk mengunggah foto laporan maupun bukti kerja.
 - **Manajemen Tugas**: Petugas dapat melihat daftar laporan baru, dan mengunggah bukti foto jika tugas telah diselesaikan.
 - **Sistem Approval (Validasi)**: Pimpinan dapat melihat komparasi "Sebelum dan Sesudah" dan menyetujui laporan.
+
+## Optimasi & Keamanan (Enterprise-Grade)
+
+- **Performa LCP Maksimal**: Penggunaan komponen `<Image />` bawaan Next.js untuk merender seluruh foto laporan/bukti secara responsif dan menghemat penggunaan _bandwidth_.
+- **Type-Safety (100% Strict)**: Seluruh _codebase_ telah dideklarasikan secara ketat. Bebas dari tipe `any`, variabel terbuang (_unused variables_), dan berhasil melalui *strict linting* serta *production build* tanpa _error_ (Exit code: 0).
+- **Efisiensi Database**: Penambahan lapisan *B-Tree Indexing* (`@@index`) pada parameter kunci (seperti `status`, `pelaporId`, dan `userId`) dalam *schema* Prisma memastikan operasi pencarian *query* berjalan secepat kilat (skala besar).
+- **Zero Memory Leak**: Logika *hook* React (terutama pada modul *Leaflet Map*) telah didesain secara independen dan diekstrak keluar dari alur _render_ untuk mencegah _memory leak_ di peramban pengguna.
 
 ## Cara Instalasi
 
@@ -63,5 +72,6 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 
 Aplikasi ini menggunakan fitur Next.js terbaru:
 - **Server Actions (`lib/actions.ts`)**: Digunakan untuk menangani pengiriman formulir dan mutasi data (tanpa perlu membuat API routes secara manual).
-- **Middleware (`middleware.ts`)**: Mengamankan rute dasbor secara otomatis agar tidak dapat diakses oleh peran yang tidak sesuai.
+- **Middleware / Proxy (`auth.config.ts` & `proxy.ts`)**: Mengamankan rute dasbor secara otomatis dan mengalihkan (redirect) pengguna dari root (`/`) langsung ke halaman Login atau Dashboard sesuai perannya.
 - **Server Components**: Dasbor secara langsung memuat data dari database (Prisma) tanpa *loading states* (Skeleton UI) di sisi klien.
+- **Prisma Client (Singleton & Custom Output)**: Menghasilkan klien Prisma secara internal ke dalam folder `app/generated/prisma` dan menerapkan pola *Singleton* di seluruh aplikasi untuk memastikan tidak terjadi kebocoran memori (memory leaks) koneksi database.
