@@ -26,47 +26,59 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 - **Efisiensi Database**: Penambahan lapisan *B-Tree Indexing* (`@@index`) pada parameter kunci (seperti `status`, `pelaporId`, dan `userId`) dalam *schema* Prisma memastikan operasi pencarian *query* berjalan secepat kilat (skala besar).
 - **Zero Memory Leak**: Logika *hook* React (terutama pada modul *Leaflet Map*) telah didesain secara independen dan diekstrak keluar dari alur _render_ untuk mencegah _memory leak_ di peramban pengguna.
 
-## Cara Instalasi
+## Panduan Instalasi & Setup Lokal
 
-1. **Clone repositori**
-   ```bash
-   git clone https://github.com/username/sibersih.git
-   cd sibersih
-   ```
+Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi SiBersih di mesin lokal Anda.
 
-2. **Instal dependensi**
-   ```bash
-   npm install
-   ```
+### 1. Persiapan Repositori
+Clone repositori ini ke komputer Anda dan masuk ke dalam direktorinya:
+```bash
+git clone https://github.com/username/sibersih.git
+cd sibersih
+```
 
-3. **Siapkan Environment Variables**
-   Buat file `.env` berdasarkan `.env.example`:
-   ```bash
-   cp .env.example .env
-   ```
-   Isi file `.env` dengan konfigurasi Supabase (DATABASE_URL, DIRECT_URL), NextAuth (AUTH_SECRET), dan Cloudinary (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET).
+### 2. Instalasi Dependensi
+Pastikan Anda menggunakan Node.js (direkomendasikan v18+). Instal seluruh dependensi menggunakan NPM:
+```bash
+npm install
+```
 
-4. **Inisialisasi Database**
-   Jalankan migrasi database ke Supabase:
-   ```bash
-   npx prisma migrate dev --name init
-   ```
+### 3. Konfigurasi Environment Variables
+Aplikasi ini membutuhkan kredensial dari **Supabase** (Database) dan **Cloudinary** (Penyimpanan Gambar).
+Salin file template `.env.example` menjadi `.env`:
+```bash
+cp .env.example .env
+```
+Buka file `.env` dan isi variabel berikut:
+- `DATABASE_URL`: Connection String PostgreSQL (Transaction mode) dari Supabase.
+- `DIRECT_URL`: Connection String PostgreSQL (Session mode) dari Supabase untuk Prisma migrations.
+- `AUTH_SECRET`: String acak aman untuk NextAuth. Buat menggunakan perintah terminal: `npx auth secret` atau `openssl rand -base64 32`.
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: Dapatkan dari *Dashboard* akun Cloudinary Anda.
 
-5. **Tambahkan Pengguna Default (SQL Editor Supabase)**
-   Jalankan perintah SQL berikut pada menu SQL Editor di *dashboard* Supabase Anda untuk menambahkan tiga pengguna dengan *role* berbeda (Password untuk semuanya adalah `password123`):
-   ```sql
-   INSERT INTO "User" ("id", "nama", "email", "password", "role", "createdAt", "updatedAt")
-   VALUES 
-     (gen_random_uuid()::text, 'Andi Pelapor', 'pelapor@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PELAPOR'::"Role", NOW(), NOW()),
-     (gen_random_uuid()::text, 'Joko Petugas', 'petugas@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PETUGAS'::"Role", NOW(), NOW()),
-     (gen_random_uuid()::text, 'Budi Pimpinan', 'pimpinan@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PIMPINAN'::"Role", NOW(), NOW());
-   ```
+### 4. Sinkronisasi Database (Prisma)
+Karena kita menggunakan struktur Prisma Client kustom di `app/generated/prisma`, Anda wajib melakukan generate dan sinkronisasi skema ke database Supabase Anda:
+```bash
+npx prisma generate
+npx prisma db push
+```
+*(Catatan: Kami menggunakan `db push` untuk prototyping cepat, untuk environment produksi Anda bisa menggunakan `migrate deploy`)*
 
-6. **Jalankan Server Development**
-   ```bash
-   npm run dev
-   ```
-   Aplikasi dapat diakses melalui `http://localhost:3000`.
+### 5. Seeding Akun Default
+Untuk masuk ke dasbor, Anda butuh akun. Buka **SQL Editor** di *Dashboard* Supabase Anda, jalankan _script_ berikut untuk membuat 3 akun peran utama (Password semuanya adalah `password123`):
+```sql
+INSERT INTO "User" ("id", "nama", "email", "password", "role", "createdAt", "updatedAt")
+VALUES 
+    (gen_random_uuid()::text, 'Andi Pelapor', 'pelapor@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PELAPOR'::"Role", NOW(), NOW()),
+    (gen_random_uuid()::text, 'Joko Petugas', 'petugas@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PETUGAS'::"Role", NOW(), NOW()),
+    (gen_random_uuid()::text, 'Budi Pimpinan', 'pimpinan@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PIMPINAN'::"Role", NOW(), NOW());
+```
+
+### 6. Menjalankan Server
+Jalankan server *development*:
+```bash
+npm run dev
+```
+Buka browser Anda dan akses `http://localhost:3000`. Selamat, SiBersih siap digunakan!
 
 ## Arsitektur Aplikasi (App Router)
 
