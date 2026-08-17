@@ -12,7 +12,8 @@ export default function DeleteReportButton({ reportId }: { reportId: string }) {
             startTransition(async () => {
                 try {
                     await hapusLaporan(reportId);
-                } catch (error: any) {
+                } catch (e: unknown) {
+                    const error = e as Error;
                     alert(error.message || "Gagal menghapus laporan");
                 }
             });

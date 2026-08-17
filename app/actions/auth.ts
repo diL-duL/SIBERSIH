@@ -61,7 +61,7 @@ export async function registerAction(prevState: string | undefined, formData: Fo
       },
     });
 
-  } catch (error) {
+  } catch {
     return 'Terjadi kesalahan saat mendaftar.';
   }
   

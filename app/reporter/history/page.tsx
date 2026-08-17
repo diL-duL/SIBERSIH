@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, CheckCircle, Hourglass, XCircle, Megaphone } from "lucide-react";
+import { ArrowLeft, Clock, CheckCircle, Hourglass, Megaphone } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";

@@ -1,6 +1,7 @@
+import crypto from "crypto";
+
 export async function uploadImageToCloudinary(file: File) {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET || "sibersih_preset"; 
   // We can use an unsigned upload preset, or signed upload.
   // Since we have API Key & Secret, we can do a signed upload if we generate a signature.
   // However, for simplicity using fetch, if we generate a signature:
@@ -15,7 +16,6 @@ export async function uploadImageToCloudinary(file: File) {
   const timestamp = Math.round(new Date().getTime() / 1000).toString();
   
   // Create signature
-  const crypto = require("crypto");
   const signature = crypto.createHash("sha1").update(`timestamp=${timestamp}${apiSecret}`).digest("hex");
 
   const formData = new FormData();

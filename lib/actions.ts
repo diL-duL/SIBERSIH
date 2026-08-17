@@ -23,7 +23,15 @@ export async function buatLaporan(formData: FormData) {
 
   const imageUrl = await uploadImageToCloudinary(file);
 
-  const dataToSave: any = {
+  const dataToSave: {
+    lokasi: string;
+    deskripsi: string;
+    fotoLaporanUrl: string;
+    pelaporId: string;
+    status: "LAPORAN_MASUK" | "MENUNGGU_APPROVAL" | "SELESAI";
+    latitude?: number;
+    longitude?: number;
+  } = {
     lokasi,
     deskripsi,
     fotoLaporanUrl: imageUrl,

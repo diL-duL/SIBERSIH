@@ -11,7 +11,7 @@ export async function logoutAction() {
 }
 
 // 2. Change Password
-export async function changePasswordAction(prevState: any, formData: FormData) {
+export async function changePasswordAction(prevState: unknown, formData: FormData) {
   try {
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };
@@ -45,13 +45,13 @@ export async function changePasswordAction(prevState: any, formData: FormData) {
     });
 
     return { success: 'Kata sandi berhasil diubah!' };
-  } catch (error) {
+  } catch {
     return { error: 'Terjadi kesalahan pada server.' };
   }
 }
 
 // 3. Update Profile
-export async function updateProfileAction(prevState: any, formData: FormData) {
+export async function updateProfileAction(prevState: unknown, formData: FormData) {
   try {
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };
@@ -66,13 +66,13 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
 
     revalidatePath('/', 'layout');
     return { success: 'Profil berhasil diperbarui!' };
-  } catch (error) {
+  } catch {
     return { error: 'Gagal memperbarui profil.' };
   }
 }
 
 // 4. Delete Account
-export async function deleteAccountAction(prevState: any, formData: FormData) {
+export async function deleteAccountAction(prevState: unknown, formData: FormData) {
   try {
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };
@@ -97,7 +97,7 @@ export async function deleteAccountAction(prevState: any, formData: FormData) {
     await prisma.user.delete({
       where: { id: user.id }
     });
-  } catch (error) {
+  } catch {
     return { error: 'Gagal menghapus akun.' };
   }
   

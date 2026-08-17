@@ -18,7 +18,7 @@ export async function markAsRead(notificationId: string) {
     });
     revalidatePath('/', 'layout');
     return { success: true };
-  } catch (error) {
+  } catch {
     return { error: 'Failed to mark as read' };
   }
 }
@@ -37,7 +37,7 @@ export async function markAllAsRead() {
     });
     revalidatePath('/', 'layout');
     return { success: true };
-  } catch (error) {
+  } catch {
     return { error: 'Failed to mark all as read' };
   }
 }
