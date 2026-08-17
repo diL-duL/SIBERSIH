@@ -19,6 +19,15 @@ interface MapPickerProps {
   defaultPosition?: [number, number];
 }
 
+function MapEvents({ setPosition }: { setPosition: (pos: L.LatLng) => void }) {
+  useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+    },
+  });
+  return null;
+}
+
 export default function MapPicker({ onPositionChange, defaultPosition }: MapPickerProps) {
   // Center roughly at Fakultas Teknik Universitas Tadulako
   const center = defaultPosition || [-0.8365, 119.8935];
@@ -41,15 +50,7 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
     []
   );
 
-  // Component to handle map clicks
-  function MapEvents() {
-    useMapEvents({
-      click(e) {
-        setPosition(e.latlng);
-      },
-    });
-    return null;
-  }
+
 
   return (
     <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
@@ -63,12 +64,12 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MapEvents />
+        <MapEvents setPosition={setPosition} />
         <Marker
           draggable={true}
-          {...({ eventHandlers } as any)}
+          eventHandlers={eventHandlers}
           position={position}
-          ref={markerRef as any}
+          ref={markerRef as React.Ref<L.Marker>}
           icon={customIcon}
         />
       </MapContainer>
