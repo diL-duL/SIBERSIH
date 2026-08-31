@@ -31,42 +31,35 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const mainFileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (mainFileInputRef.current && e.target !== mainFileInputRef.current) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                mainFileInputRef.current.files = dataTransfer.files;
+            }
             setPreviewUrl(URL.createObjectURL(file));
         }
     };
 
-    const handleCameraClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    const handleDesktopCameraClick = (e: React.MouseEvent) => {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isSecureContext = window.isSecureContext;
-
-        if (isMobile || !isSecureContext) {
-            cameraInputRef.current?.click();
-        } else {
+        if (!isMobile && window.isSecureContext) {
+            e.preventDefault();
+            e.stopPropagation();
             setIsCameraModalOpen(true);
         }
     };
 
-    const handleGalleryClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        fileInputRef.current?.click();
-    };
-
     const handleCameraCapture = (file: File) => {
-        if (fileInputRef.current) {
+        if (mainFileInputRef.current) {
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
-            fileInputRef.current.files = dataTransfer.files;
+            mainFileInputRef.current.files = dataTransfer.files;
         }
         setPreviewUrl(URL.createObjectURL(file));
     };
@@ -87,10 +80,10 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
             const file = files[0];
-            if (fileInputRef.current) {
+            if (mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
-                fileInputRef.current.files = dataTransfer.files;
+                mainFileInputRef.current.files = dataTransfer.files;
             }
             setPreviewUrl(URL.createObjectURL(file));
         }
@@ -172,6 +165,19 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                     {/* Form Bukti Section */}
                     <form action={dispatch} className="p-4 sm:p-6 space-y-6">
                         <input type="hidden" name="reportId" value={report.id} />
+
+                        {/* Main File Input */}
+                        <input 
+                            ref={mainFileInputRef}
+                            id="file-upload" 
+                            name="file-upload" 
+                            type="file" 
+                            required={!isSubmitted && !previewUrl}
+                            className="hidden" 
+                            accept="image/*" 
+                            onChange={handleImageChange} 
+                            disabled={isSubmitted}
+                        />
                         
                         <div className="space-y-2">
                             <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
@@ -183,29 +189,6 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                 )}
                             </label>
 
-                            {/* Hidden Input Files */}
-                            <input 
-                                ref={fileInputRef} 
-                                id="file-upload" 
-                                name="file-upload" 
-                                type="file" 
-                                required={!isSubmitted && !previewUrl}
-                                className="sr-only" 
-                                accept="image/*" 
-                                onChange={handleImageChange} 
-                                disabled={isSubmitted} 
-                            />
-
-                            <input 
-                                ref={cameraInputRef} 
-                                type="file" 
-                                accept="image/*" 
-                                capture="environment" 
-                                className="sr-only" 
-                                onChange={handleImageChange} 
-                                disabled={isSubmitted}
-                            />
-                            
                             {isSubmitted && report.fotoBuktiUrl ? (
                                 <div 
                                     onClick={(e) => openLightbox(report.fotoBuktiUrl!, e)}
@@ -240,15 +223,21 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                 >
                                                     <Eye size={14} /> Lihat Full
                                                 </Button>
-                                                <Button 
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={handleGalleryClick}
-                                                    className="gap-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border-sibersih-primary/20"
+                                                
+                                                <label 
+                                                    htmlFor="file-upload-change-staff"
+                                                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-white cursor-pointer transition-colors"
                                                 >
                                                     <RefreshCw size={14} /> Ganti Foto
-                                                </Button>
+                                                    <input 
+                                                        id="file-upload-change-staff" 
+                                                        type="file" 
+                                                        accept="image/*" 
+                                                        className="hidden" 
+                                                        onChange={handleImageChange} 
+                                                        disabled={isSubmitted}
+                                                    />
+                                                </label>
                                             </div>
                                         </div>
                                     ) : (
@@ -266,23 +255,41 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                 </p>
                                             </div>
 
-                                            {/* Action Buttons */}
+                                            {/* Native Labels with Hidden File Inputs */}
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm">
-                                                <button
-                                                    type="button"
-                                                    onClick={handleCameraClick}
-                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+                                                {/* Camera Label/Input */}
+                                                <label 
+                                                    htmlFor="file-upload-camera-staff"
+                                                    onClick={handleDesktopCameraClick}
+                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
                                                 >
                                                     <Camera size={18} /> Ambil Foto (Kamera)
-                                                </button>
+                                                    <input 
+                                                        id="file-upload-camera-staff" 
+                                                        type="file" 
+                                                        accept="image/*" 
+                                                        capture="environment" 
+                                                        className="hidden" 
+                                                        onChange={handleImageChange} 
+                                                        disabled={isSubmitted}
+                                                    />
+                                                </label>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={handleGalleryClick}
-                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer"
+                                                {/* Gallery Label/Input */}
+                                                <label 
+                                                    htmlFor="file-upload-gallery-staff"
+                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
                                                 >
                                                     <ImageIcon size={18} /> Pilih dari Galeri / File
-                                                </button>
+                                                    <input 
+                                                        id="file-upload-gallery-staff" 
+                                                        type="file" 
+                                                        accept="image/*" 
+                                                        className="hidden" 
+                                                        onChange={handleImageChange} 
+                                                        disabled={isSubmitted}
+                                                    />
+                                                </label>
                                             </div>
 
                                             <p className="text-[10px] sm:text-xs text-sibersih-primary/50">

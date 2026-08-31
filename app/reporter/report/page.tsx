@@ -43,45 +43,36 @@ export default function ReportPage() {
     const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const mainFileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            // Ensure main hidden input has the file for FormData submission
+            if (mainFileInputRef.current && e.target !== mainFileInputRef.current) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                mainFileInputRef.current.files = dataTransfer.files;
+            }
             setPreviewUrl(URL.createObjectURL(file));
         }
     };
 
-    const handleCameraClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Detect if user is on mobile or if getUserMedia is restricted over HTTP
+    const handleDesktopCameraClick = (e: React.MouseEvent) => {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isSecureContext = window.isSecureContext;
-
-        if (isMobile || !isSecureContext) {
-            // Trigger native camera input directly on mobile
-            cameraInputRef.current?.click();
-        } else {
-            // Open WebRTC Camera Modal on desktop with HTTPS/localhost
+        if (!isMobile && window.isSecureContext) {
+            e.preventDefault();
+            e.stopPropagation();
             setIsCameraModalOpen(true);
         }
     };
 
-    const handleGalleryClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        fileInputRef.current?.click();
-    };
-
     const handleCameraCapture = (file: File) => {
-        if (fileInputRef.current) {
+        if (mainFileInputRef.current) {
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
-            fileInputRef.current.files = dataTransfer.files;
+            mainFileInputRef.current.files = dataTransfer.files;
         }
         setPreviewUrl(URL.createObjectURL(file));
     };
@@ -102,10 +93,10 @@ export default function ReportPage() {
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
             const file = files[0];
-            if (fileInputRef.current) {
+            if (mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
-                fileInputRef.current.files = dataTransfer.files;
+                mainFileInputRef.current.files = dataTransfer.files;
             }
             setPreviewUrl(URL.createObjectURL(file));
         }
@@ -144,6 +135,18 @@ export default function ReportPage() {
                     </div>
 
                     <form action={dispatch} className="p-4 sm:p-6 space-y-6">
+                        {/* Primary Hidden Form Input for File Upload */}
+                        <input 
+                            ref={mainFileInputRef}
+                            id="file-upload" 
+                            name="file-upload" 
+                            type="file" 
+                            required={!previewUrl}
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={handleImageChange}
+                        />
+
                         {/* 1. Map Section */}
                         <div className="space-y-2">
                             <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
@@ -200,28 +203,6 @@ export default function ReportPage() {
                                     </span>
                                 )}
                             </label>
-                            
-                            {/* Hidden Input File Standard (Gallery/Files) */}
-                            <input 
-                                ref={fileInputRef} 
-                                id="file-upload" 
-                                name="file-upload" 
-                                type="file" 
-                                required={!previewUrl} 
-                                className="sr-only" 
-                                accept="image/*" 
-                                onChange={handleImageChange} 
-                            />
-
-                            {/* Hidden Input File Camera (Direct Mobile Camera App) */}
-                            <input 
-                                ref={cameraInputRef} 
-                                type="file" 
-                                accept="image/*" 
-                                capture="environment" 
-                                className="sr-only" 
-                                onChange={handleImageChange} 
-                            />
 
                             <div 
                                 className={`flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed rounded-2xl transition-all overflow-hidden bg-sibersih-bg/40 ${
@@ -246,15 +227,20 @@ export default function ReportPage() {
                                             >
                                                 <Eye size={14} /> Lihat Full
                                             </Button>
-                                            <Button 
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={handleGalleryClick}
-                                                className="gap-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border-sibersih-primary/20"
+                                            
+                                            <label 
+                                                htmlFor="file-upload-change"
+                                                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-white cursor-pointer transition-colors"
                                             >
                                                 <RefreshCw size={14} /> Ganti Foto
-                                            </Button>
+                                                <input 
+                                                    id="file-upload-change" 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    className="hidden" 
+                                                    onChange={handleImageChange} 
+                                                />
+                                            </label>
                                         </div>
                                     </div>
                                 ) : (
@@ -272,23 +258,39 @@ export default function ReportPage() {
                                             </p>
                                         </div>
 
-                                        {/* Mobile-Friendly Action Buttons */}
+                                        {/* Mobile Native Labels with Hidden File Inputs */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm">
-                                            <button
-                                                type="button"
-                                                onClick={handleCameraClick}
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+                                            {/* Camera Label/Input */}
+                                            <label 
+                                                htmlFor="file-upload-camera"
+                                                onClick={handleDesktopCameraClick}
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
                                             >
                                                 <Camera size={18} /> Ambil Foto (Kamera)
-                                            </button>
+                                                <input 
+                                                    id="file-upload-camera" 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    capture="environment" 
+                                                    className="hidden" 
+                                                    onChange={handleImageChange} 
+                                                />
+                                            </label>
 
-                                            <button
-                                                type="button"
-                                                onClick={handleGalleryClick}
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer"
+                                            {/* Gallery Label/Input */}
+                                            <label 
+                                                htmlFor="file-upload-gallery"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
                                             >
                                                 <ImageIcon size={18} /> Pilih dari Galeri / File
-                                            </button>
+                                                <input 
+                                                    id="file-upload-gallery" 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    className="hidden" 
+                                                    onChange={handleImageChange} 
+                                                />
+                                            </label>
                                         </div>
 
                                         <p className="text-[10px] sm:text-xs text-sibersih-primary/50">
