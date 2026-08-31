@@ -28,13 +28,16 @@ export default function BottomNav() {
     
     let centerUrl = "/reporter/report";
     let CenterIcon = FileText;
-    
+    let centerLabel = "Lapor";
+
     if (role === "staff") {
         centerUrl = "/staff/tasks";
         CenterIcon = ClipboardList;
+        centerLabel = "Tugas";
     } else if (role === "executive") {
         centerUrl = "/executive/validations";
         CenterIcon = CheckCircle;
+        centerLabel = "Validasi";
     }
 
     // Logika cerdas untuk mendeteksi halaman aktif
@@ -44,32 +47,35 @@ export default function BottomNav() {
 
     return (
         <div 
-            style={{ position: 'fixed', bottom: '32px', left: 0, right: 0, margin: '0 auto', zIndex: 9999 }}
-            className="w-[90%] max-w-sm bg-white/80 backdrop-blur-xl rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex justify-around items-center px-6 py-4 border border-white/50"
+            style={{ position: 'fixed', bottom: '24px', left: 0, right: 0, margin: '0 auto', zIndex: 9999 }}
+            className="w-[90%] max-w-sm bg-white/85 backdrop-blur-xl rounded-[28px] shadow-[0_10px_35px_rgba(0,0,0,0.15)] flex justify-around items-center px-6 py-2.5 border border-white/60 transition-all"
         >
 
             {/* Tombol Home (Kiri) */}
             <Link
                 href={homeUrl}
-                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isHome ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
+                className={`flex flex-col items-center gap-0.5 transition-all duration-300 transform ${isHome ? "text-sibersih-primary scale-105" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
-                <Home size={24} className={`pointer-events-none ${isHome ? "stroke-[2.5]" : "stroke-2"}`} />
+                <Home size={22} className={`pointer-events-none ${isHome ? "stroke-[2.5]" : "stroke-2"}`} />
+                <span className="text-[11px] font-semibold tracking-tight">Beranda</span>
             </Link>
 
             {/* Tombol Aksi Utama (Tengah) */}
             <Link
                 href={centerUrl}
-                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isCenter ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
+                className={`flex flex-col items-center gap-0.5 transition-all duration-300 transform ${isCenter ? "text-sibersih-primary scale-105" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
-                <CenterIcon size={24} className={`pointer-events-none ${isCenter ? "stroke-[2.5]" : "stroke-2"}`} />
+                <CenterIcon size={22} className={`pointer-events-none ${isCenter ? "stroke-[2.5]" : "stroke-2"}`} />
+                <span className="text-[11px] font-semibold tracking-tight">{centerLabel}</span>
             </Link>
 
             {/* Tombol Profile (Kanan) */}
             <Link
                 href={`/${role}/profile`}
-                className={`flex flex-col items-center gap-1 transition-all duration-300 transform hover:scale-110 ${isProfile ? "text-sibersih-primary" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
+                className={`flex flex-col items-center gap-0.5 transition-all duration-300 transform ${isProfile ? "text-sibersih-primary scale-105" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
-                <User size={24} className={`pointer-events-none ${isProfile ? "stroke-[2.5]" : "stroke-2"}`} />
+                <User size={22} className={`pointer-events-none ${isProfile ? "stroke-[2.5]" : "stroke-2"}`} />
+                <span className="text-[11px] font-semibold tracking-tight">Profil</span>
             </Link>
 
         </div>

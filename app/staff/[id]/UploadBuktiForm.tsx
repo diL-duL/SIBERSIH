@@ -1,11 +1,13 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, MapPin } from "lucide-react";
+import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useActionState, useRef } from "react";
 import { ajukanPenyelesaian } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
+import ImageLightboxModal from "@/components/ImageLightboxModal";
+import { Button } from "@/components/ui/button";
 
 type ActionState = { message: string | null; error: string | null };
 
@@ -24,6 +26,9 @@ async function formAction(prevState: ActionState, formData: FormData): Promise<A
 export default function UploadBuktiForm({ report }: { report: { id: string; lokasi: string; deskripsi: string; fotoLaporanUrl: string; fotoBuktiUrl: string | null; status: string; } }) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
@@ -49,11 +54,20 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         setIsDragging(false);
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
+            const file = files[0];
             if (fileInputRef.current) {
-                fileInputRef.current.files = files;
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInputRef.current.files = dataTransfer.files;
             }
-            setPreviewUrl(URL.createObjectURL(files[0]));
+            setPreviewUrl(URL.createObjectURL(file));
         }
+    };
+
+    const openLightbox = (src: string, e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        setLightboxSrc(src);
+        setIsLightboxOpen(true);
     };
 
     const isSubmitted = report.status !== "LAPORAN_MASUK";
@@ -77,9 +91,25 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                     </div>
 
                     <div className="p-6 border-b border-sibersih-primary/5">
-                        <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider mb-2">Kondisi Awal (Sebelum Dibersihkan)</h2>
-                        <div className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center mb-6 overflow-hidden">
-                            <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                        <div className="flex justify-between items-center mb-2">
+                            <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider">Kondisi Awal (Sebelum Dibersihkan)</h2>
+                            <button
+                                type="button"
+                                onClick={(e) => openLightbox(report.fotoLaporanUrl, e)}
+                                className="text-xs font-medium text-sibersih-primary hover:underline flex items-center gap-1"
+                            >
+                                <Eye size={14} /> Lihat Full
+                            </button>
+                        </div>
+
+                        <div 
+                            onClick={(e) => openLightbox(report.fotoLaporanUrl, e)}
+                            className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center mb-6 overflow-hidden cursor-pointer group"
+                        >
+                            <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1.5">
+                                <Eye size={16} /> Klik untuk memperbesar
+                            </div>
                         </div>
 
                         <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider mb-2">Lokasi Pembersihan</h2>
@@ -98,42 +128,81 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                         
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-sibersih-primary/80 flex items-center gap-2">
-                                Foto Bukti (Sudah Bersih)
+                                Foto Bukti Pekerjaan (Sudah Bersih)
                             </label>
+
+                            <input 
+                                ref={fileInputRef} 
+                                id="file-upload" 
+                                name="file-upload" 
+                                type="file" 
+                                required={!isSubmitted}
+                                className="sr-only" 
+                                accept="image/*" 
+                                onChange={handleImageChange} 
+                                disabled={isSubmitted} 
+                            />
                             
                             {isSubmitted && report.fotoBuktiUrl ? (
-                                <div className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center overflow-hidden">
-                                    <Image src={report.fotoBuktiUrl} alt="Bukti" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                                <div 
+                                    onClick={(e) => openLightbox(report.fotoBuktiUrl!, e)}
+                                    className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer group"
+                                >
+                                    <Image src={report.fotoBuktiUrl} alt="Bukti" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1.5">
+                                        <Eye size={16} /> Klik untuk memperbesar foto bukti
+                                    </div>
                                 </div>
                             ) : (
                                 <div 
-                                    className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg transition-colors overflow-hidden ${isDragging ? 'border-sibersih-accent bg-sibersih-accent/10' : 'border-sibersih-primary/20 bg-sibersih-bg hover:bg-sibersih-primary/5'}`}
+                                    className={`mt-1 flex justify-center px-6 pt-6 pb-6 border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden ${
+                                        isDragging 
+                                            ? 'border-sibersih-accent bg-sibersih-accent/15 scale-[1.01]' 
+                                            : 'border-sibersih-primary/20 bg-sibersih-bg hover:bg-sibersih-primary/5 hover:border-sibersih-primary/40'
+                                    }`}
                                     onDragOver={handleDragOver}
                                     onDragLeave={handleDragLeave}
                                     onDrop={handleDrop}
+                                    onClick={() => !isSubmitted && fileInputRef.current?.click()}
                                 >
                                     {previewUrl ? (
-                                        <div className="relative w-full h-48 rounded-lg overflow-hidden group">
-                                            <Image src={previewUrl} alt="Preview" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <label htmlFor="file-upload" className="cursor-pointer px-4 py-2 bg-white rounded-lg text-sm font-medium text-sibersih-primary shadow-sm hover:bg-sibersih-bg transition-colors">
-                                                    Ganti Foto
-                                                </label>
+                                        <div className="relative w-full h-52 rounded-lg overflow-hidden group">
+                                            <Image src={previewUrl} alt="Preview Bukti" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                <Button 
+                                                    type="button"
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={(e) => openLightbox(previewUrl, e)}
+                                                    className="gap-1.5 text-xs font-semibold"
+                                                >
+                                                    <Eye size={14} /> Lihat Full
+                                                </Button>
+                                                <Button 
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        fileInputRef.current?.click();
+                                                    }}
+                                                    className="gap-1.5 text-xs font-semibold bg-white"
+                                                >
+                                                    <RefreshCw size={14} /> Ganti Foto
+                                                </Button>
                                             </div>
-                                            <input ref={fileInputRef} id="file-upload" name="file-upload" type="file" required className="sr-only" accept="image/*" onChange={handleImageChange} disabled={isSubmitted} />
                                         </div>
                                     ) : (
-                                        <div className="space-y-1 text-center pointer-events-none">
-                                            <UploadCloud className={`mx-auto h-12 w-12 transition-colors ${isDragging ? 'text-sibersih-accent' : 'text-sibersih-primary/40'}`} />
-                                            <div className="flex text-sm text-sibersih-primary/70 justify-center">
-                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-sibersih-primary hover:text-sibersih-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sibersih-accent pointer-events-auto">
-                                                    <span>Unggah file</span>
-                                                    <input ref={fileInputRef} id="file-upload" name="file-upload" type="file" required className="sr-only" accept="image/*" onChange={handleImageChange} disabled={isSubmitted} />
-                                                </label>
-                                                <p className="pl-1">atau tarik dan lepas</p>
+                                        <div className="space-y-2 text-center py-2">
+                                            <div className="w-12 h-12 rounded-full bg-sibersih-primary/10 flex items-center justify-center mx-auto">
+                                                <UploadCloud className={`h-6 w-6 transition-colors ${isDragging ? 'text-sibersih-primary' : 'text-sibersih-primary/60'}`} />
                                             </div>
-                                            <p className="text-xs text-sibersih-primary/60">
-                                                PNG, JPG hingga 5MB
+                                            <div className="flex text-sm text-sibersih-primary/80 justify-center font-medium">
+                                                <span className="text-sibersih-primary underline hover:text-sibersih-primary/80">Klik untuk memilih foto</span>
+                                                <span className="pl-1 text-sibersih-primary/60">atau tarik dan lepas di sini</span>
+                                            </div>
+                                            <p className="text-xs text-sibersih-primary/50">
+                                                Format PNG, JPG atau WEBP (Maksimal 5MB)
                                             </p>
                                         </div>
                                     )}
@@ -154,6 +223,12 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                     </form>
                 </div>
             </div>
+
+            <ImageLightboxModal
+                src={lightboxSrc}
+                isOpen={isLightboxOpen}
+                onClose={() => setIsLightboxOpen(false)}
+            />
         </div>
     );
 }

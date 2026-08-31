@@ -4,7 +4,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { approveLaporan } from "@/lib/actions";
+import ApproveReportButton from "@/components/ApproveReportButton";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 
 export default async function PimpinanValidations() {
     const session = await auth();
@@ -34,51 +36,44 @@ export default async function PimpinanValidations() {
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {butuhApproval.map((item) => (
-                    <div key={item.id} className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
-                        <div className="p-5 border-b border-sibersih-primary/5 flex justify-between items-start">
-                            <div>
-                                <h3 className="font-semibold text-lg text-sibersih-primary mb-2">
-                                    {item.lokasi}
-                                </h3>
-                                <div className="flex flex-col gap-1 mt-2">
-                                    <p className="text-sm text-sibersih-primary/70 flex items-start sm:items-center gap-2">
-                                        <User size={14} className="text-sibersih-primary/40 mt-0.5 sm:mt-0 shrink-0" />
-                                        <span className="text-sibersih-primary/60 w-20 shrink-0">Dilaporkan:</span>
-                                        <span className="font-medium text-sibersih-primary break-words">{item.pelapor.nama}</span>
-                                    </p>
+                    <Card key={item.id} className="overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <CardHeader className="p-5 flex flex-row justify-between items-start">
+                                <div>
+                                    <h3 className="font-semibold text-lg text-sibersih-primary mb-2">
+                                        {item.lokasi}
+                                    </h3>
+                                    <div className="flex flex-col gap-1 mt-2">
+                                        <p className="text-sm text-sibersih-primary/70 flex items-start sm:items-center gap-2">
+                                            <User size={14} className="text-sibersih-primary/40 mt-0.5 sm:mt-0 shrink-0" />
+                                            <span className="text-sibersih-primary/60 w-20 shrink-0">Dilaporkan:</span>
+                                            <span className="font-medium text-sibersih-primary break-words">{item.pelapor.nama}</span>
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                            <span className="inline-flex items-center text-xs font-semibold text-orange-700 bg-orange-100 px-2.5 py-1 rounded">
-                                Menunggu Review
-                            </span>
+                                <Badge variant="warning">Menunggu Review</Badge>
+                            </CardHeader>
+
+                            <CardContent className="p-5 grid grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Sebelum (Laporan)</span>
+                                    <div className="relative w-full h-36 bg-gray-100 border border-sibersih-primary/10 rounded-lg overflow-hidden group">
+                                        <Image src={item.fotoLaporanUrl} alt="Sebelum" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Sesudah (Hasil Kerja)</span>
+                                    <div className="relative w-full h-36 bg-gray-100 border border-emerald-200 rounded-lg overflow-hidden group">
+                                        <Image src={item.fotoBuktiUrl!} alt="Sesudah" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                    </div>
+                                </div>
+                            </CardContent>
                         </div>
 
-                        <div className="p-5 grid grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Kondisi Awal</span>
-                                <div className="relative w-full h-32 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center gap-2 overflow-hidden">
-                                    <Image src={item.fotoLaporanUrl} alt="Awal" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Hasil Kerja</span>
-                                <div className="relative w-full h-32 bg-gray-100 border border-green-200 rounded-lg flex flex-col items-center justify-center gap-2 overflow-hidden">
-                                    <Image src={item.fotoBuktiUrl!} alt="Akhir" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="p-5 bg-sibersih-bg/50 border-t border-sibersih-primary/10 flex gap-3">
-                            <form action={async () => {
-                                "use server";
-                                await approveLaporan(item.id);
-                            }} className="flex-1">
-                                <button type="submit" className="w-full bg-sibersih-primary hover:bg-sibersih-primary/90 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
-                                    <Check size={16} /> Setujui
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                        <CardFooter className="p-5 bg-sibersih-bg/50 border-t border-sibersih-primary/10">
+                            <ApproveReportButton reportId={item.id} />
+                        </CardFooter>
+                    </Card>
                 ))}
                 </div>
             )}
