@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw, Camera, ImageIcon } from "lucide-react";
+import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw, Camera, ImageIcon, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useActionState, useRef } from "react";
@@ -28,10 +28,11 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +40,26 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         if (file) {
             setPreviewUrl(URL.createObjectURL(file));
         }
+    };
+
+    const handleCameraClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isSecureContext = window.isSecureContext;
+
+        if (isMobile || !isSecureContext) {
+            cameraInputRef.current?.click();
+        } else {
+            setIsCameraModalOpen(true);
+        }
+    };
+
+    const handleGalleryClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInputRef.current?.click();
     };
 
     const handleCameraCapture = (file: File) => {
@@ -84,107 +105,138 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const isSubmitted = report.status !== "LAPORAN_MASUK";
 
     return (
-        <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-32">
+        <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-36">
             <div className="max-w-2xl mx-auto w-full">
-                <Link href="/staff/tasks" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
+                {/* Header Back Link */}
+                <Link 
+                    href="/staff/tasks" 
+                    className="inline-flex items-center gap-2 text-sibersih-primary/70 hover:text-sibersih-primary font-semibold text-xs sm:text-sm mb-4 transition-colors px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm border border-sibersih-primary/10 shadow-xs"
+                >
                     <ArrowLeft size={16} /> Kembali ke Daftar Tugas
                 </Link>
 
-                <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
-                    <div className="p-6 border-b border-sibersih-primary/5 bg-sibersih-bg/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden">
+                    {/* Header Info */}
+                    <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-gradient-to-r from-sibersih-primary/5 via-sibersih-bg to-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
-                            <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">ID Laporan #{report.id.substring(0, 8)}</span>
-                            <h1 className="text-xl font-semibold text-sibersih-primary mt-1">Penyelesaian Tugas</h1>
+                            <span className="text-[10px] font-bold text-sibersih-primary/60 uppercase tracking-wider bg-sibersih-primary/10 px-2.5 py-0.5 rounded-full">
+                                ID #{report.id.substring(0, 8)}
+                            </span>
+                            <h1 className="text-lg sm:text-xl font-bold text-sibersih-primary mt-1">Penyelesaian Tugas Pembersihan</h1>
                         </div>
-                        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-md ${isSubmitted ? 'text-green-700 bg-green-100' : 'text-orange-700 bg-orange-100'}`}>
-                            {isSubmitted ? 'Selesai / Menunggu' : 'Pending'}
+                        <span className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full w-fit ${isSubmitted ? 'text-green-800 bg-green-100 border border-green-200' : 'text-orange-800 bg-orange-100 border border-orange-200'}`}>
+                            {isSubmitted ? <><CheckCircle2 size={14} /> Selesai / Menunggu Validasi</> : '• Menunggu Pembersihan'}
                         </span>
                     </div>
 
-                    <div className="p-6 border-b border-sibersih-primary/5">
-                        <div className="flex justify-between items-center mb-2">
-                            <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider">Kondisi Awal (Sebelum Dibersihkan)</h2>
-                            <button
-                                type="button"
-                                onClick={(e) => openLightbox(report.fotoLaporanUrl, e)}
-                                className="text-xs font-medium text-sibersih-primary hover:underline flex items-center gap-1"
-                            >
-                                <Eye size={14} /> Lihat Full
-                            </button>
-                        </div>
+                    {/* Report Information Details */}
+                    <div className="p-4 sm:p-6 border-b border-sibersih-primary/10 space-y-5">
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <h2 className="text-xs text-sibersih-primary/70 font-bold uppercase tracking-wider">Foto Kondisi Awal (Sebelum Dibersihkan)</h2>
+                                <button
+                                    type="button"
+                                    onClick={(e) => openLightbox(report.fotoLaporanUrl, e)}
+                                    className="text-xs font-bold text-sibersih-primary hover:underline flex items-center gap-1"
+                                >
+                                    <Eye size={14} /> Lihat Full
+                                </button>
+                            </div>
 
-                        <div 
-                            onClick={(e) => openLightbox(report.fotoLaporanUrl, e)}
-                            className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center mb-6 overflow-hidden cursor-pointer group"
-                        >
-                            <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1.5">
-                                <Eye size={16} /> Klik untuk memperbesar
+                            <div 
+                                onClick={(e) => openLightbox(report.fotoLaporanUrl, e)}
+                                className="relative w-full h-48 sm:h-56 bg-sibersih-bg border border-sibersih-primary/15 rounded-xl flex flex-col items-center justify-center overflow-hidden cursor-pointer group shadow-inner"
+                            >
+                                <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-black/40 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1.5">
+                                    <Eye size={16} /> Klik untuk memperbesar foto
+                                </div>
                             </div>
                         </div>
 
-                        <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider mb-2">Lokasi Pembersihan</h2>
-                        <p className="text-base font-medium text-sibersih-primary flex items-center gap-2 mb-6">
-                            <MapPin size={18} className="text-red-500" /> {report.lokasi}
-                        </p>
+                        <div>
+                            <h2 className="text-xs text-sibersih-primary/70 font-bold uppercase tracking-wider mb-1">Lokasi Pembersihan</h2>
+                            <p className="text-xs sm:text-sm font-semibold text-sibersih-primary flex items-center gap-2 bg-sibersih-bg p-3 rounded-xl border border-sibersih-primary/10">
+                                <MapPin size={18} className="text-red-500 shrink-0" /> {report.lokasi}
+                            </p>
+                        </div>
 
-                        <h2 className="text-xs text-sibersih-primary/60 font-semibold uppercase tracking-wider mb-2">Deskripsi Kondisi</h2>
-                        <p className="text-sm text-sibersih-primary/80 bg-sibersih-primary/5 p-4 rounded-lg border border-sibersih-primary/10 leading-relaxed">
-                            {report.deskripsi}
-                        </p>
+                        <div>
+                            <h2 className="text-xs text-sibersih-primary/70 font-bold uppercase tracking-wider mb-1">Deskripsi Laporan Pelapor</h2>
+                            <p className="text-xs sm:text-sm text-sibersih-primary/80 bg-sibersih-bg/60 p-3.5 rounded-xl border border-sibersih-primary/10 leading-relaxed font-medium">
+                                {report.deskripsi}
+                            </p>
+                        </div>
                     </div>
 
-                    <form action={dispatch} className="p-6 space-y-6">
+                    {/* Form Bukti Section */}
+                    <form action={dispatch} className="p-4 sm:p-6 space-y-6">
                         <input type="hidden" name="reportId" value={report.id} />
                         
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-sibersih-primary/80 flex items-center gap-2">
-                                Foto Bukti Pekerjaan (Sudah Bersih)
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
+                                <span>Upload Foto Bukti Hasil Pembersihan <span className="text-red-500">*</span></span>
+                                {previewUrl && (
+                                    <span className="text-[10px] text-green-700 font-semibold bg-green-100 px-2 py-0.5 rounded-full">
+                                        ✓ Foto Terpilih
+                                    </span>
+                                )}
                             </label>
 
+                            {/* Hidden Input Files */}
                             <input 
                                 ref={fileInputRef} 
                                 id="file-upload" 
                                 name="file-upload" 
                                 type="file" 
-                                required={!isSubmitted}
+                                required={!isSubmitted && !previewUrl}
                                 className="sr-only" 
                                 accept="image/*" 
                                 onChange={handleImageChange} 
                                 disabled={isSubmitted} 
                             />
+
+                            <input 
+                                ref={cameraInputRef} 
+                                type="file" 
+                                accept="image/*" 
+                                capture="environment" 
+                                className="sr-only" 
+                                onChange={handleImageChange} 
+                                disabled={isSubmitted}
+                            />
                             
                             {isSubmitted && report.fotoBuktiUrl ? (
                                 <div 
                                     onClick={(e) => openLightbox(report.fotoBuktiUrl!, e)}
-                                    className="relative w-full h-48 bg-gray-100 border border-sibersih-primary/10 rounded-lg flex flex-col items-center justify-center overflow-hidden cursor-pointer group"
+                                    className="relative w-full h-52 bg-sibersih-bg border border-sibersih-primary/15 rounded-xl flex flex-col items-center justify-center overflow-hidden cursor-pointer group shadow-xs"
                                 >
                                     <Image src={report.fotoBuktiUrl} alt="Bukti" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
-                                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium gap-1.5">
+                                    <div className="absolute inset-0 bg-black/40 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1.5">
                                         <Eye size={16} /> Klik untuk memperbesar foto bukti
                                     </div>
                                 </div>
                             ) : (
                                 <div 
-                                    className={`mt-1 flex flex-col items-center justify-center px-6 pt-6 pb-6 border-2 border-dashed rounded-xl transition-all overflow-hidden ${
+                                    className={`flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed rounded-2xl transition-all overflow-hidden bg-sibersih-bg/40 ${
                                         isDragging 
                                             ? 'border-sibersih-accent bg-sibersih-accent/15 scale-[1.01]' 
-                                            : 'border-sibersih-primary/20 bg-sibersih-bg hover:border-sibersih-primary/40'
+                                            : 'border-sibersih-primary/20 hover:border-sibersih-primary/40'
                                     }`}
                                     onDragOver={handleDragOver}
                                     onDragLeave={handleDragLeave}
                                     onDrop={handleDrop}
                                 >
                                     {previewUrl ? (
-                                        <div className="relative w-full h-52 rounded-lg overflow-hidden group">
+                                        <div className="relative w-full h-56 rounded-xl overflow-hidden shadow-inner group">
                                             <Image src={previewUrl} alt="Preview Bukti" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                            <div className="absolute inset-0 bg-black/60 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
                                                 <Button 
                                                     type="button"
                                                     variant="secondary"
                                                     size="sm"
                                                     onClick={(e) => openLightbox(previewUrl, e)}
-                                                    className="gap-1.5 text-xs font-semibold"
+                                                    className="gap-1.5 text-xs font-semibold shadow-md bg-white text-sibersih-primary hover:bg-sibersih-bg"
                                                 >
                                                     <Eye size={14} /> Lihat Full
                                                 </Button>
@@ -192,11 +244,8 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                     type="button"
                                                     variant="outline"
                                                     size="sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        fileInputRef.current?.click();
-                                                    }}
-                                                    className="gap-1.5 text-xs font-semibold bg-white"
+                                                    onClick={handleGalleryClick}
+                                                    className="gap-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border-sibersih-primary/20"
                                                 >
                                                     <RefreshCw size={14} /> Ganti Foto
                                                 </Button>
@@ -204,33 +253,40 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                         </div>
                                     ) : (
                                         <div className="space-y-4 text-center py-2 w-full flex flex-col items-center">
-                                            <div className="w-12 h-12 rounded-full bg-sibersih-primary/10 flex items-center justify-center">
-                                                <UploadCloud className={`h-6 w-6 transition-colors ${isDragging ? 'text-sibersih-primary' : 'text-sibersih-primary/60'}`} />
+                                            <div className="w-14 h-14 rounded-full bg-sibersih-primary/10 border border-sibersih-primary/15 flex items-center justify-center shadow-xs">
+                                                <UploadCloud className="h-7 w-7 text-sibersih-primary" />
                                             </div>
 
-                                            <div className="flex flex-col sm:flex-row gap-2.5 w-full max-w-xs">
-                                                <Button
-                                                    type="button"
-                                                    variant="default"
-                                                    size="sm"
-                                                    onClick={() => setIsCameraOpen(true)}
-                                                    className="flex-1 gap-2 text-xs font-semibold shadow-sm"
-                                                >
-                                                    <Camera size={16} /> Ambil Foto (Kamera)
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => fileInputRef.current?.click()}
-                                                    className="flex-1 gap-2 text-xs font-semibold bg-white border-sibersih-primary/20"
-                                                >
-                                                    <ImageIcon size={16} /> Pilih dari File / Galeri
-                                                </Button>
+                                            <div>
+                                                <p className="text-xs sm:text-sm font-semibold text-sibersih-primary">
+                                                    Pilih Cara Unggah Foto Bukti
+                                                </p>
+                                                <p className="text-[11px] text-sibersih-primary/60 mt-0.5">
+                                                    Ambil langsung dengan kamera HP atau pilih dari galeri
+                                                </p>
                                             </div>
 
-                                            <p className="text-xs text-sibersih-primary/50">
-                                                Atau tarik dan lepas file di sini (PNG, JPG hingga 5MB)
+                                            {/* Action Buttons */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm">
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCameraClick}
+                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+                                                >
+                                                    <Camera size={18} /> Ambil Foto (Kamera)
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={handleGalleryClick}
+                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer"
+                                                >
+                                                    <ImageIcon size={18} /> Pilih dari Galeri / File
+                                                </button>
+                                            </div>
+
+                                            <p className="text-[10px] sm:text-xs text-sibersih-primary/50">
+                                                Format PNG, JPG atau WEBP (Maksimal 5MB)
                                             </p>
                                         </div>
                                     )}
@@ -238,14 +294,23 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                             )}
                         </div>
 
-                        {state.error && <p className="text-red-500 text-sm mt-2">{state.error}</p>}
+                        {state.error && (
+                            <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm font-medium">
+                                {state.error}
+                            </div>
+                        )}
                         
                         {!isSubmitted && (
-                            <div className="pt-4 flex justify-end gap-3">
-                                <Link href="/staff/tasks" className="px-4 py-2 border border-sibersih-primary/20 rounded-lg text-sm font-medium text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors">
+                            <div className="pt-4 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3">
+                                <Link 
+                                    href="/staff/tasks" 
+                                    className="w-full sm:w-auto text-center px-5 py-3 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
+                                >
                                     Batal
                                 </Link>
-                                <SubmitButton>Ajukan Selesai</SubmitButton>
+                                <div className="w-full sm:w-auto">
+                                    <SubmitButton>Ajukan Selesai</SubmitButton>
+                                </div>
                             </div>
                         )}
                     </form>
@@ -259,8 +324,8 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
             />
 
             <CameraCaptureModal
-                isOpen={isCameraOpen}
-                onClose={() => setIsCameraOpen(false)}
+                isOpen={isCameraModalOpen}
+                onClose={() => setIsCameraModalOpen(false)}
                 onCapture={handleCameraCapture}
             />
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon } from "lucide-react";
+import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon, MapPin, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useActionState, useRef } from "react";
@@ -11,7 +11,6 @@ import ImageLightboxModal from "@/components/ImageLightboxModal";
 import CameraCaptureModal from "@/components/CameraCaptureModal";
 import { Button } from "@/components/ui/button";
 
-// Wrapper for the action to catch errors
 type ActionState = { message: string | null; error: string | null };
 
 async function formAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
@@ -20,14 +19,19 @@ async function formAction(prevState: ActionState, formData: FormData): Promise<A
         return { message: "Laporan berhasil dikirim", error: null };
     } catch (e: unknown) {
         const error = e as Error;
-        if (error.message === "NEXT_REDIRECT") throw error; // Let Next.js handle redirect
+        if (error.message === "NEXT_REDIRECT") throw error;
         return { message: null, error: error.message || "Gagal mengirim laporan" };
     }
 }
 
 const MapPicker = dynamic(() => import('@/components/MapPicker'), {
     ssr: false,
-    loading: () => <div className="w-full h-full bg-gray-100 flex items-center justify-center text-sibersih-primary/50 text-sm">Memuat peta...</div>
+    loading: () => (
+        <div className="w-full h-full bg-sibersih-bg flex flex-col items-center justify-center text-sibersih-primary/50 text-xs gap-2">
+            <MapPin className="animate-bounce text-sibersih-primary" size={24} />
+            <span>Memuat peta interaktif...</span>
+        </div>
+    )
 });
 
 export default function ReportPage() {
@@ -36,10 +40,11 @@ export default function ReportPage() {
     const [longitude, setLongitude] = useState<number | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-    const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +52,29 @@ export default function ReportPage() {
         if (file) {
             setPreviewUrl(URL.createObjectURL(file));
         }
+    };
+
+    const handleCameraClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Detect if user is on mobile or if getUserMedia is restricted over HTTP
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isSecureContext = window.isSecureContext;
+
+        if (isMobile || !isSecureContext) {
+            // Trigger native camera input directly on mobile
+            cameraInputRef.current?.click();
+        } else {
+            // Open WebRTC Camera Modal on desktop with HTTPS/localhost
+            setIsCameraModalOpen(true);
+        }
+    };
+
+    const handleGalleryClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInputRef.current?.click();
     };
 
     const handleCameraCapture = (file: File) => {
@@ -90,24 +118,38 @@ export default function ReportPage() {
     };
 
     return (
-        <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-32">
+        <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-36">
             <div className="max-w-2xl mx-auto w-full">
-                <Link href="/reporter" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
-                    <ArrowLeft size={16} /> Kembali
+                {/* Header Back Button */}
+                <Link 
+                    href="/reporter" 
+                    className="inline-flex items-center gap-2 text-sibersih-primary/70 hover:text-sibersih-primary font-semibold text-xs sm:text-sm mb-4 transition-colors px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm border border-sibersih-primary/10 shadow-xs"
+                >
+                    <ArrowLeft size={16} /> Kembali ke Beranda
                 </Link>
 
-                <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
-                    <div className="p-6 border-b border-sibersih-primary/5 bg-sibersih-bg/50">
-                        <h1 className="text-xl font-semibold text-sibersih-primary">Buat Laporan Kebersihan</h1>
-                        <p className="text-sm text-sibersih-primary/60 mt-1">
-                            Lengkapi detail di bawah ini untuk melaporkan tumpukan sampah atau fasilitas kotor.
-                        </p>
+                {/* Form Card Container */}
+                <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden">
+                    {/* Banner Card Header */}
+                    <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-gradient-to-r from-sibersih-primary/5 via-sibersih-bg to-white flex items-center justify-between">
+                        <div>
+                            <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-sibersih-primary bg-sibersih-primary/10 px-2.5 py-1 rounded-full uppercase tracking-wider mb-1">
+                                <Sparkles size={12} /> Formulir Pelaporan
+                            </span>
+                            <h1 className="text-lg sm:text-2xl font-bold text-sibersih-primary tracking-tight">Buat Laporan Kebersihan</h1>
+                            <p className="text-xs sm:text-sm text-sibersih-primary/70 mt-1">
+                                Laporkan lokasi kotor atau tumpukan sampah untuk segera dibersihkan petugas.
+                            </p>
+                        </div>
                     </div>
 
-                    <form action={dispatch} className="p-6 space-y-6">
+                    <form action={dispatch} className="p-4 sm:p-6 space-y-6">
+                        {/* 1. Map Section */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-sibersih-primary/80">Tandai Lokasi di Peta</label>
-                            <div className="w-full h-64 bg-gray-100 rounded-lg relative overflow-hidden group">
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
+                                <MapPin size={16} className="text-red-500" /> 1. Tandai Lokasi di Peta
+                            </label>
+                            <div className="w-full h-60 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
                                 <MapPicker onPositionChange={(lat, lng) => {
                                     setLatitude(lat);
                                     setLongitude(lng);
@@ -115,67 +157,92 @@ export default function ReportPage() {
                                 <input type="hidden" name="latitude" value={latitude || ""} />
                                 <input type="hidden" name="longitude" value={longitude || ""} />
                             </div>
-                            <p className="text-xs text-sibersih-primary/60 mt-1">
-                                Geser penanda di atas peta untuk menyesuaikan titik lokasi dengan akurat.
+                            <p className="text-[11px] sm:text-xs text-sibersih-primary/60 italic">
+                                *Sentuh atau geser penanda di atas peta untuk menyesuaikan posisi lokasi dengan akurat.
                             </p>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-sibersih-primary/80">Detail Lokasi</label>
+                        {/* 2. Detail Lokasi Input */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
+                                2. Detail Lokasi / Nama Tempat <span className="text-red-500">*</span>
+                            </label>
                             <input 
                                 type="text" 
                                 name="lokasi"
                                 required
-                                placeholder="Contoh: Samping Gedung Perpustakaan" 
-                                className="w-full bg-white border border-sibersih-primary/20 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none transition-shadow" 
+                                placeholder="Contoh: Samping Gedung Perpustakaan Lantai 1" 
+                                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs transition-all" 
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-sibersih-primary/80">Deskripsi Kondisi</label>
+                        {/* 3. Deskripsi Input */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
+                                3. Deskripsi Kondisi <span className="text-red-500">*</span>
+                            </label>
                             <textarea 
-                                rows={4} 
+                                rows={3} 
                                 name="deskripsi"
                                 required
-                                placeholder="Jelaskan kondisi tumpukan sampah secara spesifik..." 
-                                className="w-full bg-white border border-sibersih-primary/20 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none resize-y transition-shadow"
+                                placeholder="Jelaskan kondisi sampah secara rinci (misal: tumpukan plastik dan dedaunan kering)..." 
+                                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs resize-y transition-all"
                             ></textarea>
                         </div>
 
+                        {/* 4. Upload Foto Section */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-sibersih-primary/80">Foto Laporan</label>
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
+                                <span>4. Foto Bukti Laporan <span className="text-red-500">*</span></span>
+                                {previewUrl && (
+                                    <span className="text-[10px] text-green-700 font-semibold bg-green-100 px-2 py-0.5 rounded-full">
+                                        ✓ Foto Terpilih
+                                    </span>
+                                )}
+                            </label>
                             
+                            {/* Hidden Input File Standard (Gallery/Files) */}
                             <input 
                                 ref={fileInputRef} 
                                 id="file-upload" 
                                 name="file-upload" 
                                 type="file" 
-                                required 
+                                required={!previewUrl} 
                                 className="sr-only" 
                                 accept="image/*" 
                                 onChange={handleImageChange} 
                             />
 
+                            {/* Hidden Input File Camera (Direct Mobile Camera App) */}
+                            <input 
+                                ref={cameraInputRef} 
+                                type="file" 
+                                accept="image/*" 
+                                capture="environment" 
+                                className="sr-only" 
+                                onChange={handleImageChange} 
+                            />
+
                             <div 
-                                className={`mt-1 flex flex-col items-center justify-center px-6 pt-6 pb-6 border-2 border-dashed rounded-xl transition-all overflow-hidden ${
+                                className={`flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed rounded-2xl transition-all overflow-hidden bg-sibersih-bg/40 ${
                                     isDragging 
                                         ? 'border-sibersih-accent bg-sibersih-accent/15 scale-[1.01]' 
-                                        : 'border-sibersih-primary/20 bg-sibersih-bg hover:border-sibersih-primary/40'
+                                        : 'border-sibersih-primary/20 hover:border-sibersih-primary/40'
                                 }`}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
                             >
                                 {previewUrl ? (
-                                    <div className="relative w-full h-52 rounded-lg overflow-hidden group">
+                                    <div className="relative w-full h-56 rounded-xl overflow-hidden shadow-inner group">
                                         <Image src={previewUrl} alt="Preview Foto Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                        <div className="absolute inset-0 bg-black/60 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
                                             <Button 
                                                 type="button"
                                                 variant="secondary"
                                                 size="sm"
                                                 onClick={(e) => openLightbox(previewUrl, e)}
-                                                className="gap-1.5 text-xs font-semibold"
+                                                className="gap-1.5 text-xs font-semibold shadow-md bg-white text-sibersih-primary hover:bg-sibersih-bg"
                                             >
                                                 <Eye size={14} /> Lihat Full
                                             </Button>
@@ -183,11 +250,8 @@ export default function ReportPage() {
                                                 type="button"
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    fileInputRef.current?.click();
-                                                }}
-                                                className="gap-1.5 text-xs font-semibold bg-white"
+                                                onClick={handleGalleryClick}
+                                                className="gap-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border-sibersih-primary/20"
                                             >
                                                 <RefreshCw size={14} /> Ganti Foto
                                             </Button>
@@ -195,59 +259,80 @@ export default function ReportPage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-4 text-center py-2 w-full flex flex-col items-center">
-                                        <div className="w-12 h-12 rounded-full bg-sibersih-primary/10 flex items-center justify-center">
-                                            <UploadCloud className={`h-6 w-6 transition-colors ${isDragging ? 'text-sibersih-primary' : 'text-sibersih-primary/60'}`} />
+                                        <div className="w-14 h-14 rounded-full bg-sibersih-primary/10 border border-sibersih-primary/15 flex items-center justify-center shadow-xs">
+                                            <UploadCloud className="h-7 w-7 text-sibersih-primary" />
                                         </div>
 
-                                        <div className="flex flex-col sm:flex-row gap-2.5 w-full max-w-xs">
-                                            <Button
-                                                type="button"
-                                                variant="default"
-                                                size="sm"
-                                                onClick={() => setIsCameraOpen(true)}
-                                                className="flex-1 gap-2 text-xs font-semibold shadow-sm"
-                                            >
-                                                <Camera size={16} /> Ambil Foto (Kamera)
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => fileInputRef.current?.click()}
-                                                className="flex-1 gap-2 text-xs font-semibold bg-white border-sibersih-primary/20"
-                                            >
-                                                <ImageIcon size={16} /> Pilih dari File / Galeri
-                                            </Button>
+                                        <div>
+                                            <p className="text-xs sm:text-sm font-semibold text-sibersih-primary">
+                                                Pilih Cara Unggah Foto
+                                            </p>
+                                            <p className="text-[11px] text-sibersih-primary/60 mt-0.5">
+                                                Ambil dari kamera fisik atau pilih dari penyimpanan HP
+                                            </p>
                                         </div>
 
-                                        <p className="text-xs text-sibersih-primary/50">
-                                            Atau tarik dan lepas file di sini (PNG, JPG hingga 5MB)
+                                        {/* Mobile-Friendly Action Buttons */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm">
+                                            <button
+                                                type="button"
+                                                onClick={handleCameraClick}
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+                                            >
+                                                <Camera size={18} /> Ambil Foto (Kamera)
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleGalleryClick}
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer"
+                                            >
+                                                <ImageIcon size={18} /> Pilih dari Galeri / File
+                                            </button>
+                                        </div>
+
+                                        <p className="text-[10px] sm:text-xs text-sibersih-primary/50">
+                                            Format PNG, JPG atau WEBP (Maksimal 5MB)
                                         </p>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        {state.error && <p className="text-red-500 text-sm mt-2">{state.error}</p>}
-                        <div className="pt-4 flex justify-end gap-3">
-                            <Link href="/reporter" className="px-4 py-2 border border-sibersih-primary/20 rounded-lg text-sm font-medium text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors">
+                        {/* Error Alert */}
+                        {state.error && (
+                            <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm font-medium">
+                                {state.error}
+                            </div>
+                        )}
+
+                        {/* Form Submit Footer Actions */}
+                        <div className="pt-4 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3">
+                            <Link 
+                                href="/reporter" 
+                                className="w-full sm:w-auto text-center px-5 py-3 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
+                            >
                                 Batal
                             </Link>
-                            <SubmitButton>Kirim Laporan</SubmitButton>
+                            <div className="w-full sm:w-auto">
+                                <SubmitButton>Kirim Laporan</SubmitButton>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
 
+            {/* Lightbox Modal */}
             <ImageLightboxModal
                 src={lightboxSrc}
                 isOpen={isLightboxOpen}
                 onClose={() => setIsLightboxOpen(false)}
             />
 
+            {/* Desktop WebRTC Camera Modal */}
             <CameraCaptureModal
-                isOpen={isCameraOpen}
-                onClose={() => setIsCameraOpen(false)}
+                isOpen={isCameraModalOpen}
+                onClose={() => setIsCameraModalOpen(false)}
                 onCapture={handleCameraCapture}
             />
         </div>
