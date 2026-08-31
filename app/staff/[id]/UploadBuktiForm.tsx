@@ -1,12 +1,13 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw } from "lucide-react";
+import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw, Camera, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useActionState, useRef } from "react";
 import { ajukanPenyelesaian } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
+import CameraCaptureModal from "@/components/CameraCaptureModal";
 import { Button } from "@/components/ui/button";
 
 type ActionState = { message: string | null; error: string | null };
@@ -27,6 +28,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +39,15 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         if (file) {
             setPreviewUrl(URL.createObjectURL(file));
         }
+    };
+
+    const handleCameraCapture = (file: File) => {
+        if (fileInputRef.current) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInputRef.current.files = dataTransfer.files;
+        }
+        setPreviewUrl(URL.createObjectURL(file));
     };
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -155,15 +166,14 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                 </div>
                             ) : (
                                 <div 
-                                    className={`mt-1 flex justify-center px-6 pt-6 pb-6 border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden ${
+                                    className={`mt-1 flex flex-col items-center justify-center px-6 pt-6 pb-6 border-2 border-dashed rounded-xl transition-all overflow-hidden ${
                                         isDragging 
                                             ? 'border-sibersih-accent bg-sibersih-accent/15 scale-[1.01]' 
-                                            : 'border-sibersih-primary/20 bg-sibersih-bg hover:bg-sibersih-primary/5 hover:border-sibersih-primary/40'
+                                            : 'border-sibersih-primary/20 bg-sibersih-bg hover:border-sibersih-primary/40'
                                     }`}
                                     onDragOver={handleDragOver}
                                     onDragLeave={handleDragLeave}
                                     onDrop={handleDrop}
-                                    onClick={() => !isSubmitted && fileInputRef.current?.click()}
                                 >
                                     {previewUrl ? (
                                         <div className="relative w-full h-52 rounded-lg overflow-hidden group">
@@ -193,16 +203,34 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="space-y-2 text-center py-2">
-                                            <div className="w-12 h-12 rounded-full bg-sibersih-primary/10 flex items-center justify-center mx-auto">
+                                        <div className="space-y-4 text-center py-2 w-full flex flex-col items-center">
+                                            <div className="w-12 h-12 rounded-full bg-sibersih-primary/10 flex items-center justify-center">
                                                 <UploadCloud className={`h-6 w-6 transition-colors ${isDragging ? 'text-sibersih-primary' : 'text-sibersih-primary/60'}`} />
                                             </div>
-                                            <div className="flex text-sm text-sibersih-primary/80 justify-center font-medium">
-                                                <span className="text-sibersih-primary underline hover:text-sibersih-primary/80">Klik untuk memilih foto</span>
-                                                <span className="pl-1 text-sibersih-primary/60">atau tarik dan lepas di sini</span>
+
+                                            <div className="flex flex-col sm:flex-row gap-2.5 w-full max-w-xs">
+                                                <Button
+                                                    type="button"
+                                                    variant="default"
+                                                    size="sm"
+                                                    onClick={() => setIsCameraOpen(true)}
+                                                    className="flex-1 gap-2 text-xs font-semibold shadow-sm"
+                                                >
+                                                    <Camera size={16} /> Ambil Foto (Kamera)
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    className="flex-1 gap-2 text-xs font-semibold bg-white border-sibersih-primary/20"
+                                                >
+                                                    <ImageIcon size={16} /> Pilih dari File / Galeri
+                                                </Button>
                                             </div>
+
                                             <p className="text-xs text-sibersih-primary/50">
-                                                Format PNG, JPG atau WEBP (Maksimal 5MB)
+                                                Atau tarik dan lepas file di sini (PNG, JPG hingga 5MB)
                                             </p>
                                         </div>
                                     )}
@@ -228,6 +256,12 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                 src={lightboxSrc}
                 isOpen={isLightboxOpen}
                 onClose={() => setIsLightboxOpen(false)}
+            />
+
+            <CameraCaptureModal
+                isOpen={isCameraOpen}
+                onClose={() => setIsCameraOpen(false)}
+                onCapture={handleCameraCapture}
             />
         </div>
     );
