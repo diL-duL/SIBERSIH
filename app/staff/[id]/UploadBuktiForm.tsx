@@ -98,7 +98,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const isSubmitted = report.status !== "LAPORAN_MASUK";
 
     return (
-        <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-36">
+        <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-72">
             <div className="max-w-2xl mx-auto w-full">
                 {/* Header Back Link */}
                 <Link 
@@ -108,7 +108,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                     <ArrowLeft size={16} /> Kembali ke Daftar Tugas
                 </Link>
 
-                <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden mb-12">
                     {/* Header Info */}
                     <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-gradient-to-r from-sibersih-primary/5 via-sibersih-bg to-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
@@ -226,11 +226,13 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                 
                                                 <label 
                                                     htmlFor="file-upload-change-staff"
-                                                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-white cursor-pointer transition-colors"
+                                                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-white text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-sibersih-bg cursor-pointer transition-all"
                                                 >
-                                                    <RefreshCw size={14} /> Ganti Foto
+                                                    <RefreshCw size={14} className="pointer-events-none" />
+                                                    <span className="pointer-events-none">Ganti Foto</span>
                                                     <input 
                                                         id="file-upload-change-staff" 
+                                                        name="file-upload-change-staff-input"
                                                         type="file" 
                                                         accept="image/*" 
                                                         className="hidden" 
@@ -261,11 +263,13 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                 <label 
                                                     htmlFor="file-upload-camera-staff"
                                                     onClick={handleDesktopCameraClick}
-                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
                                                 >
-                                                    <Camera size={18} /> Ambil Foto (Kamera)
+                                                    <Camera size={18} className="pointer-events-none shrink-0" />
+                                                    <span className="pointer-events-none">Ambil Foto (Kamera)</span>
                                                     <input 
                                                         id="file-upload-camera-staff" 
+                                                        name="file-upload-camera"
                                                         type="file" 
                                                         accept="image/*" 
                                                         capture="environment" 
@@ -278,11 +282,13 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                 {/* Gallery Label/Input */}
                                                 <label 
                                                     htmlFor="file-upload-gallery-staff"
-                                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
                                                 >
-                                                    <ImageIcon size={18} /> Pilih dari Galeri / File
+                                                    <ImageIcon size={18} className="pointer-events-none shrink-0" />
+                                                    <span className="pointer-events-none">Pilih dari Galeri / File</span>
                                                     <input 
                                                         id="file-upload-gallery-staff" 
+                                                        name="file-upload-gallery"
                                                         type="file" 
                                                         accept="image/*" 
                                                         className="hidden" 
@@ -308,10 +314,10 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                         )}
                         
                         {!isSubmitted && (
-                            <div className="pt-4 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3">
+                            <div className="pt-6 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3 pb-8">
                                 <Link 
                                     href="/staff/tasks" 
-                                    className="w-full sm:w-auto text-center px-5 py-3 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
+                                    className="w-full sm:w-auto text-center px-5 py-3.5 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
                                 >
                                     Batal
                                 </Link>

@@ -5,14 +5,8 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix Leaflet icon issue in Next.js
-const customIcon = new L.Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+// Create inline SVG Data URI for marker icon (no external unpkg.com network dependency)
+const svgIcon = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ef4444" width="36" height="36"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
 
 interface MapPickerProps {
   onPositionChange: (lat: number, lng: number) => void;
@@ -29,10 +23,22 @@ function MapEvents({ setPosition }: { setPosition: (pos: L.LatLng) => void }) {
 }
 
 export default function MapPicker({ onPositionChange, defaultPosition }: MapPickerProps) {
-  // Center roughly at Fakultas Teknik Universitas Tadulako
+  // Center at Fakultas Teknik Universitas Tadulako
   const center = defaultPosition || [-0.8365, 119.8935];
   const [position, setPosition] = useState<L.LatLng>(L.latLng(center[0], center[1]));
   const markerRef = useRef<L.Marker>(null);
+  const [icon, setIcon] = useState<L.Icon | null>(null);
+
+  useEffect(() => {
+    // Create Leaflet icon on client mount
+    const markerIcon = new L.Icon({
+      iconUrl: svgIcon,
+      iconSize: [36, 36],
+      iconAnchor: [18, 36],
+      popupAnchor: [0, -36],
+    });
+    setIcon(markerIcon);
+  }, []);
 
   useEffect(() => {
     onPositionChange(position.lat, position.lng);
@@ -50,10 +56,8 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
     []
   );
 
-
-
   return (
-    <div className="w-full h-full rounded-lg overflow-hidden relative z-0">
+    <div className="w-full h-full rounded-xl overflow-hidden relative z-0">
       <MapContainer
         center={center as L.LatLngTuple}
         zoom={16}
@@ -65,13 +69,15 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapEvents setPosition={setPosition} />
-        <Marker
-          draggable={true}
-          eventHandlers={eventHandlers}
-          position={position}
-          ref={markerRef as React.Ref<L.Marker>}
-          icon={customIcon}
-        />
+        {icon && (
+          <Marker
+            draggable={true}
+            eventHandlers={eventHandlers}
+            position={position}
+            ref={markerRef as React.Ref<L.Marker>}
+            icon={icon}
+          />
+        )}
       </MapContainer>
     </div>
   );

@@ -49,7 +49,6 @@ export default function ReportPage() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Ensure main hidden input has the file for FormData submission
             if (mainFileInputRef.current && e.target !== mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
@@ -109,18 +108,18 @@ export default function ReportPage() {
     };
 
     return (
-        <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-36">
+        <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-72">
             <div className="max-w-2xl mx-auto w-full">
                 {/* Header Back Button */}
                 <Link 
                     href="/reporter" 
-                    className="inline-flex items-center gap-2 text-sibersih-primary/70 hover:text-sibersih-primary font-semibold text-xs sm:text-sm mb-4 transition-colors px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm border border-sibersih-primary/10 shadow-xs"
+                    className="inline-flex items-center gap-2 text-sibersih-primary/70 hover:text-sibersih-primary font-semibold text-xs sm:text-sm mb-4 transition-colors px-3.5 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-sibersih-primary/10 shadow-xs"
                 >
                     <ArrowLeft size={16} /> Kembali ke Beranda
                 </Link>
 
                 {/* Form Card Container */}
-                <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden mb-12">
                     {/* Banner Card Header */}
                     <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-gradient-to-r from-sibersih-primary/5 via-sibersih-bg to-white flex items-center justify-between">
                         <div>
@@ -152,7 +151,7 @@ export default function ReportPage() {
                             <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
                                 <MapPin size={16} className="text-red-500" /> 1. Tandai Lokasi di Peta
                             </label>
-                            <div className="w-full h-60 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
+                            <div className="w-full h-64 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
                                 <MapPicker onPositionChange={(lat, lng) => {
                                     setLatitude(lat);
                                     setLongitude(lng);
@@ -230,11 +229,13 @@ export default function ReportPage() {
                                             
                                             <label 
                                                 htmlFor="file-upload-change"
-                                                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white/90 text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-white cursor-pointer transition-colors"
+                                                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-white text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-sibersih-bg cursor-pointer transition-all"
                                             >
-                                                <RefreshCw size={14} /> Ganti Foto
+                                                <RefreshCw size={14} className="pointer-events-none" />
+                                                <span className="pointer-events-none">Ganti Foto</span>
                                                 <input 
                                                     id="file-upload-change" 
+                                                    name="file-upload-change-input"
                                                     type="file" 
                                                     accept="image/*" 
                                                     className="hidden" 
@@ -264,11 +265,13 @@ export default function ReportPage() {
                                             <label 
                                                 htmlFor="file-upload-camera"
                                                 onClick={handleDesktopCameraClick}
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
                                             >
-                                                <Camera size={18} /> Ambil Foto (Kamera)
+                                                <Camera size={18} className="pointer-events-none shrink-0" />
+                                                <span className="pointer-events-none">Ambil Foto (Kamera)</span>
                                                 <input 
                                                     id="file-upload-camera" 
+                                                    name="file-upload-camera"
                                                     type="file" 
                                                     accept="image/*" 
                                                     capture="environment" 
@@ -280,11 +283,13 @@ export default function ReportPage() {
                                             {/* Gallery Label/Input */}
                                             <label 
                                                 htmlFor="file-upload-gallery"
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
                                             >
-                                                <ImageIcon size={18} /> Pilih dari Galeri / File
+                                                <ImageIcon size={18} className="pointer-events-none shrink-0" />
+                                                <span className="pointer-events-none">Pilih dari Galeri / File</span>
                                                 <input 
                                                     id="file-upload-gallery" 
+                                                    name="file-upload-gallery"
                                                     type="file" 
                                                     accept="image/*" 
                                                     className="hidden" 
@@ -308,11 +313,11 @@ export default function ReportPage() {
                             </div>
                         )}
 
-                        {/* Form Submit Footer Actions */}
-                        <div className="pt-4 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3">
+                        {/* Form Submit Footer Actions with Plenty of Extra Scroll Space */}
+                        <div className="pt-6 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3 pb-8">
                             <Link 
                                 href="/reporter" 
-                                className="w-full sm:w-auto text-center px-5 py-3 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
+                                className="w-full sm:w-auto text-center px-5 py-3.5 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
                             >
                                 Batal
                             </Link>

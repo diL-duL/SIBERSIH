@@ -13,12 +13,21 @@ export async function buatLaporan(formData: FormData) {
 
   const lokasi = formData.get("lokasi") as string;
   const deskripsi = formData.get("deskripsi") as string;
-  const file = formData.get("file-upload") as File;
+  
+  // Check all possible file input names from mobile or desktop
+  let file = formData.get("file-upload") as File | null;
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-gallery") as File | null;
+  }
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-camera") as File | null;
+  }
+
   const latStr = formData.get("latitude") as string | null;
   const lngStr = formData.get("longitude") as string | null;
 
   if (!lokasi || !deskripsi || !file || file.size === 0) {
-    throw new Error("Data tidak lengkap");
+    throw new Error("Data tidak lengkap. Harap pastikan lokasi, deskripsi, dan foto laporan telah diisi.");
   }
 
   const imageUrl = await uploadImageToCloudinary(file);
@@ -62,10 +71,16 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PETUGAS") throw new Error("Forbidden");
 
-  const file = formData.get("file-upload") as File;
+  let file = formData.get("file-upload") as File | null;
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-gallery") as File | null;
+  }
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-camera") as File | null;
+  }
 
   if (!file || file.size === 0) {
-    throw new Error("Foto bukti harus diunggah");
+    throw new Error("Foto bukti harus diunggah.");
   }
 
   const imageUrl = await uploadImageToCloudinary(file);
