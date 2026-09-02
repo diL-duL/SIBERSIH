@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Clock, CheckCircle, Hourglass, MapPin } from "lucide-react";
+import { Search, Clock, CheckCircle, Hourglass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 

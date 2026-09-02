@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Camera, X, RefreshCw, Check, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -17,26 +17,35 @@ export default function CameraCaptureModal({
 }: CameraCaptureModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+  }, []);
+
+  const handleClose = useCallback(() => {
+    stopCamera();
+    setCapturedImage(null);
+    setCameraError(null);
+    onClose();
+  }, [stopCamera, onClose]);
 
   // Start camera stream when modal opens
   useEffect(() => {
     if (!isOpen) {
       stopCamera();
-      setCapturedImage(null);
-      setCameraError(null);
       return;
     }
 
     async function startCamera() {
       try {
-        setCameraError(null);
-        if (stream) {
-          stream.getTracks().forEach((track) => track.stop());
-        }
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: { ideal: facingMode },
@@ -46,7 +55,7 @@ export default function CameraCaptureModal({
           audio: false,
         });
 
-        setStream(mediaStream);
+        streamRef.current = mediaStream;
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
         }
@@ -61,14 +70,7 @@ export default function CameraCaptureModal({
     return () => {
       stopCamera();
     };
-  }, [isOpen, facingMode]);
-
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-  };
+  }, [isOpen, facingMode, stopCamera]);
 
   const handleTakeSnapshot = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -97,8 +99,7 @@ export default function CameraCaptureModal({
             type: "image/jpeg",
           });
           onCapture(file);
-          stopCamera();
-          onClose();
+          handleClose();
         }
       },
       "image/jpeg",
@@ -121,10 +122,7 @@ export default function CameraCaptureModal({
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity animate-in fade-in"
-        onClick={() => {
-          stopCamera();
-          onClose();
-        }}
+        onClick={handleClose}
       />
 
       {/* Modal Box */}
@@ -139,10 +137,7 @@ export default function CameraCaptureModal({
           </div>
           <button
             type="button"
-            onClick={() => {
-              stopCamera();
-              onClose();
-            }}
+            onClick={handleClose}
             className="p-1 text-sibersih-primary/60 hover:text-sibersih-primary rounded-lg transition-colors"
           >
             <X size={20} />
@@ -214,10 +209,7 @@ export default function CameraCaptureModal({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  stopCamera();
-                  onClose();
-                }}
+                onClick={handleClose}
                 className="px-4 text-xs"
               >
                 Batal

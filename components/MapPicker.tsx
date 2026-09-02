@@ -27,18 +27,18 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
   const center = defaultPosition || [-0.8365, 119.8935];
   const [position, setPosition] = useState<L.LatLng>(L.latLng(center[0], center[1]));
   const markerRef = useRef<L.Marker>(null);
-  const [icon, setIcon] = useState<L.Icon | null>(null);
-
-  useEffect(() => {
-    // Create Leaflet icon on client mount
-    const markerIcon = new L.Icon({
-      iconUrl: svgIcon,
-      iconSize: [36, 36],
-      iconAnchor: [18, 36],
-      popupAnchor: [0, -36],
-    });
-    setIcon(markerIcon);
-  }, []);
+  
+  const [icon] = useState<L.Icon | null>(() => {
+    if (typeof window !== "undefined") {
+      return new L.Icon({
+        iconUrl: svgIcon,
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -36],
+      });
+    }
+    return null;
+  });
 
   useEffect(() => {
     onPositionChange(position.lat, position.lng);
