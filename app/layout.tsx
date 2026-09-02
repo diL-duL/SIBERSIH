@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import BottomNav from "@/components/BottomNav";
+
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -31,7 +31,7 @@ export default function RootLayout({
     >
       <body className="bg-sibersih-bg text-sibersih-primary font-sans min-h-screen">
         {children}
-        <BottomNav />
+
         <Toaster />
       </body>
     </html>
