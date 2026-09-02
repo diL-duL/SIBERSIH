@@ -14,13 +14,13 @@ export default function LoginPage() {
     <div className="flex min-h-screen bg-sibersih-bg font-sans">
       {/* Left side - Image */}
       <div className="relative hidden w-1/2 lg:block">
-        <Image
-          src="/fatek.jpg"
-          alt="SIBERSIH Background"
-          fill
-          className="object-cover"
+        <Image 
+          src="/fatek.webp" 
+          alt="Gedung Fakultas Teknik Universitas Tadulako" 
+          fill 
           priority
-          unoptimized
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover transition-transform duration-[10s] hover:scale-105"
         />
         <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]" />
         
