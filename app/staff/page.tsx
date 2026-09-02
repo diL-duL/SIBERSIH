@@ -10,7 +10,16 @@ export default async function PetugasDashboard() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const reports = await prisma.report.findMany();
+    const [newTasks, processing, completed, recentTasks] = await Promise.all([
+        prisma.report.count({ where: { status: "LAPORAN_MASUK" } }),
+        prisma.report.count({ where: { status: "MENUNGGU_APPROVAL" } }),
+        prisma.report.count({ where: { status: "SELESAI" } }),
+        prisma.report.findMany({
+            where: { status: "LAPORAN_MASUK" },
+            orderBy: { createdAt: "desc" },
+            take: 5
+        })
+    ]);
 
     const notifications = await prisma.notification.findMany({
         where: { userId: session.user.id },
@@ -22,9 +31,7 @@ export default async function PetugasDashboard() {
         select: { nama: true }
     });
 
-    const newTasks = reports.filter(r => r.status === "LAPORAN_MASUK").length;
-    const processing = reports.filter(r => r.status === "MENUNGGU_APPROVAL").length;
-    const completed = reports.filter(r => r.status === "SELESAI").length;
+
 
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -66,12 +73,12 @@ export default async function PetugasDashboard() {
                             <h2 className="text-sm font-semibold text-sibersih-primary">Tugas Baru ({newTasks})</h2>
                         </div>
                         <div className="flex-1 bg-sibersih-bg p-4 flex flex-col gap-4 overflow-y-auto max-h-[500px]">
-                        {reports.filter(r => r.status === "LAPORAN_MASUK").length === 0 ? (
+                        {newTasks === 0 ? (
                              <div className="flex-1 flex items-center justify-center text-sm text-sibersih-primary/40 font-bold">
                                 Tidak ada tugas baru.
                              </div>
                         ) : (
-                            reports.filter(r => r.status === "LAPORAN_MASUK").slice(0, 5).map(report => (
+                            recentTasks.map(report => (
                                 <div key={report.id} className="bg-white p-4 rounded-xl border border-sibersih-primary/10 shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                                     <div className="relative w-full sm:w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                                         <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 640px) 100vw, 96px" className="object-cover" />
