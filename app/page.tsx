@@ -52,13 +52,14 @@ export default async function LandingPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentReports.length > 0 ? (
-              recentReports.map((report) => (
+              recentReports.map((report, index) => (
                 <div key={report.id} className="bg-white rounded-2xl overflow-hidden border border-sibersih-primary/10 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
                   <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
                     <Image 
                       src={report.fotoLaporanUrl} 
                       alt="Foto Laporan" 
                       fill 
+                      priority={index === 0}
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
