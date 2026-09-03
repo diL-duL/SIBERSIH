@@ -8,7 +8,7 @@ export default function StaffLayout({
   return (
     <>
       {children}
-      <BottomNav />
+      <BottomNav role="staff" />
     </>
   );
 }

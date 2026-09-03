@@ -8,7 +8,7 @@ export default function ExecutiveLayout({
   return (
     <>
       {children}
-      <BottomNav />
+      <BottomNav role="executive" />
     </>
   );
 }

@@ -8,7 +8,7 @@ export default function ReporterLayout({
   return (
     <>
       {children}
-      <BottomNav />
+      <BottomNav role="reporter" />
     </>
   );
 }

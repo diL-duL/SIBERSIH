@@ -4,7 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, FileText, User, ClipboardList, CheckCircle } from "lucide-react";
 
-export default function BottomNav() {
+interface BottomNavProps {
+    role: "reporter" | "staff" | "executive";
+}
+
+export default function BottomNav({ role }: BottomNavProps) {
     const pathname = usePathname();
 
     // Sembunyikan navbar di halaman otentikasi
@@ -13,18 +17,8 @@ export default function BottomNav() {
         return null;
     }
 
-    // Deteksi role dari URL
-    let role = "reporter"; // Default
-    if (pathname?.startsWith("/staff")) {
-        role = "staff";
-    } else if (pathname?.startsWith("/executive")) {
-        role = "executive";
-    } else if (pathname?.startsWith("/reporter") || pathname === "/") {
-        role = "reporter";
-    }
-
     // Tentukan URL untuk navigasi berdasarkan role
-    const homeUrl = pathname === "/" ? "/" : `/${role}`;
+    const homeUrl = `/${role}`;
     
     let centerUrl = "/reporter/report";
     let CenterIcon = FileText;
@@ -41,8 +35,8 @@ export default function BottomNav() {
     }
 
     // Logika cerdas untuk mendeteksi halaman aktif
-    const isHome = pathname === "/" || pathname === "/reporter" || pathname === "/staff" || pathname === "/executive";
-    const isCenter = pathname?.startsWith(centerUrl) || (pathname?.startsWith(`/${role}/`) && !isHome && !pathname.endsWith("/profile"));
+    const isHome = pathname === `/${role}`;
+    const isCenter = pathname?.startsWith(centerUrl) || (pathname?.startsWith(`/${role}/`) && !isHome && !pathname.endsWith("/profile") && !pathname.endsWith("/staff-management"));
     const isProfile = pathname?.endsWith("/profile");
 
     return (
