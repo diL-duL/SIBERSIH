@@ -24,21 +24,17 @@ function MapEvents({ setPosition }: { setPosition: (pos: L.LatLng) => void }) {
 
 export default function MapPicker({ onPositionChange, defaultPosition }: MapPickerProps) {
   // Center at Fakultas Teknik Universitas Tadulako
-  const center = defaultPosition || [-0.8365, 119.8935];
+  const center = defaultPosition || [-0.840622, 119.893536];
   const [position, setPosition] = useState<L.LatLng>(L.latLng(center[0], center[1]));
   const markerRef = useRef<L.Marker>(null);
   
-  const [icon] = useState<L.Icon | null>(() => {
-    if (typeof window !== "undefined") {
-      return new L.Icon({
-        iconUrl: svgIcon,
-        iconSize: [36, 36],
-        iconAnchor: [18, 36],
-        popupAnchor: [0, -36],
-      });
-    }
-    return null;
-  });
+  // Create icon synchronously to prevent React Strict Mode _leaflet_pos error
+  const icon = typeof window !== "undefined" ? new L.Icon({
+    iconUrl: svgIcon,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -36],
+  }) : null;
 
   useEffect(() => {
     onPositionChange(position.lat, position.lng);
@@ -60,7 +56,7 @@ export default function MapPicker({ onPositionChange, defaultPosition }: MapPick
     <div className="w-full h-full rounded-xl overflow-hidden relative z-0">
       <MapContainer
         center={center as L.LatLngTuple}
-        zoom={16}
+        zoom={17}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%", zIndex: 0 }}
       >
