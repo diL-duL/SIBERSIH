@@ -65,7 +65,7 @@ export default function LoginPage() {
           {/* Mobile Logo */}
           <div className="flex items-center justify-center lg:hidden -mb-4">
             <div className="relative h-16 w-48">
-              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority />
+              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="(max-width: 1024px) 192px, 0px" />
             </div>
           </div>
 
