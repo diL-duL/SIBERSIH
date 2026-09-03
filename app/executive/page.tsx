@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CheckSquare, Hourglass, CheckCircle } from "lucide-react";
+import { CheckSquare, Hourglass, CheckCircle, UserPlus } from "lucide-react";
 import NotificationMenu from "@/components/NotificationMenu";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -117,6 +117,18 @@ export default async function PimpinanDashboard() {
                                 </div>
                                 <span className="font-semibold text-sibersih-primary">{completed}</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
+                        <div className="p-4 border-b border-sibersih-primary/5">
+                            <h2 className="text-sm font-semibold text-sibersih-primary">Manajemen Petugas</h2>
+                        </div>
+                        <div className="p-4 flex flex-col gap-3">
+                            <p className="text-xs text-sibersih-primary/60 leading-relaxed">Kelola akun petugas kebersihan, tambah akun baru atau hapus akses ke sistem.</p>
+                            <Link href="/executive/staff-management" className="flex items-center justify-center gap-2 bg-sibersih-accent/20 text-sibersih-primary px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-sibersih-accent/40 transition">
+                                <UserPlus size={16} /> Kelola Petugas
+                            </Link>
                         </div>
                     </div>
 
