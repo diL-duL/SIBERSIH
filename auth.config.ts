@@ -17,7 +17,7 @@ export const authConfig = {
            if (role === 'PETUGAS') return Response.redirect(new URL('/staff', nextUrl));
            if (role === 'PIMPINAN') return Response.redirect(new URL('/executive', nextUrl));
         }
-        return Response.redirect(new URL('/login', nextUrl));
+        return true;
       }
       if (path === '/login') {
         if (isLoggedIn) {
