@@ -4,7 +4,7 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 
 ## Tech Stack
 - **Framework Utama:** Next.js 16 (App Router) dengan Server Actions
-- **Styling & UI:** Tailwind CSS v4, shadcn/ui, Lucide Icons
+- **Styling & UI:** Tailwind CSS v4, shadcn/ui, Lucide Icons, Glassmorphism UI
 - **Database:** Supabase (PostgreSQL)
 - **ORM:** Prisma
 - **Autentikasi & Otorisasi:** Auth.js (NextAuth v5)
@@ -12,19 +12,22 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 
 ## Fitur Utama
 
+- **Public Landing Page**: Halaman muka yang elegan menampilkan data riil (laporan terbaru) secara instan untuk transparansi publik sebelum melakukan registrasi.
 - **Role-based Dashboard**: Tampilan dan fitur yang disesuaikan untuk Pelapor, Petugas, dan Pimpinan.
+- **Manajemen Petugas (Eksekutif)**: Dasbor khusus bagi Pimpinan untuk mengelola (menambah dan menghapus) akses akun Petugas secara aman.
 - **Sistem Pelaporan Real-time**: Pelapor dapat mengajukan laporan kebersihan lengkap dengan foto dan lokasi koordinat presisi berkat integrasi peta interaktif (*Leaflet*).
 - **Pembatalan Laporan**: Pelapor dapat membatalkan atau menghapus laporannya sendiri selama statusnya masih "LAPORAN MASUK".
 - **Upload Interaktif (Drag and Drop)**: Pengalaman pengguna yang lebih baik dengan fitur seret dan lepas untuk mengunggah foto laporan maupun bukti kerja.
 - **Manajemen Tugas**: Petugas dapat melihat daftar laporan baru, dan mengunggah bukti foto jika tugas telah diselesaikan.
 - **Sistem Approval (Validasi)**: Pimpinan dapat melihat komparasi "Sebelum dan Sesudah" dan menyetujui laporan.
 
-## Optimasi & Keamanan (Enterprise-Grade)
+## Keamanan & Performa (Enterprise-Grade)
 
-- **Performa LCP Maksimal**: Penggunaan komponen `<Image />` bawaan Next.js untuk merender seluruh foto laporan/bukti secara responsif dan menghemat penggunaan _bandwidth_.
-- **Type-Safety (100% Strict)**: Seluruh _codebase_ telah dideklarasikan secara ketat. Bebas dari tipe `any`, variabel terbuang (_unused variables_), dan berhasil melalui *strict linting* serta *production build* tanpa _error_ (Exit code: 0).
-- **Efisiensi Database**: Penambahan lapisan *B-Tree Indexing* (`@@index`) pada parameter kunci (seperti `status`, `pelaporId`, dan `userId`) dalam *schema* Prisma memastikan operasi pencarian *query* berjalan secepat kilat (skala besar).
-- **Zero Memory Leak**: Logika *hook* React (terutama pada modul *Leaflet Map*) telah didesain secara independen dan diekstrak keluar dari alur _render_ untuk mencegah _memory leak_ di peramban pengguna.
+- **Anti-DDoS & Caching Ekstrem (ISR)**: Landing Page dibangun menggunakan *Incremental Static Regeneration* (`revalidate: 60`). Sistem menyajikan _file_ statis ke jutaan pengunjung dan hanya membebani database (GET Query) 1 kali setiap 60 detik.
+- **Anti-Brute Force & Spam**: Implementasi *In-Memory Rate Limiter* pada level *Server Actions* untuk melindungi formulir pendaftaran dan _login_. Memblokir skrip bot secara instan berdasarkan deteksi IP dan Email sebelum menyentuh _database_.
+- **SaaS Premium UI & UX**: Formulir pendaftaran/login dirancang menyerupai standar *Startup/SaaS* modern, dengan elemen *Glassmorphism*, penempatan ikon interaktif, mikro-animasi pada komponen tombol, serta navigasi bawah (*BottomNav*) yang responsif.
+- **Performa LCP Maksimal**: Penggunaan komponen `<Image />` bawaan Next.js dengan deteksi LCP otomatis (prioritizing), pengoptimalan resolusi, kualitas (*qualities config*), dan format _WebP_ modern.
+- **Type-Safety & Efisiensi Database**: Basis kode murni TypeScript tanpa `any`, ditambah lapisan *B-Tree Indexing* (`@@index`) di skema Prisma pada parameter relasional kunci untuk mempercepat operasi kueri tabel berskala besar.
 
 ## Panduan Instalasi & Setup Lokal
 
@@ -61,7 +64,6 @@ Karena kita menggunakan struktur Prisma Client kustom di `app/generated/prisma`,
 npx prisma generate
 npx prisma db push
 ```
-*(Catatan: Kami menggunakan `db push` untuk prototyping cepat, untuk environment produksi Anda bisa menggunakan `migrate deploy`)*
 
 ### 5. Seeding Akun Default
 Untuk masuk ke dasbor, Anda butuh akun. Buka **SQL Editor** di *Dashboard* Supabase Anda, jalankan _script_ berikut untuk membuat 3 akun peran utama (Password semuanya adalah `password123`):
@@ -81,9 +83,6 @@ npm run dev
 Buka browser Anda dan akses `http://localhost:3000`. Selamat, SiBersih siap digunakan!
 
 ## Arsitektur Aplikasi (App Router)
-
-Aplikasi ini menggunakan fitur Next.js terbaru:
-- **Server Actions (`lib/actions.ts`)**: Digunakan untuk menangani pengiriman formulir dan mutasi data (tanpa perlu membuat API routes secara manual).
-- **Middleware / Proxy (`auth.config.ts` & `proxy.ts`)**: Mengamankan rute dasbor secara otomatis dan mengalihkan (redirect) pengguna dari root (`/`) langsung ke halaman Login atau Dashboard sesuai perannya.
-- **Server Components**: Dasbor secara langsung memuat data dari database (Prisma) tanpa *loading states* (Skeleton UI) di sisi klien.
-- **Prisma Client (Singleton & Custom Output)**: Menghasilkan klien Prisma secara internal ke dalam folder `app/generated/prisma` dan menerapkan pola *Singleton* di seluruh aplikasi untuk memastikan tidak terjadi kebocoran memori (memory leaks) koneksi database.
+- **Server Actions (`app/actions/`)**: Digunakan untuk menangani pengiriman formulir dan mutasi data (serta mitigasi Rate Limiting).
+- **Middleware Otomatis (`auth.config.ts`)**: Melindungi _Dashboard_ secara aman tanpa memblokir Landing Page publik.
+- **Prisma Client Custom**: Menghasilkan klien secara spesifik ke folder `app/generated/prisma` untuk optimalisasi performa dalam lingkungan _monorepo_ maupun _serverless_.
