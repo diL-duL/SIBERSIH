@@ -250,17 +250,8 @@ export default function ReportPage() {
                                             <UploadCloud className="h-7 w-7 text-sibersih-primary" />
                                         </div>
 
-                                        <div>
-                                            <p className="text-xs sm:text-sm font-semibold text-sibersih-primary">
-                                                Pilih Cara Unggah Foto
-                                            </p>
-                                            <p className="text-[11px] text-sibersih-primary/60 mt-0.5">
-                                                Ambil dari kamera fisik atau pilih dari penyimpanan HP
-                                            </p>
-                                        </div>
-
                                         {/* Mobile Native Labels with Hidden File Inputs */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm">
+                                        <div className="grid grid-cols-1 gap-3 w-full max-w-sm">
                                             {/* Camera Label/Input */}
                                             <label 
                                                 htmlFor="file-upload-camera"
@@ -268,7 +259,7 @@ export default function ReportPage() {
                                                 className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
                                             >
                                                 <Camera size={18} className="pointer-events-none shrink-0" />
-                                                <span className="pointer-events-none">Ambil Foto (Kamera)</span>
+                                                <span className="pointer-events-none">Ambil Foto</span>
                                                 <input 
                                                     id="file-upload-camera" 
                                                     name="file-upload-camera"
@@ -286,7 +277,7 @@ export default function ReportPage() {
                                                 className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
                                             >
                                                 <ImageIcon size={18} className="pointer-events-none shrink-0" />
-                                                <span className="pointer-events-none">Pilih dari Galeri / File</span>
+                                                <span className="pointer-events-none">Pilih dari Galeri</span>
                                                 <input 
                                                     id="file-upload-gallery" 
                                                     name="file-upload-gallery"

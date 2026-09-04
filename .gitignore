@@ -44,7 +44,7 @@ next-env.d.ts
 /app/generated/prisma
 
 # md
-AI_CONTEXT.md
+AICONTEXT.md
 
 .vscode
 .windsurf
