@@ -29,6 +29,7 @@ model Report {
   deskripsi       String
   fotoLaporanUrl  String
   fotoBuktiUrl    String?
+  deskripsiPetugas String?
   latitude        Float?
   longitude       Float?
   status          Status   @default(LAPORAN_MASUK)

@@ -51,7 +51,7 @@ export default function BottomNav({ role }: BottomNavProps) {
                 className={`flex flex-col items-center gap-0.5 transition-all duration-300 transform ${isHome ? "text-sibersih-primary scale-105" : "text-sibersih-primary/40 hover:text-sibersih-primary/70"}`}
             >
                 <Home size={22} className={`pointer-events-none ${isHome ? "stroke-[2.5]" : "stroke-2"}`} />
-                <span className="text-[11px] font-semibold tracking-tight">Beranda</span>
+                <span className="text-[11px] font-semibold tracking-tight">beranda</span>
             </Link>
 
             {/* Tombol Aksi Utama (Tengah) */}

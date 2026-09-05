@@ -54,19 +54,27 @@ export default async function PimpinanValidations() {
                                 <Badge variant="warning">Menunggu Review</Badge>
                             </CardHeader>
 
-                            <CardContent className="p-5 grid grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Sebelum (Laporan)</span>
-                                    <div className="relative w-full h-36 bg-gray-100 border border-sibersih-primary/10 rounded-lg overflow-hidden group">
-                                        <Image src={item.fotoLaporanUrl} alt="Sebelum" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                            <CardContent className="p-5 flex flex-col gap-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Sebelum (Laporan)</span>
+                                        <div className="relative w-full h-36 bg-gray-100 border border-sibersih-primary/10 rounded-lg overflow-hidden group">
+                                            <Image src={item.fotoLaporanUrl} alt="Sebelum" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Sesudah (Hasil Kerja)</span>
+                                        <div className="relative w-full h-36 bg-gray-100 border border-emerald-200 rounded-lg overflow-hidden group">
+                                            <Image src={item.fotoBuktiUrl!} alt="Sesudah" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider">Sesudah (Hasil Kerja)</span>
-                                    <div className="relative w-full h-36 bg-gray-100 border border-emerald-200 rounded-lg overflow-hidden group">
-                                        <Image src={item.fotoBuktiUrl!} alt="Sesudah" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover transition-transform group-hover:scale-105" />
+                                {item.deskripsiPetugas && (
+                                    <div className="bg-sibersih-bg p-3 rounded-lg border border-sibersih-primary/10">
+                                        <span className="text-xs font-semibold text-sibersih-primary/60 uppercase tracking-wider block mb-1">Catatan Petugas:</span>
+                                        <p className="text-sm text-sibersih-primary">{item.deskripsiPetugas}</p>
                                     </div>
-                                </div>
+                                )}
                             </CardContent>
                         </div>
 

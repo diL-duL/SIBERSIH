@@ -71,6 +71,14 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PETUGAS") throw new Error("Forbidden");
 
+  const deskripsiPetugas = formData.get("deskripsiPetugas") as string;
+  
+  const existingReport = await prisma.report.findUnique({ where: { id: reportId } });
+  
+  if (existingReport?.status === "SELESAI") {
+      throw new Error("Laporan yang sudah divalidasi tidak dapat diedit.");
+  }
+
   let file = formData.get("file-upload") as File | null;
   if (!file || file.size === 0) {
     file = formData.get("file-upload-gallery") as File | null;
@@ -78,17 +86,29 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
   if (!file || file.size === 0) {
     file = formData.get("file-upload-camera") as File | null;
   }
-
   if (!file || file.size === 0) {
+    file = formData.get("file-upload-change-staff-input") as File | null;
+  }
+
+  let imageUrl = existingReport?.fotoBuktiUrl;
+
+  if (file && file.size > 0) {
+    imageUrl = await uploadImageToCloudinary(file);
+  }
+
+  if (!imageUrl) {
     throw new Error("Foto bukti harus diunggah.");
   }
 
-  const imageUrl = await uploadImageToCloudinary(file);
+  if (!deskripsiPetugas) {
+    throw new Error("Deskripsi hasil kerja harus diisi.");
+  }
 
   await prisma.report.update({
     where: { id: reportId },
     data: {
       fotoBuktiUrl: imageUrl,
+      deskripsiPetugas,
       status: "MENUNGGU_APPROVAL",
     },
   });

@@ -24,8 +24,8 @@ async function formAction(prevState: ActionState, formData: FormData): Promise<A
     }
 }
 
-export default function UploadBuktiForm({ report }: { report: { id: string; lokasi: string; deskripsi: string; fotoLaporanUrl: string; fotoBuktiUrl: string | null; status: string; } }) {
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+export default function UploadBuktiForm({ report }: { report: { id: string; lokasi: string; deskripsi: string; fotoLaporanUrl: string; fotoBuktiUrl: string | null; deskripsiPetugas: string | null; status: string; } }) {
+    const [previewUrl, setPreviewUrl] = useState<string | null>(report.fotoBuktiUrl || null);
     const [isDragging, setIsDragging] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
@@ -95,7 +95,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         setIsLightboxOpen(true);
     };
 
-    const isSubmitted = report.status !== "LAPORAN_MASUK";
+    const isSubmitted = report.status === "SELESAI";
 
     return (
         <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-72">
@@ -117,8 +117,14 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                             </span>
                             <h1 className="text-lg sm:text-xl font-bold text-sibersih-primary mt-1">Penyelesaian Tugas Pembersihan</h1>
                         </div>
-                        <span className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full w-fit ${isSubmitted ? 'text-green-800 bg-green-100 border border-green-200' : 'text-orange-800 bg-orange-100 border border-orange-200'}`}>
-                            {isSubmitted ? <><CheckCircle2 size={14} /> Selesai / Menunggu Validasi</> : '• Menunggu Pembersihan'}
+                        <span className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full w-fit ${
+                            report.status === "SELESAI" ? 'text-green-800 bg-green-100 border border-green-200' : 
+                            report.status === "MENUNGGU_APPROVAL" ? 'text-blue-800 bg-blue-100 border border-blue-200' : 
+                            'text-orange-800 bg-orange-100 border border-orange-200'
+                        }`}>
+                            {report.status === "SELESAI" ? <><CheckCircle2 size={14} /> Divalidasi / Selesai</> : 
+                             report.status === "MENUNGGU_APPROVAL" ? <><CheckCircle2 size={14} /> Menunggu Validasi</> : 
+                             '• Menunggu Pembersihan'}
                         </span>
                     </div>
 
@@ -296,6 +302,21 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                     )}
                                 </div>
                             )}
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
+                                <span>Deskripsi Hasil Kerja <span className="text-red-500">*</span></span>
+                            </label>
+                            <textarea
+                                name="deskripsiPetugas"
+                                defaultValue={report.deskripsiPetugas || ""}
+                                disabled={isSubmitted}
+                                required
+                                rows={3}
+                                className="w-full bg-sibersih-bg/60 p-3.5 rounded-xl border border-sibersih-primary/10 text-sibersih-primary text-xs sm:text-sm focus:ring-2 focus:ring-sibersih-primary/20 focus:border-sibersih-primary/50 transition-all outline-none"
+                                placeholder="Jelaskan detail tindakan pembersihan yang telah dilakukan..."
+                            />
                         </div>
 
                         {state.error && (

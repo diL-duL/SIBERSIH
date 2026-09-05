@@ -11,6 +11,7 @@ export type ReportItem = {
   id: string;
   lokasi: string;
   deskripsi: string;
+  deskripsiPetugas?: string | null;
   fotoLaporanUrl: string;
   fotoBuktiUrl?: string | null;
   status: string;
@@ -131,6 +132,12 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
                     <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
                       {item.deskripsi}
                     </p>
+                    {item.deskripsiPetugas && (
+                      <div className="mt-2 p-2 bg-sibersih-bg/50 border border-sibersih-primary/5 rounded text-xs text-sibersih-primary/80">
+                        <span className="font-semibold block mb-0.5 text-[10px] uppercase tracking-wider text-sibersih-primary/60">Catatan Petugas:</span>
+                        {item.deskripsiPetugas}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-4 text-xs text-sibersih-primary/50 font-medium pt-2 border-t border-sibersih-primary/5">
                     <span className="flex items-center gap-1.5">
