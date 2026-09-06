@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Search, Clock, CheckCircle, Hourglass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import ReporterReportCard from "@/components/ReporterReportCard";
 
 export type ReportItem = {
   id: string;
@@ -163,7 +164,13 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
               );
             }
 
-            return <Card key={item.id} className="hover:border-sibersih-accent transition-all">{ContentNode}</Card>;
+            return (
+              <ReporterReportCard
+                key={item.id}
+                report={item}
+                showDeleteButton={false}
+              />
+            );
           })
         )}
       </div>

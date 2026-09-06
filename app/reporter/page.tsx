@@ -1,12 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
-import { CheckSquare, Hourglass, Megaphone, Plus, Inbox } from "lucide-react";
+import { CheckSquare, Hourglass, Megaphone, Plus } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import DeleteReportButton from "@/components/DeleteReportButton";
 import DashboardMapClient from "@/components/DashboardMapClient";
+import ReporterDashboardReports from "@/components/ReporterDashboardReports";
 
 export default async function PelaporDashboard() {
     const session = await auth();
@@ -43,44 +42,9 @@ export default async function PelaporDashboard() {
             </header>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
-                {/* KOLOM KIRI (UTAMA) - DAFTAR LAPORAN */}
+                {/* KOLOM KIRI (UTAMA) - DAFTAR LAPORAN & RIWAYAT */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col h-full min-h-[500px]">
-                        <div className="p-4 border-b border-sibersih-primary/5 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
-                            <h2 className="text-sm font-semibold text-sibersih-primary">Daftar Laporan Terakhir Anda</h2>
-                            <span className="text-xs font-medium text-sibersih-primary/50">{total} Laporan</span>
-                        </div>
-                        <div className="flex-1 bg-sibersih-bg/30 p-4 flex flex-col gap-4 overflow-y-auto max-h-[600px]">
-                        {reports.length === 0 ? (
-                            <div className="flex-1 flex flex-col items-center justify-center text-sibersih-primary/40 gap-3">
-                                <div className="w-16 h-16 rounded-full bg-sibersih-primary/5 flex items-center justify-center">
-                                    <Inbox size={32} className="opacity-50" />
-                                </div>
-                                <span className="font-semibold text-sm">Belum ada laporan yang Anda buat.</span>
-                            </div>
-                        ) : (
-                            reports.map((report, index) => (
-                                <div key={report.id} className="bg-white p-4 rounded-xl border border-sibersih-primary/10 shadow-sm hover:shadow-md hover:border-sibersih-primary/20 transition-all group flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                                    <div className="relative w-full sm:w-28 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                                        <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 640px) 100vw, 112px" className="object-cover group-hover:scale-105 transition-transform duration-500" priority={index === 0} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold text-sibersih-primary line-clamp-1">{report.lokasi}</h3>
-                                        <p className="text-sm text-sibersih-primary/60 mt-1 line-clamp-2">{report.deskripsi}</p>
-                                        <div className="mt-3 flex items-center gap-2">
-                                            <div className="text-xs font-semibold px-2.5 py-1 bg-sibersih-primary/5 text-sibersih-primary rounded-md w-max">
-                                                {report.status.replace('_', ' ')}
-                                            </div>
-                                            {report.status === "LAPORAN_MASUK" && (
-                                                <DeleteReportButton reportId={report.id} />
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                        </div>
-                    </div>
+                    <ReporterDashboardReports reports={reports} />
                 </div>
 
                 {/* KOLOM KANAN (SEKUNDER) - STATISTIK & PETA */}

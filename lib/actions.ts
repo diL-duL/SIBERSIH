@@ -156,3 +156,75 @@ export async function hapusLaporan(reportId: string) {
   revalidatePath("/reporter");
   revalidatePath("/reporter/history");
 }
+
+export async function editLaporan(reportId: string, formData: FormData) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (session.user.role !== "PELAPOR") throw new Error("Forbidden");
+
+  const existingReport = await prisma.report.findUnique({ where: { id: reportId } });
+  if (!existingReport || existingReport.pelaporId !== session.user.id) {
+    throw new Error("Laporan tidak ditemukan atau Anda tidak berhak mengeditnya.");
+  }
+
+  if (existingReport.status !== "LAPORAN_MASUK") {
+    throw new Error("Laporan yang sudah direspon atau sedang diproses petugas tidak dapat diedit.");
+  }
+
+  const lokasi = formData.get("lokasi") as string;
+  const deskripsi = formData.get("deskripsi") as string;
+
+  if (!lokasi || !deskripsi) {
+    throw new Error("Data tidak lengkap. Lokasi dan deskripsi harus diisi.");
+  }
+
+  let file = formData.get("file-upload") as File | null;
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-gallery") as File | null;
+  }
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-camera") as File | null;
+  }
+  if (!file || file.size === 0) {
+    file = formData.get("file-upload-change-input") as File | null;
+  }
+
+  let imageUrl = existingReport.fotoLaporanUrl;
+  if (file && file.size > 0) {
+    imageUrl = await uploadImageToCloudinary(file);
+  }
+
+  const latStr = formData.get("latitude") as string | null;
+  const lngStr = formData.get("longitude") as string | null;
+
+  const dataToUpdate: {
+    lokasi: string;
+    deskripsi: string;
+    fotoLaporanUrl: string;
+    latitude?: number | null;
+    longitude?: number | null;
+  } = {
+    lokasi,
+    deskripsi,
+    fotoLaporanUrl: imageUrl,
+  };
+
+  if (latStr && lngStr) {
+    const lat = parseFloat(latStr);
+    const lng = parseFloat(lngStr);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      dataToUpdate.latitude = lat;
+      dataToUpdate.longitude = lng;
+    }
+  }
+
+  await prisma.report.update({
+    where: { id: reportId },
+    data: dataToUpdate,
+  });
+
+  revalidatePath("/reporter");
+  revalidatePath("/reporter/history");
+  redirect("/reporter");
+}
+
