@@ -41,13 +41,16 @@ export default async function PetugasDashboard() {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+            <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 flex-1">
                 {/* KOLOM KIRI (UTAMA) - DAFTAR TUGAS */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col h-full min-h-[500px]">
-                        <div className="p-4 border-b border-sibersih-primary/5 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
+                <div className="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col h-full min-h-[500px] order-2 lg:order-none">
+                        <div className="p-4 border-b border-sibersih-primary/5 flex justify-between items-center gap-2 bg-gray-50/50 rounded-t-xl">
                             <h2 className="text-sm font-semibold text-sibersih-primary">Tugas Baru Membutuhkan Tindakan</h2>
-                            <span className="text-xs font-medium text-orange-600 bg-orange-100 px-2.5 py-1 rounded-full">{newTasks} Pending</span>
+                            <div className="flex items-center gap-3 shrink-0">
+                                <Link href="/staff/history" className="text-xs font-medium text-sibersih-primary hover:underline lg:hidden">Lainnya</Link>
+                                <span className="text-xs font-medium text-orange-600 bg-orange-100 px-2.5 py-1 rounded-full">{newTasks} Pending</span>
+                            </div>
                         </div>
                         <div className="flex-1 bg-sibersih-bg/30 p-4 flex flex-col gap-4 overflow-y-auto max-h-[600px]">
                         {newTasks === 0 ? (
@@ -78,9 +81,9 @@ export default async function PetugasDashboard() {
                 </div>
 
                 {/* KOLOM KANAN (SEKUNDER) - STATISTIK & PETA */}
-                <div className="lg:col-span-1 flex flex-col gap-6">
+                <div className="contents lg:col-span-1 lg:flex lg:flex-col lg:gap-6">
                     {/* STATISTIK */}
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10">
+                    <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-sibersih-primary/10">
                         <div className="p-4 border-b border-sibersih-primary/5 flex items-center justify-between">
                             <h2 className="text-sm font-semibold text-sibersih-primary">Ringkasan Tugas</h2>
                             <Link href="/staff/history" className="text-xs font-medium text-sibersih-primary hover:underline">Riwayat</Link>
@@ -111,16 +114,16 @@ export default async function PetugasDashboard() {
                     </div>
 
                     {/* MINIMAP FAKULTAS TEKNIK */}
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex-1 min-h-[300px] flex flex-col">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex flex-col h-[280px] sm:h-[320px] lg:h-auto lg:flex-1 lg:min-h-[300px] order-1 lg:order-none">
                         <div className="p-4 border-b border-sibersih-primary/5">
                             <h2 className="text-sm font-semibold text-sibersih-primary">Peta Area Tugas</h2>
                         </div>
-                        <div className="w-full h-full flex-1 relative z-0">
+                        <div className="w-full h-full flex-1 relative z-0 min-h-[200px]">
                             <DashboardMapClient />
                         </div>
                     </div>
 
-                    <Link href="/staff/tasks" className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-medium text-sm hover:bg-sibersih-primary/90 transition shadow-md">
+                    <Link href="/staff/tasks" className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-medium text-sm hover:bg-sibersih-primary/90 transition shadow-md order-3 lg:order-none">
                         <ClipboardList size={16} /> Lihat Daftar Tugas
                     </Link>
                 </div>

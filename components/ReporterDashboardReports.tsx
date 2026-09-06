@@ -7,10 +7,12 @@ import ReporterReportCard, { ReportCardData } from "@/components/ReporterReportC
 
 interface ReporterDashboardReportsProps {
   reports: ReportCardData[];
+  className?: string;
 }
 
 export default function ReporterDashboardReports({
   reports,
+  className = "",
 }: ReporterDashboardReportsProps) {
   // Hanya menampilkan maksimal 3 laporan terakhir
   const displayReports = reports.slice(0, 3);
@@ -21,20 +23,23 @@ export default function ReporterDashboardReports({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col h-[550px] sm:h-[600px] lg:h-[650px] max-h-[85vh] overflow-hidden">
+    <div className={`bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col h-[550px] sm:h-[600px] lg:h-[650px] max-h-[85vh] overflow-hidden ${className}`}>
       {/* HEADER CARD (PINNED AT TOP) */}
-      <div className="p-4 border-b border-sibersih-primary/5 bg-gray-50/50 rounded-t-xl shrink-0 flex justify-between items-center">
+      <div className="p-4 border-b border-sibersih-primary/5 bg-gray-50/50 rounded-t-xl shrink-0 flex justify-between items-center gap-2">
         <div>
           <h2 className="text-sm font-semibold text-sibersih-primary">
             Daftar Laporan Terakhir Anda
           </h2>
           <p className="text-xs text-sibersih-primary/60 mt-0.5">
-            Menampilkan 3 laporan terbaru dengan fitur progres &amp; hasil akhir
+            Menampilkan laporan terbaru dengan fitur progres &amp; hasil akhir
           </p>
         </div>
-        <span className="text-xs font-semibold px-2.5 py-1 bg-sibersih-primary/5 text-sibersih-primary rounded-full shrink-0">
-          {displayReports.length} Laporan
-        </span>
+        <Link
+          href="/reporter/history"
+          className="text-xs font-medium text-sibersih-primary hover:underline shrink-0 lg:hidden"
+        >
+          Lainnya
+        </Link>
       </div>
 
       {/* LIST 3 LAPORAN TERAKHIR DENGAN SCROLL MANDIRI */}
