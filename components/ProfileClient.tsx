@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useActionState, useEffect } from 'react';
-import { User as UserIcon, Mail, Key, Bell, ShieldCheck, Edit, LogOut } from 'lucide-react';
+import { User as UserIcon, Mail, Key, Moon, Sun, ShieldCheck, Edit, LogOut } from 'lucide-react';
 import { logoutAction, changePasswordAction, updateProfileAction, deleteAccountAction } from '@/app/actions/user';
 import { SubmitButton } from './SubmitButton';
+import { useTheme } from 'next-themes';
 
 type ProfileProps = {
   user: {
@@ -16,7 +17,14 @@ type ProfileProps = {
 
 export default function ProfileClient({ user }: ProfileProps) {
   const [activeTab, setActiveTab] = useState('personal');
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === 'dark';
   
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -179,16 +187,24 @@ export default function ProfileClient({ user }: ProfileProps) {
                     <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
                       <div>
                         <h3 className="text-sibersih-primary font-semibold text-sm flex items-center gap-2">
-                          <Bell className="w-4 h-4 text-sibersih-primary/60" />
-                          Notifikasi Email
+                          {isDark ? (
+                            <Moon className="w-4 h-4 text-emerald-400" />
+                          ) : (
+                            <Sun className="w-4 h-4 text-sibersih-primary/60" />
+                          )}
+                          Mode Gelap
                         </h3>
-                        <p className="text-xs text-sibersih-primary/60 mt-1">Terima pembaruan tentang aktivitas akun</p>
+                        <p className="text-xs text-sibersih-primary/60 mt-1">
+                          {isDark ? "Tema gelap aktif (nyaman untuk mata)" : "Aktifkan tampilan tema gelap untuk aplikasi"}
+                        </p>
                       </div>
                       <button 
-                        onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none ${notificationsEnabled ? 'bg-sibersih-primary' : 'bg-sibersih-primary/20'}`}
+                        type="button"
+                        onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none ${isDark ? 'bg-sibersih-primary' : 'bg-sibersih-primary/20'}`}
+                        aria-label="Toggle mode gelap"
                       >
-                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-300 ${notificationsEnabled ? 'translate-x-4' : 'translate-x-1'}`} />
+                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-300 ${isDark ? 'translate-x-4' : 'translate-x-1'}`} />
                       </button>
                     </div>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CheckSquare, Hourglass, Megaphone, Plus, Inbox } from "lucide-react";
-import NotificationMenu from "@/components/NotificationMenu";
+import ThemeToggle from "@/components/ThemeToggle";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -14,11 +14,6 @@ export default async function PelaporDashboard() {
 
     const reports = await prisma.report.findMany({
         where: { pelaporId: session.user.id },
-        orderBy: { createdAt: 'desc' }
-    });
-
-    const notifications = await prisma.notification.findMany({
-        where: { userId: session.user.id },
         orderBy: { createdAt: 'desc' }
     });
 
@@ -40,7 +35,7 @@ export default async function PelaporDashboard() {
                     <p className="text-sm text-sibersih-primary/60 mt-1">Pelapor</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <NotificationMenu notifications={notifications} />
+                    <ThemeToggle />
                     <Link href="/reporter/report" className="hidden sm:flex items-center gap-2 bg-sibersih-primary text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition shadow-sm">
                         <Plus size={16} /> Buat Laporan
                     </Link>

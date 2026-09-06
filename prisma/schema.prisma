@@ -13,8 +13,7 @@ model User {
   email    String   @unique
   password String
   role     Role     @default(PELAPOR)
-  laporan      Report[] 
-  notifications Notification[]
+  laporan  Report[]
 }
 
 enum Role {
@@ -46,17 +45,4 @@ enum Status {
   LAPORAN_MASUK
   MENUNGGU_APPROVAL
   SELESAI
-}
-
-model Notification {
-  id        String   @id @default(uuid())
-  title     String
-  message   String
-  type      String   @default("info")
-  isRead    Boolean  @default(false)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@index([userId])
 }

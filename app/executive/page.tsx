@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CheckSquare, Hourglass, CheckCircle, UserPlus, Inbox } from "lucide-react";
-import NotificationMenu from "@/components/NotificationMenu";
+import ThemeToggle from "@/components/ThemeToggle";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -20,11 +20,6 @@ export default async function PimpinanDashboard() {
         })
     ]);
 
-    const notifications = await prisma.notification.findMany({
-        where: { userId: session.user.id },
-        orderBy: { createdAt: 'desc' }
-    });
-
     const currentUser = await prisma.user.findUnique({
         where: { id: session.user.id },
         select: { nama: true }
@@ -38,7 +33,7 @@ export default async function PimpinanDashboard() {
                     <p className="text-sm text-sibersih-primary/60 mt-1">Pimpinan / Executive</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <NotificationMenu notifications={notifications} />
+                    <ThemeToggle />
                     <Link href="/executive/validations" className="hidden sm:flex items-center gap-2 bg-sibersih-primary text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition shadow-sm">
                         <CheckCircle size={16} /> Validasi Laporan
                     </Link>
