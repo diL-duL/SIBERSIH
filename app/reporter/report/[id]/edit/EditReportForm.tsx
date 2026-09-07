@@ -299,7 +299,7 @@ export default function EditReportForm({ report }: { report: ReportData }) {
                       <label
                         htmlFor="file-upload-camera"
                         onClick={handleDesktopCameraClick}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-sibersih-primary text-white hover:bg-sibersih-primary/90 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer select-none"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
                       >
                         <Camera size={18} className="pointer-events-none shrink-0" />
                         <span className="pointer-events-none">Ambil Foto Baru</span>
