@@ -16,5 +16,10 @@ export default async function UploadBuktiPage({ params }: { params: Promise<{ id
         notFound();
     }
 
+    // Jika laporan sudah divalidasi selesai, arahkan langsung ke riwayat
+    if (report.status === "SELESAI") {
+        redirect("/staff/history");
+    }
+
     return <UploadBuktiForm report={report} />;
 }

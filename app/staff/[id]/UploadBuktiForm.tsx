@@ -3,7 +3,7 @@
 import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw, Camera, ImageIcon, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useActionState, useRef } from "react";
+import { useState, useActionState, useRef, useEffect } from "react";
 import { ajukanPenyelesaian } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
@@ -35,6 +35,23 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const mainFileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
+    const updatePreview = (file: File) => {
+        setPreviewUrl((prev) => {
+            if (prev && prev.startsWith("blob:")) {
+                URL.revokeObjectURL(prev);
+            }
+            return URL.createObjectURL(file);
+        });
+    };
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl && previewUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawFile = e.target.files?.[0];
         if (rawFile) {
@@ -44,7 +61,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                 dataTransfer.items.add(file);
                 mainFileInputRef.current.files = dataTransfer.files;
             }
-            setPreviewUrl(URL.createObjectURL(file));
+            updatePreview(file);
         }
     };
 
@@ -64,7 +81,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
             dataTransfer.items.add(file);
             mainFileInputRef.current.files = dataTransfer.files;
         }
-        setPreviewUrl(URL.createObjectURL(file));
+        updatePreview(file);
     };
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -89,7 +106,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                 dataTransfer.items.add(file);
                 mainFileInputRef.current.files = dataTransfer.files;
             }
-            setPreviewUrl(URL.createObjectURL(file));
+            updatePreview(file);
         }
     };
 

@@ -3,7 +3,7 @@
 import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon, MapPin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useActionState, useRef } from "react";
+import { useState, useActionState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { buatLaporan } from "@/lib/actions";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -47,6 +47,23 @@ export default function ReportPage() {
     const mainFileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
+    const updatePreview = (file: File) => {
+        setPreviewUrl((prev) => {
+            if (prev && prev.startsWith("blob:")) {
+                URL.revokeObjectURL(prev);
+            }
+            return URL.createObjectURL(file);
+        });
+    };
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl && previewUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
+
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawFile = e.target.files?.[0];
         if (rawFile) {
@@ -56,7 +73,7 @@ export default function ReportPage() {
                 dataTransfer.items.add(file);
                 mainFileInputRef.current.files = dataTransfer.files;
             }
-            setPreviewUrl(URL.createObjectURL(file));
+            updatePreview(file);
         }
     };
 
@@ -76,7 +93,7 @@ export default function ReportPage() {
             dataTransfer.items.add(file);
             mainFileInputRef.current.files = dataTransfer.files;
         }
-        setPreviewUrl(URL.createObjectURL(file));
+        updatePreview(file);
     };
 
     const handleDragOver = (e: React.DragEvent) => {
