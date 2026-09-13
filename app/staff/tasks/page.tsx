@@ -43,7 +43,7 @@ export default async function PetugasTasks() {
                                     <h3 className="font-semibold text-sibersih-primary leading-tight line-clamp-1">
                                         {tugas.lokasi}
                                     </h3>
-                                    <span className="inline-flex items-center text-[10px] font-semibold text-orange-700 bg-orange-100 px-2 py-1 rounded">
+                                    <span className="inline-flex items-center text-[10px] font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md">
                                         Baru
                                     </span>
                                 </div>

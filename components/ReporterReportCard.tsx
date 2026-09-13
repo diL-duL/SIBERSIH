@@ -149,7 +149,7 @@ export default function ReporterReportCard({
                 {isPending && (
                   <Badge
                     variant="outline"
-                    className="gap-1 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800 text-xs py-0.5"
+                    className="gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 text-xs py-0.5"
                   >
                     <Clock size={12} /> Menunggu Petugas
                   </Badge>
@@ -175,7 +175,7 @@ export default function ReporterReportCard({
                 {isPending && (
                   <Link
                     href={`/reporter/report/${report.id}/edit`}
-                    className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 rounded-lg transition-colors inline-flex items-center justify-center"
+                    className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center"
                     title="Edit Laporan"
                   >
                     <Pencil size={15} />
@@ -221,15 +221,15 @@ export default function ReporterReportCard({
           <div className="border-t border-sibersih-primary/10 bg-sibersih-bg/40 p-4 sm:p-5 flex flex-col gap-5 w-full min-w-0 animate-in fade-in-50 duration-200">
             {/* 1. STATUS HIGHLIGHT BANNER */}
             {isCompleted && (
-              <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-emerald-500 text-white shrink-0 mt-0.5">
+              <div className="p-3.5 rounded-xl bg-transparent border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+                <div className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 shrink-0 mt-0.5">
                   <CheckCircle2 size={18} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
-                    Laporan Selesai & Terverifikasi
+                  <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    Laporan Selesai &amp; Terverifikasi
                   </h4>
-                  <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80 mt-0.5 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
                     Penanganan kebersihan telah selesai dikerjakan oleh petugas dan telah disetujui serta divalidasi oleh pimpinan pada {formatDate(report.updatedAt)}.
                   </p>
                 </div>
@@ -237,15 +237,15 @@ export default function ReporterReportCard({
             )}
 
             {isReviewing && (
-              <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-amber-500 text-white shrink-0 mt-0.5">
+              <div className="p-3.5 rounded-xl bg-transparent border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+                <div className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 shrink-0 mt-0.5">
                   <Hourglass size={18} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                  <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     Pekerjaan Selesai, Menunggu Validasi Pimpinan
                   </h4>
-                  <p className="text-xs text-amber-800/80 dark:text-amber-300/80 mt-0.5 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
                     Petugas kebersihan telah menyelesaikan penanganan di lokasi dan mengunggah foto bukti. Saat ini laporan sedang menunggu tinjauan dan konfirmasi dari pimpinan.
                   </p>
                 </div>
@@ -253,16 +253,16 @@ export default function ReporterReportCard({
             )}
 
             {isPending && (
-              <div className="p-3.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-3.5 rounded-xl bg-transparent border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-sky-600 text-white shrink-0 mt-0.5">
+                  <div className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 shrink-0 mt-0.5">
                     <Clock size={18} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-sky-900 dark:text-sky-200">
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                       Laporan Diterima &amp; Dalam Antrean
                     </h4>
-                    <p className="text-xs text-sky-800/80 dark:text-sky-300/80 mt-0.5 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
                       Laporan Anda belum direspon atau masih menunggu petugas. Anda masih dapat mengubah detail atau foto laporan ini.
                     </p>
                   </div>
@@ -270,7 +270,7 @@ export default function ReporterReportCard({
 
                 <Link
                   href={`/reporter/report/${report.id}/edit`}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0 self-start sm:self-center"
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors shrink-0 self-start sm:self-center"
                 >
                   <Pencil size={13} />
                   <span>Edit Laporan</span>
@@ -419,7 +419,7 @@ export default function ReporterReportCard({
                 <div className="bg-white dark:bg-black/20 p-3 rounded-xl border border-sibersih-primary/10 flex flex-col gap-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-sibersih-primary flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-orange-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />
                       Sebelum (Laporan Awal)
                     </span>
                   </div>

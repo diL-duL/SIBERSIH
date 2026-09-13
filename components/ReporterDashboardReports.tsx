@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Inbox, Plus } from "lucide-react";
+import { Inbox } from "lucide-react";
 import ReporterReportCard, { ReportCardData } from "@/components/ReporterReportCard";
 
 interface ReporterDashboardReportsProps {
@@ -52,12 +52,6 @@ export default function ReporterDashboardReports({
             <span className="font-semibold text-sm">
               Belum ada laporan yang Anda buat.
             </span>
-            <Link
-              href="/reporter/report"
-              className="mt-1 flex items-center gap-1.5 text-xs font-semibold bg-sibersih-primary text-white px-3.5 py-2 rounded-lg hover:bg-sibersih-primary/90 transition shadow-sm"
-            >
-              <Plus size={14} /> Buat Laporan Pertama
-            </Link>
           </div>
         ) : (
           displayReports.map((report, index) => (

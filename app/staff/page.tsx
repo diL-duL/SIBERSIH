@@ -47,7 +47,7 @@ export default async function PetugasDashboard() {
                             <h2 className="text-sm font-semibold text-sibersih-primary">Tugas Baru Membutuhkan Tindakan</h2>
                             <div className="flex items-center gap-3 shrink-0">
                                 <Link href="/staff/history" className="text-xs font-medium text-sibersih-primary hover:underline lg:hidden">Lainnya</Link>
-                                <span className="text-xs font-medium text-orange-600 bg-orange-100 px-2.5 py-1 rounded-full">{newTasks} Pending</span>
+                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full">{newTasks} Pending</span>
                             </div>
                         </div>
                         <div className="flex-1 bg-sibersih-bg/30 p-4 flex flex-col gap-4 overflow-y-auto max-h-[600px]">
@@ -87,12 +87,12 @@ export default async function PetugasDashboard() {
                             <Link href="/staff/history" className="text-xs font-medium text-sibersih-primary hover:underline">Riwayat</Link>
                         </div>
                         <div className="p-4 flex flex-col gap-3">
-                            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100">
-                                <div className="flex items-center gap-3 text-orange-800">
-                                    <ClipboardList size={18} className="text-orange-500" />
+                            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-slate-200 dark:border-slate-800">
+                                <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                                    <ClipboardList size={18} className="text-slate-500 dark:text-slate-400" />
                                     <span className="text-sm font-medium">Tugas Baru</span>
                                 </div>
-                                <span className="font-semibold text-orange-900">{newTasks}</span>
+                                <span className="font-semibold text-slate-900 dark:text-slate-100">{newTasks}</span>
                             </div>
                             <div className="flex items-center justify-between p-3 bg-sibersih-bg rounded-lg border border-sibersih-primary/10">
                                 <div className="flex items-center gap-3 text-sibersih-primary/80">
