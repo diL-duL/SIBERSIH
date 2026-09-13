@@ -6,14 +6,27 @@ import { auth } from "@/auth";
 import { prisma } from "./prisma";
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from "./cloudinary";
 
+function sanitizeTextInput(input: unknown): string {
+  if (typeof input !== "string") return "";
+  // Bersihkan karakter kontrol berbahaya tanpa menghapus newline atau tab
+  return input.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim();
+}
+
 export async function buatLaporan(formData: FormData) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PELAPOR") throw new Error("Forbidden");
 
-  const lokasi = (formData.get("lokasi") as string)?.trim();
-  const deskripsi = (formData.get("deskripsi") as string)?.trim();
+  const lokasi = sanitizeTextInput(formData.get("lokasi"));
+  const deskripsi = sanitizeTextInput(formData.get("deskripsi"));
   
+  if (!lokasi || lokasi.length < 3 || lokasi.length > 150) {
+    throw new Error("Nama lokasi wajib diisi (antara 3 sampai 150 karakter).");
+  }
+  if (!deskripsi || deskripsi.length < 5 || deskripsi.length > 1000) {
+    throw new Error("Deskripsi laporan wajib diisi (antara 5 sampai 1000 karakter).");
+  }
+
   // Check all possible file input names from mobile or desktop
   let file = formData.get("file-upload") as File | null;
   if (!file || file.size === 0) {
@@ -26,8 +39,8 @@ export async function buatLaporan(formData: FormData) {
   const latStr = formData.get("latitude") as string | null;
   const lngStr = formData.get("longitude") as string | null;
 
-  if (!lokasi || !deskripsi || !file || file.size === 0) {
-    throw new Error("Data tidak lengkap. Harap pastikan lokasi, deskripsi, dan foto laporan telah diisi.");
+  if (!file || file.size === 0) {
+    throw new Error("Foto laporan wajib diunggah.");
   }
 
   const imageUrl = await uploadImageToCloudinary(file);
@@ -83,7 +96,10 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PETUGAS") throw new Error("Forbidden");
 
-  const deskripsiPetugas = (formData.get("deskripsiPetugas") as string)?.trim();
+  const deskripsiPetugas = sanitizeTextInput(formData.get("deskripsiPetugas"));
+  if (!deskripsiPetugas || deskripsiPetugas.length < 5 || deskripsiPetugas.length > 1000) {
+    throw new Error("Deskripsi hasil kerja wajib diisi (antara 5 sampai 1000 karakter).");
+  }
   
   const existingReport = await prisma.report.findUnique({ where: { id: reportId } });
   if (!existingReport) {
@@ -92,6 +108,15 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
   
   if (existingReport.status === "SELESAI") {
     throw new Error("Laporan yang sudah divalidasi tidak dapat diedit.");
+  }
+
+  // Cegah petugas lain menimpa pekerjaan laporan yang sedang diajukan
+  if (
+    existingReport.status === "MENUNGGU_APPROVAL" &&
+    existingReport.petugasId &&
+    existingReport.petugasId !== session.user.id
+  ) {
+    throw new Error("Laporan ini sedang diajukan penyelesaiannya oleh petugas lain.");
   }
 
   let file = formData.get("file-upload") as File | null;
@@ -116,10 +141,6 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
 
   if (!imageUrl) {
     throw new Error("Foto bukti harus diunggah.");
-  }
-
-  if (!deskripsiPetugas) {
-    throw new Error("Deskripsi hasil kerja harus diisi.");
   }
 
   try {
@@ -244,11 +265,14 @@ export async function editLaporan(reportId: string, formData: FormData) {
     throw new Error("Laporan yang sudah direspon atau sedang diproses petugas tidak dapat diedit.");
   }
 
-  const lokasi = (formData.get("lokasi") as string)?.trim();
-  const deskripsi = (formData.get("deskripsi") as string)?.trim();
+  const lokasi = sanitizeTextInput(formData.get("lokasi"));
+  const deskripsi = sanitizeTextInput(formData.get("deskripsi"));
 
-  if (!lokasi || !deskripsi) {
-    throw new Error("Data tidak lengkap. Lokasi dan deskripsi harus diisi.");
+  if (!lokasi || lokasi.length < 3 || lokasi.length > 150) {
+    throw new Error("Nama lokasi wajib diisi (antara 3 sampai 150 karakter).");
+  }
+  if (!deskripsi || deskripsi.length < 5 || deskripsi.length > 1000) {
+    throw new Error("Deskripsi laporan wajib diisi (antara 5 sampai 1000 karakter).");
   }
 
   let file = formData.get("file-upload") as File | null;

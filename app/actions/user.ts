@@ -145,6 +145,11 @@ export async function buatAkunPetugas(data: { nama: string; email: string; passw
     }
 
     const cleanEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return { error: 'Format email tidak valid.' };
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
     if (existingUser) {
       return { error: 'Email sudah terdaftar.' };
