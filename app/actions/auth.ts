@@ -14,6 +14,15 @@ function checkRateLimit(identifier: string, maxAttempts: number) {
   const now = Date.now();
   const limitWindowMs = 60 * 1000; // 1 menit cooldown
 
+  // Bersihkan entri yang sudah kadaluarsa jika ukuran map membesar (mencegah memory leak)
+  if (rateLimitMap.size > 150) {
+    for (const [key, val] of rateLimitMap.entries()) {
+      if (now > val.resetTime) {
+        rateLimitMap.delete(key);
+      }
+    }
+  }
+
   const record = rateLimitMap.get(identifier);
 
   if (!record || now > record.resetTime) {
@@ -33,7 +42,8 @@ function checkRateLimit(identifier: string, maxAttempts: number) {
 export async function loginAction(prevState: string | undefined, formData: FormData) {
   try {
     const headersList = await headers();
-    const ip = headersList.get('x-forwarded-for') || 'unknown-ip';
+    const xForwardedFor = headersList.get('x-forwarded-for');
+    const ip = xForwardedFor ? xForwardedFor.split(',')[0].trim() : 'unknown-ip';
     const emailRaw = formData.get('email') as string;
     const email = emailRaw ? emailRaw.trim().toLowerCase() : '';
 
@@ -66,9 +76,10 @@ export async function loginAction(prevState: string | undefined, formData: FormD
 export async function registerAction(prevState: string | undefined, formData: FormData) {
   try {
     const headersList = await headers();
-    const ip = headersList.get('x-forwarded-for') || 'unknown-ip';
+    const xForwardedFor = headersList.get('x-forwarded-for');
+    const ip = xForwardedFor ? xForwardedFor.split(',')[0].trim() : 'unknown-ip';
     
-    const name = formData.get('name') as string;
+    const name = (formData.get('name') as string)?.trim();
     const emailRaw = formData.get('email') as string;
     const email = emailRaw ? emailRaw.trim().toLowerCase() : '';
     const password = formData.get('password') as string;
@@ -84,6 +95,15 @@ export async function registerAction(prevState: string | undefined, formData: Fo
 
     if (!name || !email || !password || !confirmPassword) {
       return 'Semua kolom wajib diisi.';
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Format email tidak valid.';
+    }
+
+    if (password.length < 6) {
+      return 'Kata sandi minimal 6 karakter.';
     }
 
     if (password !== confirmPassword) {
