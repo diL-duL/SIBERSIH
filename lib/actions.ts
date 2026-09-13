@@ -4,15 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "./prisma";
-import { uploadImageToCloudinary } from "./cloudinary";
+import { uploadImageToCloudinary, deleteImageFromCloudinary } from "./cloudinary";
 
 export async function buatLaporan(formData: FormData) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PELAPOR") throw new Error("Forbidden");
 
-  const lokasi = formData.get("lokasi") as string;
-  const deskripsi = formData.get("deskripsi") as string;
+  const lokasi = (formData.get("lokasi") as string)?.trim();
+  const deskripsi = (formData.get("deskripsi") as string)?.trim();
   
   // Check all possible file input names from mobile or desktop
   let file = formData.get("file-upload") as File | null;
@@ -51,18 +51,30 @@ export async function buatLaporan(formData: FormData) {
   if (latStr && lngStr) {
     const lat = parseFloat(latStr);
     const lng = parseFloat(lngStr);
-    if (!isNaN(lat) && !isNaN(lng)) {
+    // Validasi rentang koordinat bola bumi (-90 s.d 90, -180 s.d 180)
+    if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
       dataToSave.latitude = lat;
       dataToSave.longitude = lng;
     }
   }
 
-  await prisma.report.create({
-    data: dataToSave,
-  });
+  try {
+    await prisma.report.create({
+      data: dataToSave,
+    });
+  } catch (dbError) {
+    // Rollback foto di Cloudinary agar tidak menjadi orphan / boros kuota free tier
+    deleteImageFromCloudinary(imageUrl).catch(() => {});
+    throw dbError;
+  }
 
+  // Cross-role cache invalidation agar petugas langsung melihat tugas baru
+  revalidatePath("/");
   revalidatePath("/reporter");
   revalidatePath("/reporter/history");
+  revalidatePath("/staff");
+  revalidatePath("/staff/tasks");
+  revalidatePath("/executive");
   redirect("/reporter");
 }
 
@@ -71,12 +83,15 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PETUGAS") throw new Error("Forbidden");
 
-  const deskripsiPetugas = formData.get("deskripsiPetugas") as string;
+  const deskripsiPetugas = (formData.get("deskripsiPetugas") as string)?.trim();
   
   const existingReport = await prisma.report.findUnique({ where: { id: reportId } });
+  if (!existingReport) {
+    throw new Error("Laporan tidak ditemukan.");
+  }
   
-  if (existingReport?.status === "SELESAI") {
-      throw new Error("Laporan yang sudah divalidasi tidak dapat diedit.");
+  if (existingReport.status === "SELESAI") {
+    throw new Error("Laporan yang sudah divalidasi tidak dapat diedit.");
   }
 
   let file = formData.get("file-upload") as File | null;
@@ -90,10 +105,13 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
     file = formData.get("file-upload-change-staff-input") as File | null;
   }
 
-  let imageUrl = existingReport?.fotoBuktiUrl;
+  let imageUrl = existingReport.fotoBuktiUrl;
+  let isNewImageUploaded = false;
 
   if (file && file.size > 0) {
-    imageUrl = await uploadImageToCloudinary(file);
+    const newImageUrl = await uploadImageToCloudinary(file);
+    imageUrl = newImageUrl;
+    isNewImageUploaded = true;
   }
 
   if (!imageUrl) {
@@ -104,18 +122,39 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
     throw new Error("Deskripsi hasil kerja harus diisi.");
   }
 
-  await prisma.report.update({
-    where: { id: reportId },
-    data: {
-      fotoBuktiUrl: imageUrl,
-      deskripsiPetugas,
-      status: "MENUNGGU_APPROVAL",
-    },
-  });
+  try {
+    await prisma.report.update({
+      where: { id: reportId },
+      data: {
+        fotoBuktiUrl: imageUrl,
+        deskripsiPetugas,
+        petugasId: session.user.id,
+        status: "MENUNGGU_APPROVAL",
+      },
+    });
 
+    // Jika update DB sukses dan ada foto baru, hapus foto lama
+    if (isNewImageUploaded && existingReport.fotoBuktiUrl && existingReport.fotoBuktiUrl !== imageUrl) {
+      deleteImageFromCloudinary(existingReport.fotoBuktiUrl).catch(() => {});
+    }
+  } catch (dbError) {
+    // Jika update DB gagal, rollback foto baru yang baru diunggah
+    if (isNewImageUploaded) {
+      deleteImageFromCloudinary(imageUrl).catch(() => {});
+    }
+    throw dbError;
+  }
+
+  // Cross-role cache invalidation: Pimpinan & Pelapor ter-update
+  revalidatePath("/");
   revalidatePath("/staff");
   revalidatePath("/staff/tasks");
   revalidatePath(`/staff/tasks/${reportId}`);
+  revalidatePath("/staff/history");
+  revalidatePath("/reporter");
+  revalidatePath("/reporter/history");
+  revalidatePath("/executive");
+  revalidatePath("/executive/validations");
   redirect("/staff");
 }
 
@@ -124,15 +163,30 @@ export async function approveLaporan(reportId: string) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PIMPINAN") throw new Error("Forbidden");
 
-  await prisma.report.update({
-    where: { id: reportId },
+  // Atomic state machine transition: Hanya laporan berstatus MENUNGGU_APPROVAL yang bisa disetujui
+  const result = await prisma.report.updateMany({
+    where: { 
+      id: reportId,
+      status: "MENUNGGU_APPROVAL"
+    },
     data: {
       status: "SELESAI",
     },
   });
 
+  if (result.count === 0) {
+    throw new Error("Laporan tidak ditemukan atau belum diajukan penyelesaiannya oleh petugas.");
+  }
+
+  // Cross-role cache invalidation
+  revalidatePath("/");
   revalidatePath("/executive");
+  revalidatePath("/executive/validations");
   revalidatePath("/executive/history");
+  revalidatePath("/reporter");
+  revalidatePath("/reporter/history");
+  revalidatePath("/staff");
+  revalidatePath("/staff/history");
 }
 
 export async function hapusLaporan(reportId: string) {
@@ -149,12 +203,31 @@ export async function hapusLaporan(reportId: string) {
     throw new Error("Laporan yang sudah diproses tidak dapat dihapus.");
   }
 
-  await prisma.report.delete({
-    where: { id: reportId },
+  // Atomic deletion with state verification
+  const deleted = await prisma.report.deleteMany({
+    where: { 
+      id: reportId,
+      pelaporId: session.user.id,
+      status: "LAPORAN_MASUK"
+    },
   });
 
+  if (deleted.count > 0) {
+    // Hapus aset Cloudinary untuk menghemat kuota penyimpanan gratis
+    if (report.fotoLaporanUrl) {
+      deleteImageFromCloudinary(report.fotoLaporanUrl).catch(() => {});
+    }
+    if (report.fotoBuktiUrl) {
+      deleteImageFromCloudinary(report.fotoBuktiUrl).catch(() => {});
+    }
+  }
+
+  revalidatePath("/");
   revalidatePath("/reporter");
   revalidatePath("/reporter/history");
+  revalidatePath("/staff");
+  revalidatePath("/staff/tasks");
+  revalidatePath("/executive");
 }
 
 export async function editLaporan(reportId: string, formData: FormData) {
@@ -171,8 +244,8 @@ export async function editLaporan(reportId: string, formData: FormData) {
     throw new Error("Laporan yang sudah direspon atau sedang diproses petugas tidak dapat diedit.");
   }
 
-  const lokasi = formData.get("lokasi") as string;
-  const deskripsi = formData.get("deskripsi") as string;
+  const lokasi = (formData.get("lokasi") as string)?.trim();
+  const deskripsi = (formData.get("deskripsi") as string)?.trim();
 
   if (!lokasi || !deskripsi) {
     throw new Error("Data tidak lengkap. Lokasi dan deskripsi harus diisi.");
@@ -190,8 +263,12 @@ export async function editLaporan(reportId: string, formData: FormData) {
   }
 
   let imageUrl = existingReport.fotoLaporanUrl;
+  let isNewImageUploaded = false;
+
   if (file && file.size > 0) {
-    imageUrl = await uploadImageToCloudinary(file);
+    const newImageUrl = await uploadImageToCloudinary(file);
+    imageUrl = newImageUrl;
+    isNewImageUploaded = true;
   }
 
   const latStr = formData.get("latitude") as string | null;
@@ -212,19 +289,40 @@ export async function editLaporan(reportId: string, formData: FormData) {
   if (latStr && lngStr) {
     const lat = parseFloat(latStr);
     const lng = parseFloat(lngStr);
-    if (!isNaN(lat) && !isNaN(lng)) {
+    if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
       dataToUpdate.latitude = lat;
       dataToUpdate.longitude = lng;
     }
   }
 
-  await prisma.report.update({
-    where: { id: reportId },
-    data: dataToUpdate,
-  });
+  try {
+    await prisma.report.update({
+      where: { 
+        id: reportId,
+        pelaporId: session.user.id,
+        status: "LAPORAN_MASUK"
+      },
+      data: dataToUpdate,
+    });
 
+    // Jika update DB sukses dan ada foto baru, hapus foto lama
+    if (isNewImageUploaded && existingReport.fotoLaporanUrl && existingReport.fotoLaporanUrl !== imageUrl) {
+      deleteImageFromCloudinary(existingReport.fotoLaporanUrl).catch(() => {});
+    }
+  } catch (dbError) {
+    // Jika update DB gagal, rollback foto baru yang baru diunggah
+    if (isNewImageUploaded) {
+      deleteImageFromCloudinary(imageUrl).catch(() => {});
+    }
+    throw dbError;
+  }
+
+  revalidatePath("/");
   revalidatePath("/reporter");
   revalidatePath("/reporter/history");
+  revalidatePath("/staff");
+  revalidatePath("/staff/tasks");
+  revalidatePath("/executive");
   redirect("/reporter");
 }
 

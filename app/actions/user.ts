@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { auth, signOut } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { deleteImageFromCloudinary } from '@/lib/cloudinary';
 
 // 1. Logout
 export async function logoutAction() {
@@ -89,7 +90,24 @@ export async function deleteAccountAction(prevState: unknown, formData: FormData
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return { error: 'Kata sandi salah.' };
 
-    // Hapus laporan pengguna terlebih dahulu jika ada (Mencegah foreign key error)
+    // Ambil foto laporan untuk dibersihkan dari Cloudinary demi menghemat kuota gratis
+    const userReports = await prisma.report.findMany({
+      where: { pelaporId: user.id },
+      select: { fotoLaporanUrl: true, fotoBuktiUrl: true }
+    });
+
+    for (const rep of userReports) {
+      if (rep.fotoLaporanUrl) deleteImageFromCloudinary(rep.fotoLaporanUrl).catch(() => {});
+      if (rep.fotoBuktiUrl) deleteImageFromCloudinary(rep.fotoBuktiUrl).catch(() => {});
+    }
+
+    // Lepaskan referensi jika user ini pernah menjadi petugas pembersih
+    await prisma.report.updateMany({
+      where: { petugasId: user.id },
+      data: { petugasId: null }
+    });
+
+    // Hapus laporan pengguna terlebih dahulu jika ada
     await prisma.report.deleteMany({
       where: { pelaporId: user.id }
     });
@@ -116,6 +134,10 @@ export async function buatAkunPetugas(data: { nama: string; email: string; passw
 
     if (!nama || !email || !password) {
       return { error: 'Semua kolom wajib diisi.' };
+    }
+
+    if (password.length < 6) {
+      return { error: 'Kata sandi petugas minimal 6 karakter.' };
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -155,7 +177,13 @@ export async function hapusAkunPetugas(id: string) {
       return { error: 'Akun petugas tidak ditemukan.' };
     }
 
-    // Menghapus laporan jika ada untuk mencegah foreign key error
+    // Lepaskan referensi petugas pada laporan agar riwayat kerja historis kampus tidak hilang dan mencegah foreign key error
+    await prisma.report.updateMany({
+      where: { petugasId: id },
+      data: { petugasId: null }
+    });
+
+    // Menghapus laporan jika petugas pernah membuat laporan sebagai pelapor
     await prisma.report.deleteMany({
       where: { pelaporId: id }
     });
