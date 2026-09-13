@@ -22,16 +22,13 @@ export default async function PetugasDashboard() {
         })
     ]);
 
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { nama: true }
-    });
+    const userName = session.user.name || 'Petugas';
 
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <header className="flex flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
                 <div>
-                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {currentUser?.nama || 'Petugas'}</h1>
+                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {userName}</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">Petugas Kebersihan</p>
                 </div>
                 <div className="flex items-center gap-3">

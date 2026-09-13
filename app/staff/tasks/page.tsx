@@ -11,7 +11,8 @@ export default async function PetugasTasks() {
 
     const tugasMasuk = await prisma.report.findMany({
         where: { status: "LAPORAN_MASUK" },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        take: 30,
     });
 
     return (

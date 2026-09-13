@@ -11,27 +11,24 @@ export default async function PelaporDashboard() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const [total, processing, completed, recentReports, currentUser] = await Promise.all([
+    const [total, completed, recentReports] = await Promise.all([
         prisma.report.count({ where: { pelaporId: session.user.id } }),
-        prisma.report.count({ where: { pelaporId: session.user.id, status: { not: "SELESAI" } } }),
         prisma.report.count({ where: { pelaporId: session.user.id, status: "SELESAI" } }),
         prisma.report.findMany({
             where: { pelaporId: session.user.id },
             orderBy: { createdAt: 'desc' },
             take: 3
         }),
-        prisma.user.findUnique({
-            where: { id: session.user.id },
-            select: { nama: true }
-        })
     ]);
+    const processing = Math.max(0, total - completed);
+    const userName = session.user.name || 'Pengguna';
 
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             {/* HEADER */}
             <header className="flex flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
                 <div>
-                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {currentUser?.nama || 'Pengguna'}</h1>
+                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {userName}</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">Pelapor</p>
                 </div>
                 <div className="flex items-center gap-3">
