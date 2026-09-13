@@ -29,10 +29,14 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
+  const term = searchTerm.trim().toLowerCase();
+
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
-      report.lokasi.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.deskripsi.toLowerCase().includes(searchTerm.toLowerCase());
+      !term ||
+      report.lokasi.toLowerCase().includes(term) ||
+      report.deskripsi.toLowerCase().includes(term) ||
+      Boolean(report.deskripsiPetugas && report.deskripsiPetugas.toLowerCase().includes(term));
 
     const matchesStatus =
       statusFilter === "ALL" || report.status === statusFilter;
