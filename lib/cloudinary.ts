@@ -76,6 +76,21 @@ export async function deleteImageFromCloudinary(
   }
 }
 
+/**
+ * Hapus beberapa gambar sekaligus secara paralel menggunakan Promise.allSettled
+ * untuk mencegah blocking thread dan membersihkan kuota Cloudinary secara efisien.
+ */
+export async function deleteMultipleImagesFromCloudinary(
+  imageUrls: (string | null | undefined)[]
+): Promise<void> {
+  const validUrls = imageUrls.filter(
+    (url): url is string => Boolean(url && url.includes("cloudinary.com"))
+  );
+  if (validUrls.length === 0) return;
+
+  await Promise.allSettled(validUrls.map((url) => deleteImageFromCloudinary(url)));
+}
+
 export async function uploadImageToCloudinary(file: File): Promise<string> {
   // Validasi keamanan: Pastikan file berupa gambar dan ukuran wajar
   if (file.type && !file.type.startsWith("image/")) {
@@ -99,13 +114,17 @@ export async function uploadImageToCloudinary(file: File): Promise<string> {
   if (!isDemoOrMissing) {
     try {
       const timestamp = Math.round(new Date().getTime() / 1000).toString();
+      const folder = "sibersih/reports";
+
+      // Parameter signature berurutan alfabetis: folder lalu timestamp
       const signature = crypto
         .createHash("sha1")
-        .update(`timestamp=${timestamp}${apiSecret}`)
+        .update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`)
         .digest("hex");
 
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("folder", folder);
       formData.append("api_key", apiKey);
       formData.append("timestamp", timestamp);
       formData.append("signature", signature);
