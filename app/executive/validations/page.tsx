@@ -22,7 +22,8 @@ export default async function PimpinanValidations() {
                 select: { id: true, nama: true }
             }
         },
-        orderBy: { createdAt: "desc" }
+        orderBy: { updatedAt: "desc" },
+        take: 50,
     });
 
     return (
