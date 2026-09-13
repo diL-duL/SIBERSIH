@@ -15,6 +15,8 @@ model User {
   role            Role     @default(PELAPOR)
   laporan         Report[] @relation("PelaporLaporan")
   tugasDikerjakan Report[] @relation("PetugasLaporan")
+
+  @@index([role])
 }
 
 enum Role {
@@ -42,9 +44,8 @@ model Report {
 
   @@index([status, createdAt(sort: Desc)])
   @@index([pelaporId, createdAt(sort: Desc)])
+  @@index([petugasId, status, updatedAt(sort: Desc)])
   @@index([petugasId])
-  @@index([status])
-  @@index([pelaporId])
 }
 
 enum Status {
