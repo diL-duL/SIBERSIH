@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
-import ThemeToggle from "@/components/ThemeToggle";
 
 export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
 
@@ -35,7 +34,6 @@ export default async function LandingPage() {
             </div>
           </Link>
           <div className="flex items-center gap-3">
-            <ThemeToggle />
             <Link 
               href="/login" 
               className="px-4 py-2 bg-sibersih-primary text-white rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useActionState, useEffect, useSyncExternalStore } from 'react';
-import { User as UserIcon, Mail, Key, Moon, Sun, ShieldCheck, Edit, LogOut } from 'lucide-react';
+import React, { useState, useActionState, useEffect } from 'react';
+import Link from 'next/link';
+import { User as UserIcon, Mail, Key, ShieldCheck, Edit, LogOut, ArrowLeft } from 'lucide-react';
 import { logoutAction, changePasswordAction, updateProfileAction, deleteAccountAction } from '@/app/actions/user';
 import { SubmitButton } from './SubmitButton';
-import { useTheme } from 'next-themes';
 
 type ProfileProps = {
   user: {
@@ -15,18 +15,8 @@ type ProfileProps = {
   };
 };
 
-const emptySubscribe = () => () => {};
-
 export default function ProfileClient({ user }: ProfileProps) {
   const [activeTab, setActiveTab] = useState('personal');
-  const { resolvedTheme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
-
-  const isDark = mounted && resolvedTheme === 'dark';
   
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -59,9 +49,22 @@ export default function ProfileClient({ user }: ProfileProps) {
     }
   };
 
+  const dashboardUrl =
+    user.role === 'PETUGAS'
+      ? '/staff'
+      : user.role === 'PIMPINAN'
+      ? '/executive'
+      : '/reporter';
+
   return (
-    <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-6 pt-20 pb-40">
-      <div className="max-w-3xl w-full flex flex-col gap-8">
+    <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-6 pt-8 pb-16">
+      <div className="max-w-3xl w-full flex flex-col gap-6">
+        <Link
+          href={dashboardUrl}
+          className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm transition-colors self-start"
+        >
+          <ArrowLeft size={16} /> Kembali ke Dashboard
+        </Link>
         
         {/* Header Section */}
         <div className="bg-white rounded-xl p-8 border border-sibersih-primary/10 shadow-sm flex flex-col md:flex-row items-center gap-8 transition-colors hover:border-sibersih-accent">
@@ -183,30 +186,6 @@ export default function ProfileClient({ user }: ProfileProps) {
                         className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm"
                       >
                         Ubah
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
-                      <div>
-                        <h3 className="text-sibersih-primary font-semibold text-sm flex items-center gap-2">
-                          {isDark ? (
-                            <Moon className="w-4 h-4 text-emerald-400" />
-                          ) : (
-                            <Sun className="w-4 h-4 text-sibersih-primary/60" />
-                          )}
-                          Mode Gelap
-                        </h3>
-                        <p className="text-xs text-sibersih-primary/60 mt-1">
-                          {isDark ? "Tema gelap aktif (nyaman untuk mata)" : "Aktifkan tampilan tema gelap untuk aplikasi"}
-                        </p>
-                      </div>
-                      <button 
-                        type="button"
-                        onClick={() => setTheme(isDark ? 'light' : 'dark')}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-300 focus:outline-none ${isDark ? 'bg-sibersih-primary' : 'bg-sibersih-primary/20'}`}
-                        aria-label="Toggle mode gelap"
-                      >
-                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-300 ${isDark ? 'translate-x-4' : 'translate-x-1'}`} />
                       </button>
                     </div>
 
