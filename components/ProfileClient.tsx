@@ -57,7 +57,7 @@ export default function ProfileClient({ user }: ProfileProps) {
       : '/reporter';
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-6 pt-8 pb-16">
+    <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-4 sm:px-6 pt-6 sm:pt-8 pb-16">
       <div className="max-w-3xl w-full flex flex-col gap-6">
         <Link
           href={dashboardUrl}
@@ -67,30 +67,30 @@ export default function ProfileClient({ user }: ProfileProps) {
         </Link>
         
         {/* Header Section */}
-        <div className="bg-white rounded-xl p-8 border border-sibersih-primary/10 shadow-sm flex flex-col md:flex-row items-center gap-8 transition-colors hover:border-sibersih-accent">
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-sibersih-bg shadow-sm relative">
-              <div className="w-full h-full bg-sibersih-primary/5 flex items-center justify-center text-sibersih-primary text-4xl font-bold uppercase">
+        <div className="bg-white rounded-xl p-5 sm:p-8 border border-sibersih-primary/10 shadow-sm flex flex-col md:flex-row items-center gap-5 sm:gap-8 transition-colors hover:border-sibersih-accent">
+          <div className="relative shrink-0">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-sibersih-bg shadow-sm relative">
+              <div className="w-full h-full bg-sibersih-primary/5 flex items-center justify-center text-sibersih-primary text-3xl sm:text-4xl font-bold uppercase">
                 {user.nama.charAt(0)}
               </div>
             </div>
-            <div className="absolute bottom-2 right-2 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
+            <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-4 h-4 sm:w-5 sm:h-5 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           
-          <div className="flex-1 text-center md:text-left">
+          <div className="flex-1 text-center md:text-left min-w-0 w-full">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sibersih-primary/5 text-sibersih-primary text-xs font-semibold tracking-wide mb-3 uppercase">
               <ShieldCheck className="w-4 h-4" />
               {user.role}
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-sibersih-primary mb-2">{user.nama}</h1>
-            <p className="text-sibersih-primary/60 flex items-center justify-center md:justify-start gap-2 text-sm">
-              <Mail className="w-4 h-4" />
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-sibersih-primary mb-1 sm:mb-2 break-words">{user.nama}</h1>
+            <p className="text-sibersih-primary/60 flex items-center justify-center md:justify-start gap-2 text-sm break-all sm:break-normal">
+              <Mail className="w-4 h-4 shrink-0" />
               {user.email}
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Navigation Sidebar */}
           <div className="w-full lg:w-64 flex-shrink-0">
             <div className="bg-white rounded-xl p-4 border border-sibersih-primary/10 shadow-sm sticky top-8 transition-colors hover:border-sibersih-accent">
@@ -132,7 +132,7 @@ export default function ProfileClient({ user }: ProfileProps) {
 
           {/* Content Area */}
           <div className="flex-1">
-            <div className="bg-white rounded-xl p-8 border border-sibersih-primary/10 shadow-sm min-h-[400px] transition-colors hover:border-sibersih-accent">
+            <div className="bg-white rounded-xl p-5 sm:p-8 border border-sibersih-primary/10 shadow-sm min-h-[350px] sm:min-h-[400px] transition-colors hover:border-sibersih-accent">
               
               {/* Personal Info Tab */}
               {activeTab === 'personal' && (

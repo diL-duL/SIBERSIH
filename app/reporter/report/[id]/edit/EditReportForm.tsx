@@ -144,7 +144,7 @@ export default function EditReportForm({ report }: { report: ReportData }) {
       : undefined;
 
   return (
-    <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-72">
+    <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-16 sm:pb-24">
       <div className="max-w-2xl mx-auto w-full">
         {/* Header Back Button */}
         <Link

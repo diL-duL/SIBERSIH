@@ -18,7 +18,7 @@ export default async function StaffHistoryPage() {
     });
 
     return (
-        <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-32">
+        <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-16">
             <div className="max-w-3xl mx-auto w-full">
                 <Link href="/staff" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
                     <ArrowLeft size={16} /> Kembali ke Dashboard

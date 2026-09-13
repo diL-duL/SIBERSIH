@@ -25,12 +25,12 @@ export default async function PetugasDashboard() {
 
     return (
         <div className="pb-16 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <header className="flex flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
-                <div>
-                    <h1 className="text-2xl font-semibold text-sibersih-primary">Halo, {userName}</h1>
-                    <p className="text-sm text-sibersih-primary/60 mt-1">Petugas Kebersihan</p>
+            <header className="flex flex-row justify-between items-center mb-6 sm:mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
+                <div className="min-w-0 flex-1">
+                    <h1 className="text-xl sm:text-2xl font-semibold text-sibersih-primary truncate">Halo, {userName}</h1>
+                    <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5 sm:mt-1">Petugas Kebersihan</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <Link
                         href="/staff/profile"
                         className="p-2.5 rounded-xl border border-sibersih-primary/10 bg-white/70 hover:bg-white text-sibersih-primary transition-all duration-200 shadow-xs hover:shadow-sm active:scale-95 flex items-center justify-center"
@@ -70,7 +70,7 @@ export default async function PetugasDashboard() {
                                     <div className="relative w-full sm:w-28 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                                         <Image src={report.fotoLaporanUrl} alt="Laporan" fill sizes="(max-width: 640px) 100vw, 112px" className="object-cover group-hover:scale-105 transition-transform duration-500" priority={index === 0} />
                                     </div>
-                                    <div className="flex-1">
+                                    <div className="flex-1 min-w-0 w-full">
                                         <h3 className="font-semibold text-sibersih-primary line-clamp-1">{report.lokasi}</h3>
                                         <p className="text-sm text-sibersih-primary/60 mt-1 line-clamp-2">{report.deskripsi}</p>
                                         <Link href={`/staff/${report.id}`} className="mt-3 inline-block text-xs font-bold px-4 py-2 bg-sibersih-primary text-white rounded-lg hover:bg-sibersih-primary/90 shadow-sm transition-transform hover:scale-[1.02]">
