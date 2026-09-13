@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  nama     String
-  email    String   @unique
-  password String
-  role     Role     @default(PELAPOR)
-  laporan  Report[]
+  id              String   @id @default(uuid())
+  nama            String
+  email           String   @unique
+  password        String
+  role            Role     @default(PELAPOR)
+  laporan         Report[] @relation("PelaporLaporan")
+  tugasDikerjakan Report[] @relation("PetugasLaporan")
 }
 
 enum Role {
@@ -33,10 +34,15 @@ model Report {
   longitude       Float?
   status          Status   @default(LAPORAN_MASUK)
   pelaporId       String
-  pelapor         User     @relation(fields: [pelaporId], references: [id])
+  pelapor         User     @relation("PelaporLaporan", fields: [pelaporId], references: [id])
+  petugasId       String?
+  petugas         User?    @relation("PetugasLaporan", fields: [petugasId], references: [id], onDelete: SetNull)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  @@index([status, createdAt(sort: Desc)])
+  @@index([pelaporId, createdAt(sort: Desc)])
+  @@index([petugasId])
   @@index([status])
   @@index([pelaporId])
 }
