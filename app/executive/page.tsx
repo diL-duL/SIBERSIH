@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CheckSquare, Hourglass, CheckCircle, UserPlus, Inbox } from "lucide-react";
+import { CheckSquare, Hourglass, CheckCircle, UserPlus } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -16,7 +16,8 @@ export default async function PimpinanDashboard() {
         prisma.report.count({ where: { status: "SELESAI" } }),
         prisma.report.findMany({
             where: { status: "MENUNGGU_APPROVAL" },
-            orderBy: { createdAt: "desc" }
+            orderBy: { createdAt: "desc" },
+            take: 10
         })
     ]);
 

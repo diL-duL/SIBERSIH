@@ -10,7 +10,10 @@ export default async function StaffHistoryPage() {
     if (!session?.user) redirect("/login");
 
     const completedTasks = await prisma.report.findMany({
-        where: { status: { in: ["MENUNGGU_APPROVAL", "SELESAI"] } },
+        where: { 
+            petugasId: session.user.id,
+            status: { in: ["MENUNGGU_APPROVAL", "SELESAI"] } 
+        },
         orderBy: { updatedAt: "desc" }
     });
 

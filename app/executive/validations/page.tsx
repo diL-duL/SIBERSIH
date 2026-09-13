@@ -14,7 +14,15 @@ export default async function PimpinanValidations() {
 
     const butuhApproval = await prisma.report.findMany({
         where: { status: "MENUNGGU_APPROVAL" },
-        include: { pelapor: true }
+        include: {
+            pelapor: {
+                select: { id: true, nama: true, email: true }
+            },
+            petugas: {
+                select: { id: true, nama: true }
+            }
+        },
+        orderBy: { createdAt: "desc" }
     });
 
     return (
@@ -43,11 +51,16 @@ export default async function PimpinanValidations() {
                                     <h3 className="font-semibold text-lg text-sibersih-primary mb-2">
                                         {item.lokasi}
                                     </h3>
-                                    <div className="flex flex-col gap-1 mt-2">
+                                    <div className="flex flex-col gap-1.5 mt-2">
                                         <p className="text-sm text-sibersih-primary/70 flex items-start sm:items-center gap-2">
                                             <User size={14} className="text-sibersih-primary/40 mt-0.5 sm:mt-0 shrink-0" />
-                                            <span className="text-sibersih-primary/60 w-20 shrink-0">Dilaporkan:</span>
+                                            <span className="text-sibersih-primary/60 w-20 shrink-0">Pelapor:</span>
                                             <span className="font-medium text-sibersih-primary break-words">{item.pelapor.nama}</span>
+                                        </p>
+                                        <p className="text-sm text-sibersih-primary/70 flex items-start sm:items-center gap-2">
+                                            <User size={14} className="text-emerald-600/70 mt-0.5 sm:mt-0 shrink-0" />
+                                            <span className="text-sibersih-primary/60 w-20 shrink-0">Petugas:</span>
+                                            <span className="font-medium text-sibersih-primary break-words">{item.petugas?.nama || 'Petugas Kebersihan'}</span>
                                         </p>
                                     </div>
                                 </div>

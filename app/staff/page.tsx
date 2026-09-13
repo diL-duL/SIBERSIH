@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CheckSquare, Hourglass, ClipboardList, Inbox } from "lucide-react";
+import { CheckSquare, Hourglass, ClipboardList } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -17,7 +17,8 @@ export default async function PetugasDashboard() {
         prisma.report.count({ where: { status: "SELESAI" } }),
         prisma.report.findMany({
             where: { status: "LAPORAN_MASUK" },
-            orderBy: { createdAt: "desc" }
+            orderBy: { createdAt: "desc" },
+            take: 10
         })
     ]);
 
