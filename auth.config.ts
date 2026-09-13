@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from 'next-auth';
+import type { AppRole } from '@/types/next-auth';
 
 export const authConfig = {
   pages: {
@@ -51,7 +52,7 @@ export const authConfig = {
     },
     session({ session, token }) {
       if (token && session.user) {
-        session.user.role = token.role as string;
+        session.user.role = token.role as AppRole;
         session.user.id = token.id as string;
       }
       return session;

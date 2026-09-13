@@ -10,7 +10,16 @@ import { headers } from 'next/headers';
 // --- In-Memory Rate Limiter Setup ---
 const rateLimitMap = new Map<string, { count: number, resetTime: number }>();
 
-function checkRateLimit(identifier: string, maxAttempts: number) {
+function isRateLimited(identifier: string, maxAttempts: number): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier);
+  if (!record || now > record.resetTime) {
+    return false;
+  }
+  return record.count >= maxAttempts;
+}
+
+function recordFailedAttempt(identifier: string) {
   const now = Date.now();
   const limitWindowMs = 60 * 1000; // 1 menit cooldown
 
@@ -24,22 +33,20 @@ function checkRateLimit(identifier: string, maxAttempts: number) {
   }
 
   const record = rateLimitMap.get(identifier);
-
   if (!record || now > record.resetTime) {
     rateLimitMap.set(identifier, { count: 1, resetTime: now + limitWindowMs });
-    return true; 
+  } else {
+    record.count += 1;
   }
+}
 
-  if (record.count >= maxAttempts) {
-    return false; 
-  }
-
-  record.count += 1;
-  return true; 
+function resetRateLimit(identifier: string) {
+  rateLimitMap.delete(identifier);
 }
 // ------------------------------------
 
 export async function loginAction(prevState: string | undefined, formData: FormData) {
+  let identifier = '';
   try {
     const headersList = await headers();
     const xForwardedFor = headersList.get('x-forwarded-for');
@@ -48,20 +55,24 @@ export async function loginAction(prevState: string | undefined, formData: FormD
     const email = emailRaw ? emailRaw.trim().toLowerCase() : '';
 
     // ID unik untuk memblokir berdasarkan kombinasi IP dan Email
-    const identifier = `login_${ip}_${email}`;
+    identifier = `login_${ip}_${email}`;
     
-    // Untuk Login, berikan toleransi 5 percobaan agar user asli yang lupa password tidak cepat terblokir
-    if (!checkRateLimit(identifier, 5)) {
+    // Untuk Login, berikan toleransi 5 percobaan gagal
+    if (isRateLimited(identifier, 5)) {
       return 'Terlalu banyak percobaan masuk yang gagal. Harap tunggu 1 menit.';
     }
 
     await signIn('credentials', {
-      email: formData.get('email'),
+      email, // Email dinormalisasi agar konsisten dengan pencarian di database
       password: formData.get('password'),
       redirectTo: '/'
     });
+
+    // Reset limiter jika login berhasil
+    resetRateLimit(identifier);
   } catch (error) {
     if (error instanceof AuthError) {
+      if (identifier) recordFailedAttempt(identifier);
       switch (error.type) {
         case 'CredentialsSignin':
           return 'Email atau kata sandi salah.';
@@ -89,9 +100,10 @@ export async function registerAction(prevState: string | undefined, formData: Fo
     const identifier = `reg_${ip}_${email}`;
     
     // Untuk Register, batasnya lebih ketat (3 kali) untuk mencegah spam bot pembuat akun
-    if (!checkRateLimit(identifier, 3)) {
+    if (isRateLimited(identifier, 3)) {
       return 'Terlalu banyak percobaan pendaftaran. Harap tunggu 1 menit.';
     }
+    recordFailedAttempt(identifier);
 
     if (!name || !email || !password || !confirmPassword) {
       return 'Semua kolom wajib diisi.';
