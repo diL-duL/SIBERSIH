@@ -34,8 +34,8 @@ export default function RootLayout({
       <body className="bg-sibersih-bg text-sibersih-primary font-sans min-h-screen">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           {children}

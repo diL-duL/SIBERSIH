@@ -32,8 +32,11 @@ export default function BottomNav({ role }: BottomNavProps) {
 
     // Reset visibility saat navigasi rute berubah
     useEffect(() => {
-        showAndResetTimer();
+        const handle = requestAnimationFrame(() => {
+            showAndResetTimer();
+        });
         return () => {
+            cancelAnimationFrame(handle);
             if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
         };
     }, [pathname, showAndResetTimer]);
@@ -155,7 +158,7 @@ export default function BottomNav({ role }: BottomNavProps) {
             }}
             onMouseLeave={startIdleTimer}
             onTouchStart={showAndResetTimer}
-            className={`w-[90%] max-w-sm bg-white/85 backdrop-blur-xl rounded-[28px] shadow-[0_10px_35px_rgba(0,0,0,0.15)] flex justify-around items-center px-6 py-2.5 border border-white/60 transition-all duration-300 ease-in-out transform ${
+            className={`w-[90%] max-w-sm bg-white/85 backdrop-blur-xl rounded-[28px] shadow-[0_10px_35px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_35px_rgba(0,0,0,0.5)] flex justify-around items-center px-6 py-2.5 border border-white/60 dark:border-white/10 transition-all duration-300 ease-in-out transform ${
                 isVisible 
                     ? "translate-y-0 opacity-100 pointer-events-auto" 
                     : "translate-y-28 opacity-0 pointer-events-none"

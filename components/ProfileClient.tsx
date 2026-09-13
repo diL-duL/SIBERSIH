@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useActionState, useEffect } from 'react';
+import React, { useState, useActionState, useEffect, useSyncExternalStore } from 'react';
 import { User as UserIcon, Mail, Key, Moon, Sun, ShieldCheck, Edit, LogOut } from 'lucide-react';
 import { logoutAction, changePasswordAction, updateProfileAction, deleteAccountAction } from '@/app/actions/user';
 import { SubmitButton } from './SubmitButton';
@@ -15,14 +15,16 @@ type ProfileProps = {
   };
 };
 
+const emptySubscribe = () => () => {};
+
 export default function ProfileClient({ user }: ProfileProps) {
   const [activeTab, setActiveTab] = useState('personal');
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   const isDark = mounted && resolvedTheme === 'dark';
   
