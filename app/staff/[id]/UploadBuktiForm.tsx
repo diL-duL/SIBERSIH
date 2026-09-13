@@ -9,6 +9,7 @@ import { SubmitButton } from "@/components/SubmitButton";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import CameraCaptureModal from "@/components/CameraCaptureModal";
 import { Button } from "@/components/ui/button";
+import { compressImageClient } from "@/lib/clientImageCompressor";
 
 type ActionState = { message: string | null; error: string | null };
 
@@ -34,9 +35,10 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     const mainFileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0];
+        if (rawFile) {
+            const file = await compressImageClient(rawFile);
             if (mainFileInputRef.current && e.target !== mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
@@ -55,7 +57,8 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         }
     };
 
-    const handleCameraCapture = (file: File) => {
+    const handleCameraCapture = async (rawFile: File) => {
+        const file = await compressImageClient(rawFile);
         if (mainFileInputRef.current) {
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
@@ -74,12 +77,13 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
         setIsDragging(false);
     };
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = async (e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
-            const file = files[0];
+            const rawFile = files[0];
+            const file = await compressImageClient(rawFile);
             if (mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
@@ -110,7 +114,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
 
                 <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden mb-12">
                     {/* Header Info */}
-                    <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-gradient-to-r from-sibersih-primary/5 via-sibersih-bg to-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-sibersih-bg/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
                             <span className="text-[10px] font-bold text-sibersih-primary/60 uppercase tracking-wider bg-sibersih-primary/10 px-2.5 py-0.5 rounded-full">
                                 ID #{report.id.substring(0, 8)}

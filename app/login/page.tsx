@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useActionState } from "react";
 import { loginAction } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/SubmitButton";
-import { Mail, Lock, Eye, EyeOff, Quote } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,27 +33,13 @@ export default function LoginPage() {
              <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md">SiBersih</span>
           </div>
           
-          <div className="space-y-6 pb-8">
-            <h1 className="text-5xl font-extrabold tracking-tight max-w-lg leading-[1.1] drop-shadow-lg">
-              Sistem Pelaporan Kebersihan Terpadu.
+          <div className="space-y-4 pb-8 max-w-lg">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.15] drop-shadow-lg">
+              Sistem Pelaporan Kebersihan Kampus
             </h1>
-            
-            {/* Glassmorphic Testimonial/Quote Card */}
-            <div className="max-w-md p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl mt-8">
-              <Quote className="text-white/40 mb-3" size={28} />
-              <p className="text-white/90 text-sm leading-relaxed font-medium">
-                "Lingkungan yang bersih adalah cerminan dari pikiran yang jernih. Mari bersama-sama wujudkan Fakultas Teknik yang nyaman untuk semua."
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                   <span className="text-xs font-bold">FT</span>
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-xs font-bold text-white">Universitas Tadulako</span>
-                   <span className="text-[10px] text-white/60">Fakultas Teknik</span>
-                 </div>
-              </div>
-            </div>
+            <p className="text-base sm:text-lg text-white/85 leading-relaxed drop-shadow-sm font-normal">
+              Fakultas Teknik, Universitas Tadulako. Laporkan fasilitas dan area yang memerlukan penanganan kebersihan secara langsung dan transparan.
+            </p>
           </div>
         </div>
       </div>
@@ -65,7 +51,7 @@ export default function LoginPage() {
           {/* Mobile Logo */}
           <div className="flex items-center justify-center lg:hidden -mb-4">
             <div className="relative h-16 w-48">
-              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="(max-width: 1024px) 192px, 0px" />
+              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain dark:brightness-0 dark:invert" priority sizes="(max-width: 1024px) 192px, 0px" />
             </div>
           </div>
 

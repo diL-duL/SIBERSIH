@@ -7,94 +7,125 @@ export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
 
 export default async function LandingPage() {
   const recentReports = await prisma.report.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 10,
-    include: { pelapor: { select: { nama: true } } }
+    where: {
+      fotoBuktiUrl: { not: null },
+    },
+    orderBy: { updatedAt: "desc" },
+    take: 9,
+    include: {
+      petugas: { select: { nama: true } },
+    },
   });
 
   return (
     <div className="min-h-screen bg-sibersih-bg font-sans flex flex-col">
-      {/* Navbar Simple */}
+      {/* Navbar */}
       <header className="w-full bg-white/80 backdrop-blur-md border-b border-sibersih-primary/10 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-sibersih-primary flex items-center justify-center text-white font-bold">
-              S
+          <Link href="/" className="flex items-center py-1">
+            <div className="relative h-11 w-24 sm:w-28">
+              <Image 
+                src="/newlogowithtext.png" 
+                alt="SiBersih" 
+                fill 
+                priority 
+                className="object-contain object-left dark:brightness-0 dark:invert transition-[filter]" 
+                sizes="120px" 
+              />
             </div>
-            <span className="font-bold text-sibersih-primary text-xl tracking-tight">SiBersih</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Link href="/login" className="px-5 py-2 bg-sibersih-primary text-white rounded-full font-semibold text-sm hover:bg-sibersih-primary/90 transition-colors shadow-md">
-              Masuk / Daftar
+            <Link 
+              href="/login" 
+              className="px-4 py-2 bg-sibersih-primary text-white rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"
+            >
+              Masuk
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 flex flex-col gap-12">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-10">
         {/* Hero Section */}
-        <section className="text-center max-w-3xl mx-auto space-y-6 pt-8 pb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-sibersih-primary tracking-tight">
-            Laporkan Masalah Sampah di Sekitar Anda
+        <section className="text-center max-w-2xl mx-auto space-y-4 pt-6 pb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-sibersih-primary tracking-tight">
+            Sistem Pelaporan Kebersihan Kampus
           </h1>
-          <p className="text-lg text-sibersih-primary/70 leading-relaxed">
-            Platform partisipatif untuk mewujudkan lingkungan yang lebih bersih dan sehat. Mari bersama-sama menjaga kebersihan lingkungan dengan satu ketukan.
+          <p className="text-sm sm:text-base text-sibersih-primary/70 leading-relaxed">
+            Fakultas Teknik, Universitas Tadulako. Laporkan fasilitas dan area yang memerlukan penanganan kebersihan untuk segera ditindaklanjuti oleh petugas.
           </p>
-          <div className="pt-4 flex items-center justify-center gap-4">
-            <Link href="/login" className="px-8 py-3.5 bg-sibersih-primary text-white rounded-full font-bold hover:scale-105 transition-transform shadow-lg shadow-sibersih-primary/20">
+          <div className="pt-2 flex items-center justify-center">
+            <Link 
+              href="/login" 
+              className="px-6 py-2.5 bg-sibersih-primary text-white rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"
+            >
               Mulai Melapor
             </Link>
           </div>
         </section>
 
-        {/* Recent Reports */}
-        <section className="space-y-8 pb-20">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-sibersih-primary">Laporan Terbaru</h2>
+        {/* Recent Reports Showcase */}
+        <section className="space-y-6 pb-16">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">Hasil Pembersihan Terbaru</h2>
+            <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
+              Dokumentasi fasilitas dan area kampus yang telah selesai dibersihkan oleh petugas.
+            </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {recentReports.length > 0 ? (
-              recentReports.map((report, index) => (
-                <div key={report.id} className="bg-white rounded-2xl overflow-hidden border border-sibersih-primary/10 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-                  <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
-                    <Image 
-                      src={report.fotoLaporanUrl} 
-                      alt="Foto Laporan" 
-                      fill 
-                      priority={index === 0}
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-sm text-sibersih-primary shadow-sm uppercase tracking-wider">
-                      {report.status.replace("_", " ")}
+              recentReports.map((report, index) => {
+                const petugasNama = report.petugas?.nama || "Petugas Kebersihan";
+
+                return (
+                  <div 
+                    key={report.id} 
+                    className="bg-white rounded-xl overflow-hidden border border-sibersih-primary/10 shadow-xs flex flex-col"
+                  >
+                    <div className="relative w-full h-44 bg-gray-100 overflow-hidden">
+                      <Image 
+                        src={report.fotoBuktiUrl!} 
+                        alt={`Foto pembersihan ${report.lokasi}`} 
+                        fill 
+                        priority={index === 0}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover" 
+                      />
+                    </div>
+                    <div className="p-4 flex-1 flex flex-col">
+                      <h3 className="font-semibold text-sibersih-primary text-sm line-clamp-1 mb-1">
+                        {report.lokasi}
+                      </h3>
+                      <p className="text-xs text-sibersih-primary/65 line-clamp-2 mb-4 flex-1">
+                        {report.deskripsiPetugas || report.deskripsi}
+                      </p>
+                      <div className="flex items-center justify-between mt-auto pt-3 border-t border-sibersih-primary/10 text-xs text-sibersih-primary/60">
+                        <span className="line-clamp-1">
+                          Petugas: <strong className="text-sibersih-primary font-medium">{petugasNama}</strong>
+                        </span>
+                        <span className="text-[11px] shrink-0 ml-2">
+                          {new Date(report.updatedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="font-semibold text-sibersih-primary mb-1 line-clamp-2">{report.lokasi}</h3>
-                    <p className="text-sm text-sibersih-primary/60 line-clamp-2 mb-4 flex-1">
-                      {report.deskripsi}
-                    </p>
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-sibersih-primary/10">
-                      <div className="text-xs font-medium text-sibersih-primary/70">
-                        {report.pelapor.nama}
-                      </div>
-                      <div className="text-xs text-sibersih-primary/50">
-                        {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
-              <div className="col-span-full py-12 text-center text-sibersih-primary/50 bg-white rounded-2xl border border-dashed border-sibersih-primary/20">
-                Belum ada laporan yang masuk.
+              <div className="col-span-full py-12 text-center text-sm text-sibersih-primary/50 bg-white rounded-xl border border-dashed border-sibersih-primary/15">
+                Belum ada dokumentasi pembersihan yang selesai.
               </div>
             )}
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-sibersih-primary/10 py-6 text-center text-xs text-sibersih-primary/50">
+        © {new Date().getFullYear()} SiBersih — Fakultas Teknik, Universitas Tadulako
+      </footer>
     </div>
   );
 }

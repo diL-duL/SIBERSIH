@@ -12,7 +12,6 @@ import {
   ZoomIn,
   MapPin,
   Calendar,
-  Sparkles,
   ShieldCheck,
   Check,
   Pencil,
@@ -281,9 +280,8 @@ export default function ReporterReportCard({
 
             {/* 2. TIMELINE PROGRES ALUR PENANGANAN (3 TAHAP) */}
             <div className="bg-white dark:bg-black/20 rounded-xl p-4 border border-sibersih-primary/10">
-              <h4 className="text-xs font-semibold text-sibersih-primary/80 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                <Sparkles size={14} className="text-sibersih-primary" />
-                Tahapan Progres Penanganan
+              <h4 className="text-xs font-semibold text-sibersih-primary/80 uppercase tracking-wider mb-4">
+                Tahapan Penanganan
               </h4>
 
               <div className="relative flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-2">

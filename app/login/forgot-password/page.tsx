@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
       <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 xl:px-24">
         <div className="mx-auto w-full max-w-md flex justify-center -mb-6">
            <div className="relative h-48 w-full max-w-[420px]">
-             <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="(max-width: 768px) 100vw, 420px" />
+             <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain dark:brightness-0 dark:invert" priority sizes="(max-width: 768px) 100vw, 420px" />
            </div>
         </div>
         <div className="mx-auto w-full max-w-sm space-y-8">

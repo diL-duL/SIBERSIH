@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useActionState } from "react";
 import { registerAction } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/SubmitButton";
-import { User, Mail, Lock, Eye, EyeOff, Quote } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,27 +34,13 @@ export default function RegisterPage() {
              <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md">SiBersih</span>
           </div>
           
-          <div className="space-y-6 pb-8">
-            <h1 className="text-5xl font-extrabold tracking-tight max-w-lg leading-[1.1] drop-shadow-lg">
-              Mulai Perjalanan Anda Bersama Kami.
+          <div className="space-y-4 pb-8 max-w-lg">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.15] drop-shadow-lg">
+              Daftar Akun Pelapor
             </h1>
-            
-            <div className="max-w-md p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl mt-8">
-              <Quote className="text-white/40 mb-3" size={28} />
-              <p className="text-white/90 text-sm leading-relaxed font-medium">
-                "Ribuan mahasiswa telah berpartisipasi menjaga lingkungan kampus. Buat akun dalam hitungan detik dan jadilah bagian dari perubahan hari ini."
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                 <div className="flex -space-x-2">
-                   {[1, 2, 3, 4].map(i => (
-                     <div key={i} className={`w-8 h-8 rounded-full border-2 border-white/20 bg-sibersih-primary flex items-center justify-center opacity-${100 - (i*10)}`}>
-                       <User size={12} className="text-white" />
-                     </div>
-                   ))}
-                 </div>
-                 <span className="text-xs font-bold text-white/80">+2000 Pelapor</span>
-              </div>
-            </div>
+            <p className="text-base sm:text-lg text-white/85 leading-relaxed drop-shadow-sm font-normal">
+              Fakultas Teknik, Universitas Tadulako. Bersama-sama menjaga kebersihan, kenyamanan, dan kelestarian fasilitas kampus.
+            </p>
           </div>
         </div>
       </div>
@@ -66,7 +52,7 @@ export default function RegisterPage() {
           {/* Mobile Logo */}
           <div className="flex items-center justify-center lg:hidden -mb-4">
             <div className="relative h-16 w-48">
-              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="(max-width: 1024px) 192px, 0px" />
+              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain dark:brightness-0 dark:invert" priority sizes="(max-width: 1024px) 192px, 0px" />
             </div>
           </div>
 

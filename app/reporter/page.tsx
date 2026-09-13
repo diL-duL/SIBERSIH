@@ -11,19 +11,20 @@ export default async function PelaporDashboard() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const reports = await prisma.report.findMany({
-        where: { pelaporId: session.user.id },
-        orderBy: { createdAt: 'desc' }
-    });
-
-    const currentUser = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { nama: true }
-    });
-
-    const total = reports.length;
-    const processing = reports.filter(r => r.status !== "SELESAI").length;
-    const completed = reports.filter(r => r.status === "SELESAI").length;
+    const [total, processing, completed, recentReports, currentUser] = await Promise.all([
+        prisma.report.count({ where: { pelaporId: session.user.id } }),
+        prisma.report.count({ where: { pelaporId: session.user.id, status: { not: "SELESAI" } } }),
+        prisma.report.count({ where: { pelaporId: session.user.id, status: "SELESAI" } }),
+        prisma.report.findMany({
+            where: { pelaporId: session.user.id },
+            orderBy: { createdAt: 'desc' },
+            take: 3
+        }),
+        prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { nama: true }
+        })
+    ]);
 
     return (
         <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -44,7 +45,7 @@ export default async function PelaporDashboard() {
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 flex-1">
                 {/* KOLOM KIRI (UTAMA) - DAFTAR LAPORAN & RIWAYAT */}
                 <div className="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
-                    <ReporterDashboardReports reports={reports} className="order-2 lg:order-none" />
+                    <ReporterDashboardReports reports={recentReports} className="order-2 lg:order-none" />
                 </div>
 
                 {/* KOLOM KANAN (SEKUNDER) - STATISTIK & PETA */}

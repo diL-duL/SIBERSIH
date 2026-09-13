@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon, MapPin, Sparkles } from "lucide-react";
+import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon, MapPin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useActionState, useRef } from "react";
@@ -10,6 +10,7 @@ import { SubmitButton } from "@/components/SubmitButton";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import CameraCaptureModal from "@/components/CameraCaptureModal";
 import { Button } from "@/components/ui/button";
+import { compressImageClient } from "@/lib/clientImageCompressor";
 
 type ActionState = { message: string | null; error: string | null };
 
@@ -46,10 +47,11 @@ export default function ReportPage() {
     const mainFileInputRef = useRef<HTMLInputElement>(null);
     const [state, dispatch] = useActionState(formAction, { message: null, error: null });
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            if (mainFileInputRef.current && e.target !== mainFileInputRef.current) {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0];
+        if (rawFile) {
+            const file = await compressImageClient(rawFile);
+            if (mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 mainFileInputRef.current.files = dataTransfer.files;
@@ -67,7 +69,8 @@ export default function ReportPage() {
         }
     };
 
-    const handleCameraCapture = (file: File) => {
+    const handleCameraCapture = async (rawFile: File) => {
+        const file = await compressImageClient(rawFile);
         if (mainFileInputRef.current) {
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
@@ -86,12 +89,13 @@ export default function ReportPage() {
         setIsDragging(false);
     };
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = async (e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
-            const file = files[0];
+            const rawFile = files[0];
+            const file = await compressImageClient(rawFile);
             if (mainFileInputRef.current) {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
@@ -120,17 +124,12 @@ export default function ReportPage() {
 
                 {/* Form Card Container */}
                 <div className="bg-white rounded-2xl shadow-md border border-sibersih-primary/10 overflow-hidden mb-12">
-                    {/* Banner Card Header */}
-                    <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-gradient-to-r from-sibersih-primary/5 via-sibersih-bg to-white flex items-center justify-between">
-                        <div>
-                            <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-sibersih-primary bg-sibersih-primary/10 px-2.5 py-1 rounded-full uppercase tracking-wider mb-1">
-                                <Sparkles size={12} /> Formulir Pelaporan
-                            </span>
-                            <h1 className="text-lg sm:text-2xl font-bold text-sibersih-primary tracking-tight">Buat Laporan Kebersihan</h1>
-                            <p className="text-xs sm:text-sm text-sibersih-primary/70 mt-1">
-                                Laporkan lokasi kotor atau tumpukan sampah untuk segera dibersihkan petugas.
-                            </p>
-                        </div>
+                    {/* Card Header */}
+                    <div className="p-5 sm:p-6 border-b border-sibersih-primary/10 bg-sibersih-bg/30">
+                        <h1 className="text-lg sm:text-2xl font-bold text-sibersih-primary tracking-tight">Buat Laporan Kebersihan</h1>
+                        <p className="text-xs sm:text-sm text-sibersih-primary/70 mt-1">
+                            Laporkan fasilitas atau area yang memerlukan penanganan kebersihan oleh petugas.
+                        </p>
                     </div>
 
                     <form action={dispatch} className="p-4 sm:p-6 space-y-6">
