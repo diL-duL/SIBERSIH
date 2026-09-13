@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { auth, signOut } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { deleteImageFromCloudinary } from '@/lib/cloudinary';
+import { deleteMultipleImagesFromCloudinary } from '@/lib/cloudinary';
 
 // 1. Logout
 export async function logoutAction() {
@@ -23,6 +23,10 @@ export async function changePasswordAction(prevState: unknown, formData: FormDat
 
     if (!oldPassword || !newPassword || !confirmPassword) {
       return { error: 'Semua kolom wajib diisi.' };
+    }
+
+    if (newPassword.length < 6) {
+      return { error: 'Kata sandi baru minimal 6 karakter.' };
     }
 
     if (newPassword !== confirmPassword) {
@@ -57,8 +61,8 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };
 
-    const nama = formData.get('nama') as string;
-    if (!nama) return { error: 'Nama tidak boleh kosong.' };
+    const nama = (formData.get('nama') as string)?.trim();
+    if (!nama || nama.length < 2) return { error: 'Nama minimal 2 karakter.' };
 
     await prisma.user.update({
       where: { email: session.user.email },
@@ -96,25 +100,25 @@ export async function deleteAccountAction(prevState: unknown, formData: FormData
       select: { fotoLaporanUrl: true, fotoBuktiUrl: true }
     });
 
-    for (const rep of userReports) {
-      if (rep.fotoLaporanUrl) deleteImageFromCloudinary(rep.fotoLaporanUrl).catch(() => {});
-      if (rep.fotoBuktiUrl) deleteImageFromCloudinary(rep.fotoBuktiUrl).catch(() => {});
-    }
+    const urlsToDelete = userReports.flatMap((rep) => [rep.fotoLaporanUrl, rep.fotoBuktiUrl]);
+    deleteMultipleImagesFromCloudinary(urlsToDelete).catch(() => {});
 
-    // Lepaskan referensi jika user ini pernah menjadi petugas pembersih
-    await prisma.report.updateMany({
-      where: { petugasId: user.id },
-      data: { petugasId: null }
-    });
-
-    // Hapus laporan pengguna terlebih dahulu jika ada
-    await prisma.report.deleteMany({
-      where: { pelaporId: user.id }
-    });
-
-    await prisma.user.delete({
-      where: { id: user.id }
-    });
+    // Jalankan seluruh mutasi dalam transaksi ACID untuk mencegah inkonsistensi data
+    await prisma.$transaction([
+      // Lepaskan referensi jika user ini pernah menjadi petugas pembersih
+      prisma.report.updateMany({
+        where: { petugasId: user.id },
+        data: { petugasId: null }
+      }),
+      // Hapus laporan pengguna
+      prisma.report.deleteMany({
+        where: { pelaporId: user.id }
+      }),
+      // Hapus akun pengguna
+      prisma.user.delete({
+        where: { id: user.id }
+      })
+    ]);
   } catch {
     return { error: 'Gagal menghapus akun.' };
   }
@@ -140,7 +144,8 @@ export async function buatAkunPetugas(data: { nama: string; email: string; passw
       return { error: 'Kata sandi petugas minimal 6 karakter.' };
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const cleanEmail = email.trim().toLowerCase();
+    const existingUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
     if (existingUser) {
       return { error: 'Email sudah terdaftar.' };
     }
@@ -149,8 +154,8 @@ export async function buatAkunPetugas(data: { nama: string; email: string; passw
 
     await prisma.user.create({
       data: {
-        nama,
-        email,
+        nama: nama.trim(),
+        email: cleanEmail,
         password: hashedPassword,
         role: 'PETUGAS'
       }
@@ -177,19 +182,33 @@ export async function hapusAkunPetugas(id: string) {
       return { error: 'Akun petugas tidak ditemukan.' };
     }
 
-    // Lepaskan referensi petugas pada laporan agar riwayat kerja historis kampus tidak hilang dan mencegah foreign key error
-    await prisma.report.updateMany({
-      where: { petugasId: id },
-      data: { petugasId: null }
+    // Ambil foto laporan jika akun petugas ini pernah membuat laporan sebagai pelapor
+    const staffReports = await prisma.report.findMany({
+      where: { pelaporId: id },
+      select: { fotoLaporanUrl: true, fotoBuktiUrl: true }
     });
 
-    // Menghapus laporan jika petugas pernah membuat laporan sebagai pelapor
-    await prisma.report.deleteMany({
-      where: { pelaporId: id }
-    });
+    const urlsToDelete = staffReports.flatMap((rep) => [rep.fotoLaporanUrl, rep.fotoBuktiUrl]);
+    deleteMultipleImagesFromCloudinary(urlsToDelete).catch(() => {});
 
-    await prisma.user.delete({ where: { id } });
+    // Jalankan seluruh mutasi dalam transaksi ACID
+    await prisma.$transaction([
+      // Lepaskan referensi petugas pada laporan agar riwayat kerja historis kampus tidak hilang dan mencegah foreign key error
+      prisma.report.updateMany({
+        where: { petugasId: id },
+        data: { petugasId: null }
+      }),
+      // Hapus laporan jika petugas pernah membuat laporan sebagai pelapor
+      prisma.report.deleteMany({
+        where: { pelaporId: id }
+      }),
+      // Hapus akun petugas
+      prisma.user.delete({ where: { id } })
+    ]);
+
     revalidatePath('/executive/staff-management');
+    revalidatePath('/executive/validations');
+    revalidatePath('/');
     return { success: 'Akun petugas berhasil dihapus.' };
   } catch (error) {
     console.error("Error hapusAkunPetugas:", error);
