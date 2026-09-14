@@ -178,62 +178,11 @@ export default function EditReportForm({ report }: { report: ReportData }) {
               onChange={handleImageChange}
             />
 
-            {/* 1. Map Section */}
-            <div className="space-y-2">
-              <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
-                <MapPin size={16} className="text-red-500" /> 1. Sesuaikan Lokasi di Peta
-              </label>
-              <div className="w-full h-64 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
-                <MapPicker
-                  defaultPosition={defaultPosition}
-                  onPositionChange={(lat, lng) => {
-                    setLatitude(lat);
-                    setLongitude(lng);
-                  }}
-                />
-                <input type="hidden" name="latitude" value={latitude || ""} />
-                <input type="hidden" name="longitude" value={longitude || ""} />
-              </div>
-              <p className="text-[11px] sm:text-xs text-sibersih-primary/60 italic">
-                *Sentuh atau geser penanda di atas peta jika ingin mengubah titik koordinat.
-              </p>
-            </div>
-
-            {/* 2. Detail Lokasi Input */}
-            <div className="space-y-1.5">
-              <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
-                2. Detail Lokasi / Nama Tempat <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="lokasi"
-                required
-                defaultValue={report.lokasi}
-                placeholder="Contoh: Samping Gedung Perpustakaan Lantai 1"
-                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs transition-all"
-              />
-            </div>
-
-            {/* 3. Deskripsi Input */}
-            <div className="space-y-1.5">
-              <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
-                3. Deskripsi Kondisi <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                rows={3}
-                name="deskripsi"
-                required
-                defaultValue={report.deskripsi}
-                placeholder="Jelaskan kondisi sampah secara rinci..."
-                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs resize-y transition-all"
-              ></textarea>
-            </div>
-
-            {/* 4. Upload Foto Section */}
+            {/* 1. Upload Foto Section */}
             <div className="space-y-2">
               <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
                 <span>
-                  4. Foto Bukti Laporan <span className="text-red-500">*</span>
+                  1. Foto Bukti Laporan <span className="text-red-500">*</span>
                 </span>
                 <span className="text-[10px] text-green-700 font-semibold bg-green-100 px-2 py-0.5 rounded-full">
                   Foto Tersedia
@@ -293,13 +242,13 @@ export default function EditReportForm({ report }: { report: ReportData }) {
                       <UploadCloud className="h-7 w-7 text-sibersih-primary" />
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3 w-full max-w-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-sm">
                       <label
                         htmlFor="file-upload-camera"
                         onClick={handleDesktopCameraClick}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-all cursor-pointer select-none"
                       >
-                        <Camera size={18} className="pointer-events-none shrink-0" />
+                        <Camera size={18} className="pointer-events-none shrink-0 text-emerald-600" />
                         <span className="pointer-events-none">Ambil Foto Baru</span>
                         <input
                           id="file-upload-camera"
@@ -314,10 +263,10 @@ export default function EditReportForm({ report }: { report: ReportData }) {
 
                       <label
                         htmlFor="file-upload-gallery"
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer select-none"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-all cursor-pointer select-none"
                       >
-                        <ImageIcon size={18} className="pointer-events-none shrink-0" />
-                        <span className="pointer-events-none">Pilih dari Galeri</span>
+                        <ImageIcon size={18} className="pointer-events-none shrink-0 text-sibersih-primary/60" />
+                        <span className="pointer-events-none">Galeri HP</span>
                         <input
                           id="file-upload-gallery"
                           name="file-upload-gallery"
@@ -333,6 +282,57 @@ export default function EditReportForm({ report }: { report: ReportData }) {
               </div>
             </div>
 
+            {/* 2. Detail Lokasi Input */}
+            <div className="space-y-1.5">
+              <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
+                2. Detail Lokasi / Nama Tempat <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="lokasi"
+                required
+                defaultValue={report.lokasi}
+                placeholder="Contoh: Samping Gedung Perpustakaan Lantai 1"
+                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs transition-all"
+              />
+            </div>
+
+            {/* 3. Deskripsi Input */}
+            <div className="space-y-1.5">
+              <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
+                3. Deskripsi Kondisi <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                rows={3}
+                name="deskripsi"
+                required
+                defaultValue={report.deskripsi}
+                placeholder="Jelaskan kondisi sampah secara rinci..."
+                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs resize-y transition-all"
+              ></textarea>
+            </div>
+
+            {/* 4. Map Section */}
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
+                <MapPin size={16} className="text-red-500" /> 4. Sesuaikan Lokasi di Peta
+              </label>
+              <div className="w-full h-56 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
+                <MapPicker
+                  defaultPosition={defaultPosition}
+                  onPositionChange={(lat, lng) => {
+                    setLatitude(lat);
+                    setLongitude(lng);
+                  }}
+                />
+                <input type="hidden" name="latitude" value={latitude || ""} />
+                <input type="hidden" name="longitude" value={longitude || ""} />
+              </div>
+              <p className="text-[11px] sm:text-xs text-sibersih-primary/60 italic">
+                *Sentuh atau geser penanda di atas peta jika ingin mengubah titik koordinat.
+              </p>
+            </div>
+
             {/* Error Alert */}
             {state.error && (
               <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm font-medium">
@@ -341,10 +341,10 @@ export default function EditReportForm({ report }: { report: ReportData }) {
             )}
 
             {/* Submit & Cancel Actions */}
-            <div className="pt-6 border-t border-sibersih-primary/10 flex flex-col sm:flex-row justify-end gap-3 pb-8">
+            <div className="pt-4 sm:pt-6 border-t border-sibersih-primary/10 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 pb-6 sm:pb-8">
               <Link
                 href="/reporter"
-                className="w-full sm:w-auto text-center px-5 py-3.5 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
+                className="w-full sm:w-auto text-center px-5 py-3 border border-sibersih-primary/20 rounded-xl text-xs sm:text-sm font-bold text-sibersih-primary/80 hover:bg-sibersih-primary/5 transition-colors"
               >
                 Batal
               </Link>

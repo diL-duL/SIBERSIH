@@ -383,7 +383,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                         )}
                         
                         {!isSubmitted && (
-                            <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row justify-end gap-3 pb-8">
+                            <div className="pt-4 sm:pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 pb-6 sm:pb-8">
                                 <Link 
                                     href="/staff/tasks" 
                                     className="w-full sm:w-auto text-center px-5 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
