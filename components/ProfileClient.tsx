@@ -59,12 +59,23 @@ export default function ProfileClient({ user }: ProfileProps) {
   return (
     <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-4 sm:px-6 pt-6 sm:pt-8 pb-16">
       <div className="max-w-3xl w-full flex flex-col gap-6">
-        <Link
-          href={dashboardUrl}
-          className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm transition-colors self-start"
-        >
-          <ArrowLeft size={16} /> Kembali ke Dashboard
-        </Link>
+        {/* TOP BAR DENGAN NAVIGASI KEMBALI & LOGOUT KHUSUS MOBILE */}
+        <div className="flex items-center justify-between w-full">
+          <Link
+            href={dashboardUrl}
+            className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm transition-colors"
+          >
+            <ArrowLeft size={16} /> Kembali ke Dashboard
+          </Link>
+          <button
+            type="button"
+            onClick={() => setIsLogoutModalOpen(true)}
+            className="lg:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 transition-colors shadow-2xs cursor-pointer"
+          >
+            <LogOut size={13} />
+            <span>Keluar</span>
+          </button>
+        </div>
         
         {/* Header Section */}
         <div className="bg-white rounded-xl p-5 sm:p-8 border border-sibersih-primary/10 shadow-sm flex flex-col md:flex-row items-center gap-5 sm:gap-8 transition-colors hover:border-sibersih-accent">
@@ -90,41 +101,99 @@ export default function ProfileClient({ user }: ProfileProps) {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* Navigation Sidebar */}
-          <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-xl p-4 border border-sibersih-primary/10 shadow-sm sticky top-8 transition-colors hover:border-sibersih-accent">
+        {/* TAB NAVIGASI KHUSUS MOBILE (SEGMENTED 3 TABS BERSIH, TANPA OVERFLOW ANEH) */}
+        <div className="lg:hidden w-full bg-white p-1.5 rounded-xl border border-sibersih-primary/10 shadow-2xs">
+          <div className="grid grid-cols-3 gap-1">
+            <button 
+              type="button"
+              onClick={() => setActiveTab('personal')}
+              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'personal' 
+                  ? 'bg-sibersih-primary text-white shadow-2xs' 
+                  : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
+              }`}
+            >
+              <UserIcon size={14} className="shrink-0" />
+              <span>Biodata</span>
+            </button>
+            <button 
+              type="button"
+              onClick={() => setActiveTab('edit')}
+              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'edit' 
+                  ? 'bg-sibersih-primary text-white shadow-2xs' 
+                  : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
+              }`}
+            >
+              <Edit size={14} className="shrink-0" />
+              <span>Edit Profil</span>
+            </button>
+            <button 
+              type="button"
+              onClick={() => setActiveTab('account')}
+              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'account' 
+                  ? 'bg-sibersih-primary text-white shadow-2xs' 
+                  : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
+              }`}
+            >
+              <Key size={14} className="shrink-0" />
+              <span>Akun</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
+          {/* SIDEBAR NAVIGASI DESKTOP (STICKY VERTICAL) */}
+          <div className="hidden lg:block w-64 shrink-0">
+            <div className="bg-white rounded-xl p-4 border border-sibersih-primary/10 shadow-2xs sticky top-8 transition-colors hover:border-sibersih-accent">
               <nav className="flex flex-col gap-2">
                 <button 
+                  type="button"
                   onClick={() => setActiveTab('personal')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-sm font-medium ${activeTab === 'personal' ? 'bg-sibersih-primary/5 text-sibersih-primary' : 'text-sibersih-primary/60 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'}`}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer ${
+                    activeTab === 'personal' 
+                      ? 'bg-sibersih-primary/10 text-sibersih-primary shadow-2xs' 
+                      : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
+                  }`}
                 >
-                  <UserIcon className="w-4 h-4" />
-                  Informasi Pribadi
+                  <UserIcon className="w-4 h-4 shrink-0" />
+                  <span>Informasi Pribadi</span>
                 </button>
                 <button 
-                  onClick={() => setActiveTab('account')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-sm font-medium ${activeTab === 'account' ? 'bg-sibersih-primary/5 text-sibersih-primary' : 'text-sibersih-primary/60 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'}`}
-                >
-                  <Key className="w-4 h-4" />
-                  Pengaturan Akun
-                </button>
-                <button 
+                  type="button"
                   onClick={() => setActiveTab('edit')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-sm font-medium ${activeTab === 'edit' ? 'bg-sibersih-primary/5 text-sibersih-primary' : 'text-sibersih-primary/60 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'}`}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer ${
+                    activeTab === 'edit' 
+                      ? 'bg-sibersih-primary/10 text-sibersih-primary shadow-2xs' 
+                      : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
+                  }`}
                 >
-                  <Edit className="w-4 h-4" />
-                  Edit Profil
+                  <Edit className="w-4 h-4 shrink-0" />
+                  <span>Edit Profil</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setActiveTab('account')}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer ${
+                    activeTab === 'account' 
+                      ? 'bg-sibersih-primary/10 text-sibersih-primary shadow-2xs' 
+                      : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
+                  }`}
+                >
+                  <Key className="w-4 h-4 shrink-0" />
+                  <span>Pengaturan Akun</span>
                 </button>
                 
                 <div className="h-px bg-sibersih-primary/5 my-2"></div>
                 
                 <button 
+                  type="button"
                   onClick={() => setIsLogoutModalOpen(true)}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-300 text-sm font-medium"
+                  className="flex items-center gap-2 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 text-sm font-semibold cursor-pointer"
                 >
-                  <LogOut className="w-4 h-4" />
-                  Keluar
+                  <LogOut className="w-4 h-4 shrink-0" />
+                  <span>Keluar</span>
                 </button>
               </nav>
             </div>
@@ -137,10 +206,20 @@ export default function ProfileClient({ user }: ProfileProps) {
               {/* Personal Info Tab */}
               {activeTab === 'personal' && (
                 <div className="animate-in fade-in duration-500">
-                  <h2 className="text-xl font-bold tracking-tight text-sibersih-primary mb-6 flex items-center gap-2">
-                    <UserIcon className="w-5 h-5 text-sibersih-primary/80" />
-                    Informasi Pribadi
-                  </h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold tracking-tight text-sibersih-primary flex items-center gap-2">
+                      <UserIcon className="w-5 h-5 text-sibersih-primary/80" />
+                      Informasi Pribadi
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('edit')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-sibersih-primary/15 bg-white text-sibersih-primary text-xs font-semibold hover:bg-sibersih-bg transition-colors shadow-2xs cursor-pointer"
+                    >
+                      <Edit size={13} />
+                      <span>Ubah Profil</span>
+                    </button>
+                  </div>
                   
                   <div className="grid grid-cols-1 gap-4">
                     <div className="p-4 rounded-xl bg-sibersih-bg border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300">
@@ -183,9 +262,22 @@ export default function ProfileClient({ user }: ProfileProps) {
                       </div>
                       <button 
                         onClick={() => setIsChangePasswordModalOpen(true)}
-                        className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm"
+                        className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm cursor-pointer"
                       >
                         Ubah
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
+                      <div>
+                        <h3 className="text-sibersih-primary font-semibold text-sm">Keluar dari Akun</h3>
+                        <p className="text-xs text-sibersih-primary/60 mt-1">Akhiri sesi login Anda pada perangkat ini</p>
+                      </div>
+                      <button 
+                        onClick={() => setIsLogoutModalOpen(true)}
+                        className="px-4 py-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors duration-300 text-xs shadow-2xs cursor-pointer"
+                      >
+                        Keluar
                       </button>
                     </div>
 
@@ -194,7 +286,7 @@ export default function ProfileClient({ user }: ProfileProps) {
                       <p className="text-xs text-red-600 mb-4">Sekali Anda menghapus akun Anda, tidak ada jalan kembali.</p>
                       <button 
                         onClick={() => setIsDeleteModalOpen(true)}
-                        className="px-4 py-2 bg-white text-red-600 border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm"
+                        className="px-4 py-2 bg-white text-red-600 border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm cursor-pointer"
                       >
                         Hapus Akun
                       </button>
@@ -258,6 +350,18 @@ export default function ProfileClient({ user }: ProfileProps) {
 
             </div>
           </div>
+        </div>
+
+        {/* TOMBOL LOGOUT UTAMA DI LAYAR PONSEL (MUDAH DIJANGKAU IBU JARI) */}
+        <div className="lg:hidden w-full pt-1">
+          <button
+            type="button"
+            onClick={() => setIsLogoutModalOpen(true)}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-red-200/80 bg-red-50/70 hover:bg-red-100 text-red-600 font-semibold text-xs sm:text-sm active:scale-[0.99] transition-all shadow-2xs cursor-pointer"
+          >
+            <LogOut size={15} />
+            <span>Keluar dari Akun</span>
+          </button>
         </div>
       </div>
 
