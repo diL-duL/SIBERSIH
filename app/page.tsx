@@ -7,6 +7,7 @@ export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
 export default async function LandingPage() {
   const recentReports = await prisma.report.findMany({
     where: {
+      status: "SELESAI",
       fotoBuktiUrl: { not: null },
     },
     orderBy: { updatedAt: "desc" },
@@ -66,9 +67,9 @@ export default async function LandingPage() {
         {/* Recent Reports Showcase */}
         <section className="space-y-6 pb-16">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">Hasil Pembersihan Terbaru</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">Hasil Pembersihan Terverifikasi</h2>
             <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
-              Dokumentasi fasilitas dan area kampus yang telah selesai dibersihkan oleh petugas.
+              Dokumentasi fasilitas dan area kampus yang telah selesai dibersihkan dan disetujui oleh pimpinan.
             </p>
           </div>
           
@@ -93,9 +94,14 @@ export default async function LandingPage() {
                       />
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
-                      <h3 className="font-semibold text-sibersih-primary text-sm line-clamp-1 mb-1">
-                        {report.lokasi}
-                      </h3>
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <h3 className="font-semibold text-sibersih-primary text-sm line-clamp-1">
+                          {report.lokasi}
+                        </h3>
+                        <span className="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                          Disetujui
+                        </span>
+                      </div>
                       <p className="text-xs text-sibersih-primary/65 line-clamp-2 mb-4 flex-1">
                         {report.deskripsiPetugas || report.deskripsi}
                       </p>
@@ -113,7 +119,7 @@ export default async function LandingPage() {
               })
             ) : (
               <div className="col-span-full py-12 text-center text-sm text-sibersih-primary/50 bg-white rounded-xl border border-dashed border-sibersih-primary/15">
-                Belum ada dokumentasi pembersihan yang selesai.
+                Belum ada dokumentasi pembersihan yang disetujui pimpinan.
               </div>
             )}
           </div>
