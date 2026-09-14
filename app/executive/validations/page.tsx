@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { User, Check } from "lucide-react";
+import { User, Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
@@ -27,7 +27,11 @@ export default async function PimpinanValidations() {
     });
 
     return (
-        <div className="pb-32 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="pb-16 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <Link href="/executive" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
+                <ArrowLeft size={16} /> Kembali ke Dashboard
+            </Link>
+
             <header className="mb-8 border-b border-sibersih-primary/10 pb-4 flex justify-between items-end">
                 <div>
                     <h1 className="text-2xl font-semibold text-sibersih-primary">Validasi Pekerjaan</h1>
