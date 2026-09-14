@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Clock, CheckCircle, Hourglass } from "lucide-react";
+import { Search, Clock, CheckCircle, Hourglass, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ReporterReportCard from "@/components/ReporterReportCard";
@@ -23,68 +23,87 @@ export type ReportItem = {
 interface HistoryListClientProps {
   reports: ReportItem[];
   itemHrefPrefix?: string; // Optional prefix if item is clickable (e.g. "/staff/")
+  pageSize?: number;
 }
 
-export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryListClientProps) {
+export default function HistoryListClient({
+  reports,
+  itemHrefPrefix,
+  pageSize = 5,
+}: HistoryListClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const term = searchTerm.trim().toLowerCase();
 
-  const filteredReports = reports.filter((report) => {
-    const matchesSearch =
-      !term ||
-      report.lokasi.toLowerCase().includes(term) ||
-      report.deskripsi.toLowerCase().includes(term) ||
-      Boolean(report.deskripsiPetugas && report.deskripsiPetugas.toLowerCase().includes(term));
+  const filteredReports = useMemo(() => {
+    return reports.filter((report) => {
+      const matchesSearch =
+        !term ||
+        report.lokasi.toLowerCase().includes(term) ||
+        report.deskripsi.toLowerCase().includes(term) ||
+        Boolean(report.deskripsiPetugas && report.deskripsiPetugas.toLowerCase().includes(term));
 
-    const matchesStatus =
-      statusFilter === "ALL" || report.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "ALL" || report.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  });
+      return matchesSearch && matchesStatus;
+    });
+  }, [reports, term, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredReports.length / pageSize));
+  const validCurrentPage = Math.min(currentPage, totalPages);
+
+  const paginatedReports = useMemo(() => {
+    const startIndex = (validCurrentPage - 1) * pageSize;
+    return filteredReports.slice(startIndex, startIndex + pageSize);
+  }, [filteredReports, validCurrentPage, pageSize]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "LAPORAN_MASUK":
         return (
-          <Badge variant="outline" className="gap-1 bg-gray-50">
-            <Clock size={12} /> Menunggu
+          <Badge variant="outline" className="gap-1 bg-slate-100 text-slate-700 text-[11px] py-0.5">
+            <Clock size={11} /> Menunggu
           </Badge>
         );
       case "MENUNGGU_APPROVAL":
         return (
-          <Badge variant="warning" className="gap-1">
-            <Hourglass size={12} /> Diproses
+          <Badge variant="warning" className="gap-1 text-[11px] py-0.5">
+            <Hourglass size={11} /> Diproses
           </Badge>
         );
       case "SELESAI":
         return (
-          <Badge variant="success" className="gap-1">
-            <CheckCircle size={12} /> Selesai
+          <Badge variant="success" className="gap-1 text-[11px] py-0.5">
+            <CheckCircle size={11} /> Selesai
           </Badge>
         );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="text-[11px] py-0.5">{status}</Badge>;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Search & Filter Controls */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sibersih-primary/40 size-4" />
           <input
             type="text"
             placeholder="Cari lokasi atau deskripsi..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-sibersih-primary/15 rounded-xl text-sm outline-none focus:ring-2 focus:ring-sibersih-primary/20 transition-all"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full pl-10 pr-4 py-2 sm:py-2.5 bg-white border border-sibersih-primary/15 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-sibersih-primary/20 transition-all shadow-2xs"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
           {[
             { id: "ALL", label: "Semua" },
             { id: "LAPORAN_MASUK", label: "Menunggu" },
@@ -93,10 +112,13 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+              onClick={() => {
+                setStatusFilter(tab.id);
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 statusFilter === tab.id
-                  ? "bg-sibersih-primary text-white shadow-sm"
+                  ? "bg-sibersih-primary text-white shadow-2xs"
                   : "bg-white text-sibersih-primary/70 hover:bg-sibersih-primary/5 border border-sibersih-primary/10"
               }`}
             >
@@ -106,30 +128,38 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
         </div>
       </div>
 
+      {/* Info Jumlah Hasil */}
+      <div className="flex items-center justify-between text-xs text-sibersih-primary/60 px-1">
+        <span>Menampilkan {filteredReports.length} laporan</span>
+        {totalPages > 1 && (
+          <span>Halaman {validCurrentPage} dari {totalPages}</span>
+        )}
+      </div>
+
       {/* List Output */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3.5 sm:gap-4">
         {filteredReports.length === 0 ? (
           <div className="py-12 bg-white rounded-xl border border-sibersih-primary/10 flex flex-col items-center justify-center text-sibersih-primary/40 font-medium text-center p-6">
-            <Search size={40} className="mb-3 opacity-30" />
-            <p className="text-sm">Tidak ada riwayat laporan yang cocok.</p>
+            <Search size={36} className="mb-3 opacity-30" />
+            <p className="text-xs sm:text-sm">Tidak ada riwayat laporan yang cocok.</p>
           </div>
         ) : (
-          filteredReports.map((item) => {
+          paginatedReports.map((item) => {
             const ContentNode = (
-              <div className="flex flex-col sm:flex-row overflow-hidden">
-                <div className="relative w-full sm:w-40 h-36 sm:h-auto bg-gray-100 shrink-0 overflow-hidden border-b sm:border-b-0 sm:border-r border-sibersih-primary/10">
+              <div className="flex flex-row p-3 sm:p-4 gap-3 sm:gap-4 items-start sm:items-center overflow-hidden">
+                <div className="relative w-20 h-20 sm:w-28 sm:h-24 rounded-xl bg-gray-100 shrink-0 overflow-hidden border border-sibersih-primary/10 shadow-2xs">
                   <Image
                     src={item.fotoBuktiUrl || item.fotoLaporanUrl}
                     alt="Foto Laporan"
                     fill
-                    sizes="(max-width: 640px) 100vw, 160px"
+                    sizes="(max-width: 640px) 80px, 112px"
                     className="object-cover transition-transform group-hover:scale-105"
                   />
                 </div>
-                <div className="p-5 flex flex-col justify-between flex-1 gap-3">
+                <div className="flex flex-col justify-between flex-1 min-w-0 gap-1.5 sm:gap-2">
                   <div>
-                    <div className="flex items-start justify-between gap-3 mb-1">
-                      <h3 className="font-semibold text-sibersih-primary text-base sm:text-lg line-clamp-1">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">
                         {item.lokasi}
                       </h3>
                       {getStatusBadge(item.status)}
@@ -138,15 +168,15 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
                       {item.deskripsi}
                     </p>
                     {item.deskripsiPetugas && (
-                      <div className="mt-2 p-2 bg-sibersih-bg/50 border border-sibersih-primary/5 rounded text-xs text-sibersih-primary/80">
-                        <span className="font-semibold block mb-0.5 text-[10px] uppercase tracking-wider text-sibersih-primary/60">Catatan Petugas:</span>
-                        {item.deskripsiPetugas}
+                      <div className="mt-1.5 p-1.5 sm:p-2 bg-sibersih-bg/60 border border-sibersih-primary/10 rounded-lg text-xs text-sibersih-primary/80">
+                        <span className="font-semibold block text-[10px] uppercase tracking-wider text-sibersih-primary/60">Catatan Petugas:</span>
+                        <p className="line-clamp-2">{item.deskripsiPetugas}</p>
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-sibersih-primary/50 font-medium pt-2 border-t border-sibersih-primary/5">
-                    <span className="flex items-center gap-1.5">
-                      <Clock size={14} />
+                  <div className="flex items-center gap-4 text-[11px] sm:text-xs text-sibersih-primary/50 font-medium pt-1">
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
                       {new Date(item.createdAt).toLocaleDateString("id-ID", {
                         day: "numeric",
                         month: "short",
@@ -163,7 +193,7 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
             if (itemHrefPrefix) {
               return (
                 <Link key={item.id} href={`${itemHrefPrefix}${item.id}`} className="group">
-                  <Card className="hover:border-sibersih-accent transition-all">{ContentNode}</Card>
+                  <Card className="hover:border-sibersih-accent transition-all shadow-2xs hover:shadow-xs">{ContentNode}</Card>
                 </Link>
               );
             }
@@ -178,6 +208,64 @@ export default function HistoryListClient({ reports, itemHrefPrefix }: HistoryLi
           })
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pt-3 flex items-center justify-between gap-2 border-t border-sibersih-primary/10">
+          <button
+            type="button"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={validCurrentPage === 1}
+            className="flex items-center gap-1 px-3 py-2 text-xs font-semibold rounded-lg border border-sibersih-primary/15 bg-white hover:bg-sibersih-bg disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer shadow-2xs"
+          >
+            <ChevronLeft size={14} />
+            <span className="hidden sm:inline">Sebelumnya</span>
+          </button>
+
+          <div className="flex items-center gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Menampilkan maksimal 5 nomor halaman agar rapi di layar ponsel
+              if (
+                totalPages > 5 &&
+                Math.abs(page - validCurrentPage) > 2 &&
+                page !== 1 &&
+                page !== totalPages
+              ) {
+                if (Math.abs(page - validCurrentPage) === 3) {
+                  return <span key={page} className="px-1 text-xs text-sibersih-primary/40">...</span>;
+                }
+                return null;
+              }
+
+              return (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                    page === validCurrentPage
+                      ? "bg-sibersih-primary text-white shadow-2xs"
+                      : "bg-white hover:bg-sibersih-bg text-sibersih-primary/70 border border-sibersih-primary/10"
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={validCurrentPage === totalPages}
+            className="flex items-center gap-1 px-3 py-2 text-xs font-semibold rounded-lg border border-sibersih-primary/15 bg-white hover:bg-sibersih-bg disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer shadow-2xs"
+          >
+            <span className="hidden sm:inline">Berikutnya</span>
+            <ChevronRight size={14} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
+

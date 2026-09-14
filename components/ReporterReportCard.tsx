@@ -96,11 +96,11 @@ export default function ReporterReportCard({
     <>
       <div className="bg-white rounded-xl border border-sibersih-primary/10 shadow-sm hover:shadow-md hover:border-sibersih-primary/20 transition-[border-color,box-shadow] overflow-hidden flex flex-col shrink-0 w-full">
         {/* ROW UTAMA (RINGKASAN LAPORAN) */}
-        <div className="p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="p-3.5 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
           {/* FOTO & INFO SINGKAT */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1 w-full">
+          <div className="flex flex-row gap-3 sm:gap-4 items-start sm:items-center flex-1 w-full min-w-0">
             <div
-              className="relative w-full sm:w-28 h-28 sm:h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0 group cursor-pointer"
+              className="relative w-20 h-20 sm:w-28 sm:h-24 bg-gray-100 rounded-xl overflow-hidden shrink-0 group cursor-pointer border border-sibersih-primary/10 shadow-2xs"
               onClick={() =>
                 openLightbox(
                   isCompleted && report.fotoBuktiUrl
@@ -119,7 +119,7 @@ export default function ReporterReportCard({
                 }
                 alt={report.lokasi}
                 fill
-                sizes="(max-width: 640px) 100vw, 112px"
+                sizes="(max-width: 640px) 80px, 112px"
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                 priority={priorityImage}
               />
@@ -127,47 +127,47 @@ export default function ReporterReportCard({
                 <ZoomIn size={18} />
               </div>
               {isCompleted && report.fotoBuktiUrl && (
-                <div className="absolute bottom-1 right-1 bg-emerald-600/90 text-[10px] text-white font-semibold px-1.5 py-0.5 rounded shadow-sm">
-                  Hasil Akhir
+                <div className="absolute bottom-1 right-1 bg-emerald-600/90 text-[9px] sm:text-[10px] text-white font-semibold px-1 py-0.5 rounded shadow-sm">
+                  Selesai
                 </div>
               )}
             </div>
 
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap mb-1">
-                <h3 className="font-semibold text-sibersih-primary text-base line-clamp-1">
+              <div className="flex items-center gap-2 flex-wrap mb-0.5 sm:mb-1">
+                <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">
                   {report.lokasi}
                 </h3>
               </div>
 
-              <p className="text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
                 {report.deskripsi}
               </p>
 
-              <div className="mt-2.5 flex items-center gap-2 flex-wrap">
+              <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 {/* STATUS BADGE */}
                 {isPending && (
                   <Badge
                     variant="outline"
-                    className="gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 text-xs py-0.5"
+                    className="gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 text-[11px] sm:text-xs py-0.5 px-2"
                   >
-                    <Clock size={12} /> Menunggu Petugas
+                    <Clock size={11} /> Menunggu Petugas
                   </Badge>
                 )}
                 {isReviewing && (
-                  <Badge variant="warning" className="gap-1 text-xs py-0.5">
-                    <Hourglass size={12} /> Menunggu Validasi
+                  <Badge variant="warning" className="gap-1 text-[11px] sm:text-xs py-0.5 px-2">
+                    <Hourglass size={11} /> Menunggu Validasi
                   </Badge>
                 )}
                 {isCompleted && (
-                  <Badge variant="success" className="gap-1 text-xs py-0.5">
-                    <CheckCircle2 size={12} /> Selesai
+                  <Badge variant="success" className="gap-1 text-[11px] sm:text-xs py-0.5 px-2">
+                    <CheckCircle2 size={11} /> Selesai
                   </Badge>
                 )}
 
                 {/* TANGGAL DIBUAT */}
-                <span className="flex items-center gap-1 text-xs text-sibersih-primary/50">
-                  <Calendar size={12} />
+                <span className="flex items-center gap-1 text-[11px] sm:text-xs text-sibersih-primary/50">
+                  <Calendar size={11} />
                   {formatDate(report.createdAt)}
                 </span>
 
@@ -175,10 +175,10 @@ export default function ReporterReportCard({
                 {isPending && (
                   <Link
                     href={`/reporter/report/${report.id}/edit`}
-                    className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center"
+                    className="p-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center"
                     title="Edit Laporan"
                   >
-                    <Pencil size={15} />
+                    <Pencil size={14} />
                   </Link>
                 )}
 
@@ -191,11 +191,11 @@ export default function ReporterReportCard({
           </div>
 
           {/* TOMBOL DROPDOWN PROGRES / HASIL AKHIR */}
-          <div className="w-full sm:w-auto flex sm:flex-col items-end justify-between sm:justify-center border-t sm:border-t-0 pt-3 sm:pt-0 border-sibersih-primary/10 shrink-0">
+          <div className="w-full sm:w-auto flex sm:flex-col items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2.5 sm:pt-0 border-sibersih-primary/10 shrink-0">
             <button
               type="button"
               onClick={handleToggle}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 isOpen
                   ? "bg-sibersih-primary text-white shadow-sm"
                   : isCompleted
@@ -218,7 +218,7 @@ export default function ReporterReportCard({
 
         {/* DROPDOWN EXPANDED CONTENT: PROGRES & HASIL AKHIR */}
         {isOpen && (
-          <div className="border-t border-sibersih-primary/10 bg-sibersih-bg/40 p-4 sm:p-5 flex flex-col gap-5 w-full min-w-0 animate-in fade-in-50 duration-200">
+          <div className="border-t border-sibersih-primary/10 bg-sibersih-bg/40 p-3.5 sm:p-5 flex flex-col gap-4 sm:gap-5 w-full min-w-0 animate-in fade-in-50 duration-200">
             {/* 1. STATUS HIGHLIGHT BANNER */}
             {isCompleted && (
               <div className="p-3.5 rounded-xl bg-transparent border border-slate-200 dark:border-slate-800 flex items-start gap-3">
@@ -284,10 +284,28 @@ export default function ReporterReportCard({
                 Tahapan Penanganan
               </h4>
 
-              <div className="relative flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-2">
+              <div className="relative flex flex-col sm:flex-row items-start justify-between gap-5 sm:gap-2">
+                {/* VERTICAL LINE CONNECTORS (MOBILE ONLY) */}
+                <div
+                  className={`sm:hidden absolute left-4 top-4 h-[42%] w-0.5 -translate-x-1/2 z-0 ${
+                    isReviewing || isCompleted
+                      ? "bg-emerald-500"
+                      : "bg-slate-200 dark:bg-slate-800"
+                  }`}
+                />
+                <div
+                  className={`sm:hidden absolute left-4 top-[50%] h-[42%] w-0.5 -translate-x-1/2 z-0 ${
+                    isCompleted
+                      ? "bg-emerald-500"
+                      : isReviewing
+                      ? "bg-amber-400"
+                      : "bg-slate-200 dark:bg-slate-800"
+                  }`}
+                />
+
                 {/* STEP 1 */}
-                <div className="flex sm:flex-col items-center sm:items-center text-left sm:text-center gap-3 sm:gap-2 flex-1 relative z-10 w-full">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                <div className="flex sm:flex-col items-start sm:items-center text-left sm:text-center gap-3 sm:gap-2 flex-1 relative z-10 w-full">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 sm:mt-0">
                     <Check size={16} className="stroke-[3]" />
                   </div>
                   <div className="flex-1">
@@ -313,9 +331,9 @@ export default function ReporterReportCard({
                 />
 
                 {/* STEP 2 */}
-                <div className="flex sm:flex-col items-center sm:items-center text-left sm:text-center gap-3 sm:gap-2 flex-1 relative z-10 w-full">
+                <div className="flex sm:flex-col items-start sm:items-center text-left sm:text-center gap-3 sm:gap-2 flex-1 relative z-10 w-full">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm mt-0.5 sm:mt-0 ${
                       isReviewing || isCompleted
                         ? "bg-emerald-500 text-white"
                         : "bg-amber-500 text-white animate-pulse"
