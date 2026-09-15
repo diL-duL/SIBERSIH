@@ -10,8 +10,8 @@ const createPrismaClient = () => {
   const pool = new Pool({
     connectionString,
     max: process.env.NODE_ENV === 'production' ? 2 : 5,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 60000,
+    connectionTimeoutMillis: 20000,
   });
   pool.on('error', (err) => {
     console.error('PG Pool Unexpected Idle Client Error:', err);

@@ -3,6 +3,7 @@ import { CheckSquare, Hourglass, Megaphone, Plus, User } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getValidUserId } from "@/lib/session-user";
 import DashboardMapClient from "@/components/DashboardMapClient";
 import ReporterDashboardReports from "@/components/ReporterDashboardReports";
 
@@ -10,17 +11,21 @@ export default async function PelaporDashboard() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
+    const userId = await getValidUserId(session.user);
+    if (!userId) redirect("/login");
+
+    const userName = session.user.name || 'Pengguna';
+
     const [total, completed, recentReports] = await Promise.all([
-        prisma.report.count({ where: { pelaporId: session.user.id } }),
-        prisma.report.count({ where: { pelaporId: session.user.id, status: "SELESAI" } }),
+        prisma.report.count({ where: { pelaporId: userId } }),
+        prisma.report.count({ where: { pelaporId: userId, status: "SELESAI" } }),
         prisma.report.findMany({
-            where: { pelaporId: session.user.id },
+            where: { pelaporId: userId },
             orderBy: { createdAt: 'desc' },
-            take: 5
+            take: 3
         }),
     ]);
     const processing = Math.max(0, total - completed);
-    const userName = session.user.name || 'Pengguna';
 
     return (
         <div className="pb-16 pt-6 sm:pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 w-full">
@@ -46,7 +51,7 @@ export default async function PelaporDashboard() {
             </header>
 
             {/* RINGKASAN METRIK KHUSUS MOBILE (LINEAR DI ATAS) */}
-            <div className="grid grid-cols-3 gap-2 sm:hidden mb-4">
+            <div className="grid grid-cols-3 gap-2 sm:hidden mb-5">
                 <div className="bg-white p-2.5 rounded-xl border border-sibersih-primary/10 shadow-2xs flex flex-col items-center text-center">
                     <Megaphone size={16} className="text-sibersih-primary/60 mb-1" />
                     <span className="text-[11px] text-sibersih-primary/60 font-medium">Total</span>
@@ -63,25 +68,20 @@ export default async function PelaporDashboard() {
                     <span className="text-base font-bold text-emerald-900">{completed}</span>
                 </div>
             </div>
-
-            {/* TOMBOL LAPOR CEPAT MOBILE (LINEAR DI BAWAH STATISTIK) */}
-            <Link
-                href="/reporter/report"
-                className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-sibersih-primary/90 active:scale-[0.99] transition shadow-sm mb-5"
-            >
-                <Plus size={17} /> Buat Laporan Kebersihan Baru
-            </Link>
             
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-5 sm:gap-6 flex-1">
-                {/* KOLOM UTAMA (DESKTOP KIRI / MOBILE TENGAH) */}
-                <div className="lg:col-span-2 flex flex-col gap-5 sm:gap-6">
-                    <ReporterDashboardReports reports={recentReports} />
+                {/* KOLOM UTAMA (DESKTOP KIRI / MOBILE URUTAN KE-3: SETELAH PETA) */}
+                <div className="order-2 lg:order-1 lg:col-span-2 flex flex-col min-h-0">
+                    <ReporterDashboardReports 
+                        reports={recentReports} 
+                        className="max-h-[500px] sm:max-h-[540px] lg:max-h-none lg:h-[580px]"
+                    />
                 </div>
 
-                {/* KOLOM SEKUNDER (DESKTOP KANAN / MOBILE BAWAH) */}
-                <div className="lg:col-span-1 flex flex-col gap-5 sm:gap-6">
+                {/* KOLOM SEKUNDER (DESKTOP KANAN / MOBILE URUTAN KE-2: SEBELUM LAPORAN TERAKHIR) */}
+                <div className="order-1 lg:order-2 lg:col-span-1 flex flex-col gap-5 sm:gap-6 lg:h-[580px]">
                     {/* STATISTIK KHUSUS DESKTOP */}
-                    <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden">
+                    <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden shrink-0">
                         <div className="p-4 border-b border-sibersih-primary/5 flex items-center justify-between">
                             <h2 className="text-sm font-semibold text-sibersih-primary">Ringkasan Laporan</h2>
                             <Link href="/reporter/history" className="text-xs font-semibold text-sibersih-primary hover:underline">Riwayat</Link>
@@ -112,8 +112,8 @@ export default async function PelaporDashboard() {
                     </div>
 
                     {/* MINIMAP FAKULTAS TEKNIK */}
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex flex-col h-[260px] sm:h-[300px] lg:h-auto lg:flex-1 lg:min-h-[280px]">
-                        <div className="p-3.5 sm:p-4 border-b border-sibersih-primary/5 flex justify-between items-center">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex flex-col h-[260px] sm:h-[300px] lg:h-auto lg:flex-1 lg:min-h-0">
+                        <div className="p-3.5 sm:p-4 border-b border-sibersih-primary/5 flex justify-between items-center shrink-0">
                             <h2 className="text-xs sm:text-sm font-semibold text-sibersih-primary">Peta Area Pengawasan</h2>
                             <span className="text-[11px] text-sibersih-primary/50">Fakultas Teknik</span>
                         </div>
@@ -123,6 +123,14 @@ export default async function PelaporDashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* TOMBOL LAPOR CEPAT MOBILE (LINEAR DI BAWAH LAPORAN TERAKHIR) */}
+            <Link
+                href="/reporter/report"
+                className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-sibersih-primary/90 active:scale-[0.99] transition shadow-sm mt-5"
+            >
+                <Plus size={17} /> Buat Laporan Kebersihan Baru
+            </Link>
         </div>
     );
 }

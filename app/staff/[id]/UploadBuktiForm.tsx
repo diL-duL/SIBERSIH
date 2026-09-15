@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw, Camera, ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
+import { UploadCloud, ArrowLeft, MapPin, Eye, RefreshCw, Camera, ImageIcon, CheckCircle2, AlertCircle, Hourglass } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useActionState, useRef, useEffect } from "react";
@@ -17,11 +17,11 @@ async function formAction(prevState: ActionState, formData: FormData): Promise<A
     try {
         const reportId = formData.get("reportId") as string;
         await ajukanPenyelesaian(reportId, formData);
-        return { message: "Bukti berhasil diajukan", error: null };
+        return { message: "Bukti berhasil disimpan", error: null };
     } catch (e: unknown) {
         const error = e as Error;
         if (error.message === "NEXT_REDIRECT") throw error;
-        return { message: null, error: error.message || "Gagal mengajukan bukti" };
+        return { message: null, error: error.message || "Gagal menyimpan bukti" };
     }
 }
 
@@ -117,16 +117,17 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
     };
 
     const isSubmitted = report.status === "SELESAI";
+    const isEditMode = report.status === "MENUNGGU_APPROVAL";
 
     return (
         <div className="min-h-screen bg-sibersih-bg/60 py-6 px-3 sm:px-6 lg:px-8 pb-16 sm:pb-24">
             <div className="max-w-2xl mx-auto w-full">
                 {/* Header Back Link */}
                 <Link 
-                    href="/staff/tasks" 
-                    className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium text-xs sm:text-sm mb-4 transition-colors px-3 py-1.5 rounded-lg bg-white/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 shadow-2xs"
+                    href="/staff" 
+                    className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors"
                 >
-                    <ArrowLeft size={15} /> Kembali ke Daftar Tugas
+                    <ArrowLeft size={16} /> Kembali ke Beranda
                 </Link>
 
                 <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800 overflow-hidden mb-12">
@@ -137,8 +138,13 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                 ID #{report.id.substring(0, 8)}
                             </span>
                             <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-1.5 tracking-tight">
-                                Penyelesaian Tugas Pembersihan
+                                {isEditMode ? "Edit Bukti Pengerjaan" : "Penyelesaian Tugas Pembersihan"}
                             </h1>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                {isEditMode
+                                    ? "Perbarui foto bukti atau catatan hasil kerja sebelum disetujui pimpinan."
+                                    : "Unggah foto bukti hasil pembersihan dan deskripsi pengerjaan."}
+                            </p>
                         </div>
                         <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border w-fit ${
                             report.status === "SELESAI" 
@@ -150,7 +156,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                             {report.status === "SELESAI" ? (
                                 <><CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" /> Divalidasi / Selesai</>
                             ) : report.status === "MENUNGGU_APPROVAL" ? (
-                                <><CheckCircle2 size={13} className="text-amber-600 dark:text-amber-400" /> Menunggu Validasi</>
+                                <><Hourglass size={13} className="text-amber-600 dark:text-amber-400" /> Menunggu Validasi (Dapat Diedit)</>
                             ) : (
                                 <><span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" /> Menunggu Tindakan</>
                             )}
@@ -385,13 +391,13 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                         {!isSubmitted && (
                             <div className="pt-4 sm:pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 pb-6 sm:pb-8">
                                 <Link 
-                                    href="/staff/tasks" 
+                                    href="/staff" 
                                     className="w-full sm:w-auto text-center px-5 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                 >
                                     Batal
                                 </Link>
                                 <div className="w-full sm:w-auto">
-                                    <SubmitButton>Ajukan Selesai</SubmitButton>
+                                    <SubmitButton>{isEditMode ? "Simpan Perubahan Bukti" : "Ajukan Selesai"}</SubmitButton>
                                 </div>
                             </div>
                         )}

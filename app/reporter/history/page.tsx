@@ -3,14 +3,18 @@ import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { getValidUserId } from "@/lib/session-user";
 import HistoryListClient from "@/components/HistoryListClient";
 
 export default async function ReporterHistoryPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
+    const validUserId = await getValidUserId(session.user);
+    if (!validUserId) redirect("/login");
+
     const historyData = await prisma.report.findMany({
-        where: { pelaporId: session.user.id },
+        where: { pelaporId: validUserId },
         orderBy: { createdAt: "desc" }
     });
 
@@ -18,7 +22,7 @@ export default async function ReporterHistoryPage() {
         <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-16">
             <div className="max-w-3xl mx-auto w-full">
                 <Link href="/reporter" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
-                    <ArrowLeft size={16} /> Kembali ke Dashboard
+                    <ArrowLeft size={16} /> Kembali ke Beranda
                 </Link>
 
                 <header className="mb-6">

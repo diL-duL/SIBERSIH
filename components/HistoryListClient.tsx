@@ -7,6 +7,7 @@ import { Search, Clock, CheckCircle, Hourglass, ChevronLeft, ChevronRight } from
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ReporterReportCard from "@/components/ReporterReportCard";
+import StaffTaskCard from "@/components/StaffTaskCard";
 
 export type ReportItem = {
   id: string;
@@ -18,18 +19,22 @@ export type ReportItem = {
   status: string;
   createdAt: Date;
   updatedAt: Date;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 interface HistoryListClientProps {
   reports: ReportItem[];
   itemHrefPrefix?: string; // Optional prefix if item is clickable (e.g. "/staff/")
   pageSize?: number;
+  role?: "PELAPOR" | "PETUGAS" | "PIMPINAN";
 }
 
 export default function HistoryListClient({
   reports,
   itemHrefPrefix,
   pageSize = 5,
+  role,
 }: HistoryListClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -189,6 +194,15 @@ export default function HistoryListClient({
                 </div>
               </div>
             );
+
+            if (role === "PETUGAS") {
+              return (
+                <StaffTaskCard
+                  key={item.id}
+                  task={item}
+                />
+              );
+            }
 
             if (itemHrefPrefix) {
               return (

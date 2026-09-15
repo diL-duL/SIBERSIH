@@ -29,7 +29,7 @@ export default async function PimpinanValidations() {
     return (
         <div className="pb-16 pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <Link href="/executive" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
-                <ArrowLeft size={16} /> Kembali ke Dashboard
+                <ArrowLeft size={16} /> Kembali ke Beranda
             </Link>
 
             <header className="mb-8 border-b border-sibersih-primary/10 pb-4 flex justify-between items-end">

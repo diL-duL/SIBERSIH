@@ -149,7 +149,7 @@ export default function EditReportForm({ report }: { report: ReportData }) {
         {/* Header Back Button */}
         <Link
           href="/reporter"
-          className="inline-flex items-center gap-2 text-sibersih-primary/70 hover:text-sibersih-primary font-semibold text-xs sm:text-sm mb-4 transition-colors px-3.5 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-sibersih-primary/10 shadow-xs"
+          className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors"
         >
           <ArrowLeft size={16} /> Kembali ke Beranda
         </Link>

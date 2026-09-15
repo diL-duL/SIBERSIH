@@ -21,7 +21,13 @@ async function formAction(prevState: ActionState, formData: FormData): Promise<A
     } catch (e: unknown) {
         const error = e as Error;
         if (error.message === "NEXT_REDIRECT") throw error;
-        return { message: null, error: error.message || "Gagal mengirim laporan" };
+        const isTimeout =
+            error.message?.includes("timeout") ||
+            error.message?.includes("Connection terminated");
+        const msg = isTimeout
+            ? "Koneksi ke database terputus karena waktu tunggu habis (timeout). Silakan coba tekan tombol 'Kirim Laporan' kembali."
+            : error.message || "Gagal mengirim laporan";
+        return { message: null, error: msg };
     }
 }
 
@@ -134,7 +140,7 @@ export default function ReportPage() {
                 {/* Header Back Button */}
                 <Link 
                     href="/reporter" 
-                    className="inline-flex items-center gap-2 text-sibersih-primary/70 hover:text-sibersih-primary font-semibold text-xs sm:text-sm mb-4 transition-colors px-3.5 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-sibersih-primary/10 shadow-xs"
+                    className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors"
                 >
                     <ArrowLeft size={16} /> Kembali ke Beranda
                 </Link>
@@ -162,10 +168,42 @@ export default function ReportPage() {
                             onChange={handleImageChange}
                         />
 
-                        {/* 1. Upload Foto Section */}
+                        {/* 1. Map Section */}
+                        <div className="space-y-2">
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
+                                <MapPin size={16} className="text-red-500" /> 1. Tandai Lokasi di Peta
+                            </label>
+                            <div className="w-full h-56 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
+                                <MapPicker onPositionChange={(lat, lng) => {
+                                    setLatitude(lat);
+                                    setLongitude(lng);
+                                }} />
+                                <input type="hidden" name="latitude" value={latitude || ""} />
+                                <input type="hidden" name="longitude" value={longitude || ""} />
+                            </div>
+                            <p className="text-[11px] sm:text-xs text-sibersih-primary/60 italic">
+                                *Sentuh atau geser penanda di atas peta untuk menyesuaikan posisi lokasi dengan akurat.
+                            </p>
+                        </div>
+
+                        {/* 2. Detail Lokasi Input */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
+                                2. Detail Lokasi / Nama Tempat <span className="text-red-500">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                name="lokasi"
+                                required
+                                placeholder="Contoh: Samping Gedung Perpustakaan Lantai 1" 
+                                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs transition-all" 
+                            />
+                        </div>
+
+                        {/* 3. Upload Foto Section */}
                         <div className="space-y-2">
                             <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
-                                <span>1. Foto Bukti Sampah / Lokasi <span className="text-red-500">*</span></span>
+                                <span>3. Foto Bukti Sampah <span className="text-red-500">*</span></span>
                                 {previewUrl && (
                                     <span className="text-[10px] text-green-700 font-semibold bg-green-100 px-2 py-0.5 rounded-full">
                                         ✓ Foto Terpilih
@@ -267,24 +305,10 @@ export default function ReportPage() {
                             </div>
                         </div>
 
-                        {/* 2. Detail Lokasi Input */}
+                        {/* 4. Deskripsi Input */}
                         <div className="space-y-1.5">
                             <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
-                                2. Detail Lokasi / Nama Tempat <span className="text-red-500">*</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                name="lokasi"
-                                required
-                                placeholder="Contoh: Samping Gedung Perpustakaan Lantai 1" 
-                                className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs transition-all" 
-                            />
-                        </div>
-
-                        {/* 3. Deskripsi Input */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary">
-                                3. Deskripsi Kondisi <span className="text-red-500">*</span>
+                                4. Deskripsi Kondisi <span className="text-red-500">*</span>
                             </label>
                             <textarea 
                                 rows={3} 
@@ -293,24 +317,6 @@ export default function ReportPage() {
                                 placeholder="Jelaskan kondisi sampah secara rinci (misal: tumpukan plastik dan dedaunan kering)..." 
                                 className="w-full bg-white border border-sibersih-primary/20 rounded-xl px-4 py-3 text-xs sm:text-sm font-medium text-sibersih-primary placeholder:text-sibersih-primary/40 focus:ring-2 focus:ring-sibersih-accent focus:border-sibersih-accent outline-none shadow-xs resize-y transition-all"
                             ></textarea>
-                        </div>
-
-                        {/* 4. Map Section */}
-                        <div className="space-y-2">
-                            <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center gap-1.5">
-                                <MapPin size={16} className="text-red-500" /> 4. Tandai Lokasi di Peta
-                            </label>
-                            <div className="w-full h-56 sm:h-72 bg-sibersih-bg rounded-xl relative overflow-hidden border border-sibersih-primary/15 shadow-inner">
-                                <MapPicker onPositionChange={(lat, lng) => {
-                                    setLatitude(lat);
-                                    setLongitude(lng);
-                                }} />
-                                <input type="hidden" name="latitude" value={latitude || ""} />
-                                <input type="hidden" name="longitude" value={longitude || ""} />
-                            </div>
-                            <p className="text-[11px] sm:text-xs text-sibersih-primary/60 italic">
-                                *Sentuh atau geser penanda di atas peta untuk menyesuaikan posisi lokasi dengan akurat.
-                            </p>
                         </div>
 
                         {/* Error Alert */}

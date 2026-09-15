@@ -59,94 +59,44 @@ export default function ProfileClient({ user }: ProfileProps) {
   return (
     <div className="min-h-screen flex flex-col items-center bg-sibersih-bg px-4 sm:px-6 pt-6 sm:pt-8 pb-16">
       <div className="max-w-3xl w-full flex flex-col gap-6">
-        {/* TOP BAR DENGAN NAVIGASI KEMBALI & LOGOUT KHUSUS MOBILE */}
+        {/* TOP BAR */}
         <div className="flex items-center justify-between w-full">
           <Link
             href={dashboardUrl}
             className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm transition-colors"
           >
-            <ArrowLeft size={16} /> Kembali ke Dashboard
+            <ArrowLeft size={16} /> Kembali ke Beranda
           </Link>
-          <button
-            type="button"
-            onClick={() => setIsLogoutModalOpen(true)}
-            className="lg:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 transition-colors shadow-2xs cursor-pointer"
-          >
-            <LogOut size={13} />
-            <span>Keluar</span>
-          </button>
         </div>
         
         {/* Header Section */}
-        <div className="bg-white rounded-xl p-5 sm:p-8 border border-sibersih-primary/10 shadow-sm flex flex-col md:flex-row items-center gap-5 sm:gap-8 transition-colors hover:border-sibersih-accent">
+        <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 border border-sibersih-primary/10 shadow-sm flex flex-row items-center gap-4 sm:gap-6 md:gap-8 transition-colors hover:border-sibersih-accent">
           <div className="relative shrink-0">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-sibersih-bg shadow-sm relative">
-              <div className="w-full h-full bg-sibersih-primary/5 flex items-center justify-center text-sibersih-primary text-3xl sm:text-4xl font-bold uppercase">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-sibersih-bg shadow-sm relative">
+              <div className="w-full h-full bg-sibersih-primary/5 flex items-center justify-center text-sibersih-primary text-2xl sm:text-3xl md:text-4xl font-bold uppercase">
                 {user.nama.charAt(0)}
               </div>
             </div>
             <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-4 h-4 sm:w-5 sm:h-5 bg-green-500 border-2 border-white rounded-full"></div>
           </div>
           
-          <div className="flex-1 text-center md:text-left min-w-0 w-full">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sibersih-primary/5 text-sibersih-primary text-xs font-semibold tracking-wide mb-3 uppercase">
+          <div className="flex-1 text-left min-w-0 w-full">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sibersih-primary/5 text-sibersih-primary text-xs font-semibold tracking-wide mb-2 sm:mb-3 uppercase">
               <ShieldCheck className="w-4 h-4" />
               {user.role}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-sibersih-primary mb-1 sm:mb-2 break-words">{user.nama}</h1>
-            <p className="text-sibersih-primary/60 flex items-center justify-center md:justify-start gap-2 text-sm break-all sm:break-normal">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-sibersih-primary mb-1 sm:mb-2 break-words">{user.nama}</h1>
+            <p className="text-sibersih-primary/60 flex items-center justify-start gap-2 text-xs sm:text-sm break-all sm:break-normal">
               <Mail className="w-4 h-4 shrink-0" />
               {user.email}
             </p>
           </div>
         </div>
 
-        {/* TAB NAVIGASI KHUSUS MOBILE (SEGMENTED 3 TABS BERSIH, TANPA OVERFLOW ANEH) */}
-        <div className="lg:hidden w-full bg-white p-1.5 rounded-xl border border-sibersih-primary/10 shadow-2xs">
-          <div className="grid grid-cols-3 gap-1">
-            <button 
-              type="button"
-              onClick={() => setActiveTab('personal')}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'personal' 
-                  ? 'bg-sibersih-primary text-white shadow-2xs' 
-                  : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
-              }`}
-            >
-              <UserIcon size={14} className="shrink-0" />
-              <span>Biodata</span>
-            </button>
-            <button 
-              type="button"
-              onClick={() => setActiveTab('edit')}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'edit' 
-                  ? 'bg-sibersih-primary text-white shadow-2xs' 
-                  : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
-              }`}
-            >
-              <Edit size={14} className="shrink-0" />
-              <span>Edit Profil</span>
-            </button>
-            <button 
-              type="button"
-              onClick={() => setActiveTab('account')}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'account' 
-                  ? 'bg-sibersih-primary text-white shadow-2xs' 
-                  : 'text-sibersih-primary/70 hover:bg-sibersih-primary/5 hover:text-sibersih-primary'
-              }`}
-            >
-              <Key size={14} className="shrink-0" />
-              <span>Akun</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
-          {/* SIDEBAR NAVIGASI DESKTOP (STICKY VERTICAL) */}
-          <div className="hidden lg:block w-64 shrink-0">
-            <div className="bg-white rounded-xl p-4 border border-sibersih-primary/10 shadow-2xs sticky top-8 transition-colors hover:border-sibersih-accent">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* SIDEBAR NAVIGASI */}
+          <div className="w-full lg:w-64 shrink-0">
+            <div className="bg-white rounded-xl p-4 border border-sibersih-primary/10 shadow-2xs lg:sticky lg:top-8 transition-colors hover:border-sibersih-accent">
               <nav className="flex flex-col gap-2">
                 <button 
                   type="button"
@@ -352,17 +302,6 @@ export default function ProfileClient({ user }: ProfileProps) {
           </div>
         </div>
 
-        {/* TOMBOL LOGOUT UTAMA DI LAYAR PONSEL (MUDAH DIJANGKAU IBU JARI) */}
-        <div className="lg:hidden w-full pt-1">
-          <button
-            type="button"
-            onClick={() => setIsLogoutModalOpen(true)}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-red-200/80 bg-red-50/70 hover:bg-red-100 text-red-600 font-semibold text-xs sm:text-sm active:scale-[0.99] transition-all shadow-2xs cursor-pointer"
-          >
-            <LogOut size={15} />
-            <span>Keluar dari Akun</span>
-          </button>
-        </div>
       </div>
 
       {/* Logout Confirmation Modal */}

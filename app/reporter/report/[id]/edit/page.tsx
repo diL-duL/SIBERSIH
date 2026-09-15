@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { getValidUserId } from "@/lib/session-user";
 import EditReportForm from "./EditReportForm";
 
 export default async function EditReportPage({
@@ -13,12 +14,17 @@ export default async function EditReportPage({
     redirect("/login");
   }
 
+  const validUserId = await getValidUserId(session.user);
+  if (!validUserId) {
+    redirect("/login");
+  }
+
   const resolvedParams = await params;
   const report = await prisma.report.findUnique({
     where: { id: resolvedParams.id },
   });
 
-  if (!report || report.pelaporId !== session.user.id) {
+  if (!report || report.pelaporId !== validUserId) {
     notFound();
   }
 

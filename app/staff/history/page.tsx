@@ -3,15 +3,19 @@ import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { getValidUserId } from "@/lib/session-user";
 import HistoryListClient from "@/components/HistoryListClient";
 
 export default async function StaffHistoryPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
+    const validUserId = await getValidUserId(session.user);
+    if (!validUserId) redirect("/login");
+
     const completedTasks = await prisma.report.findMany({
         where: { 
-            petugasId: session.user.id,
+            petugasId: validUserId,
             status: { in: ["MENUNGGU_APPROVAL", "SELESAI"] } 
         },
         orderBy: { updatedAt: "desc" }
@@ -21,7 +25,7 @@ export default async function StaffHistoryPage() {
         <div className="min-h-screen bg-sibersih-bg py-8 px-4 sm:px-6 lg:px-8 pb-16">
             <div className="max-w-3xl mx-auto w-full">
                 <Link href="/staff" className="inline-flex items-center gap-2 text-sibersih-primary/60 hover:text-sibersih-primary font-medium text-sm mb-6 transition-colors">
-                    <ArrowLeft size={16} /> Kembali ke Dashboard
+                    <ArrowLeft size={16} /> Kembali ke Beranda
                 </Link>
 
                 <header className="mb-6">
@@ -31,7 +35,7 @@ export default async function StaffHistoryPage() {
                     </p>
                 </header>
 
-                <HistoryListClient reports={completedTasks} itemHrefPrefix="/staff/" />
+                <HistoryListClient reports={completedTasks} role="PETUGAS" />
             </div>
         </div>
     );

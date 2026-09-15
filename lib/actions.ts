@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "./prisma";
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from "./cloudinary";
+import { getValidUserId } from "./session-user";
 
 function sanitizeTextInput(input: unknown): string {
   if (typeof input !== "string") return "";
@@ -45,6 +46,13 @@ export async function buatLaporan(formData: FormData) {
 
   const imageUrl = await uploadImageToCloudinary(file);
 
+  const pelaporId = await getValidUserId(session.user);
+  if (!pelaporId) {
+    throw new Error(
+      "Akun pelapor tidak ditemukan di database. Silakan keluar (logout) dan login kembali."
+    );
+  }
+
   const dataToSave: {
     lokasi: string;
     deskripsi: string;
@@ -57,7 +65,7 @@ export async function buatLaporan(formData: FormData) {
     lokasi,
     deskripsi,
     fotoLaporanUrl: imageUrl,
-    pelaporId: session.user.id,
+    pelaporId,
     status: "LAPORAN_MASUK",
   };
 
@@ -71,14 +79,33 @@ export async function buatLaporan(formData: FormData) {
     }
   }
 
-  try {
-    await prisma.report.create({
-      data: dataToSave,
-    });
-  } catch (dbError) {
+  let savedReport = null;
+  let lastError: unknown = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      savedReport = await prisma.report.create({
+        data: dataToSave,
+      });
+      break;
+    } catch (err: unknown) {
+      lastError = err;
+      const isTimeout =
+        err instanceof Error &&
+        (err.message.includes("timeout") ||
+          err.message.includes("Connection terminated") ||
+          (err as { code?: string }).code === "P1001");
+      if (isTimeout && attempt < 2) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        continue;
+      }
+      break;
+    }
+  }
+
+  if (!savedReport) {
     // Rollback foto di Cloudinary agar tidak menjadi orphan / boros kuota free tier
     deleteImageFromCloudinary(imageUrl).catch(() => {});
-    throw dbError;
+    throw lastError;
   }
 
   // Cross-role cache invalidation agar petugas langsung melihat tugas baru
@@ -110,11 +137,14 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
     throw new Error("Laporan yang sudah divalidasi tidak dapat diedit.");
   }
 
+  const petugasId = await getValidUserId(session.user);
+  if (!petugasId) throw new Error("Unauthorized");
+
   // Cegah petugas lain menimpa pekerjaan laporan yang sedang diajukan
   if (
     existingReport.status === "MENUNGGU_APPROVAL" &&
     existingReport.petugasId &&
-    existingReport.petugasId !== session.user.id
+    existingReport.petugasId !== petugasId
   ) {
     throw new Error("Laporan ini sedang diajukan penyelesaiannya oleh petugas lain.");
   }
@@ -149,7 +179,7 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData) {
       data: {
         fotoBuktiUrl: imageUrl,
         deskripsiPetugas,
-        petugasId: session.user.id,
+        petugasId,
         status: "MENUNGGU_APPROVAL",
       },
     });
@@ -215,8 +245,13 @@ export async function hapusLaporan(reportId: string) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PELAPOR") throw new Error("Forbidden");
 
+  const validUserId = await getValidUserId(session.user);
+  if (!validUserId) {
+    throw new Error("Sesi login Anda tidak valid. Silakan logout dan login kembali.");
+  }
+
   const report = await prisma.report.findUnique({ where: { id: reportId } });
-  if (!report || report.pelaporId !== session.user.id) {
+  if (!report || report.pelaporId !== validUserId) {
     throw new Error("Laporan tidak ditemukan atau Anda tidak berhak menghapusnya.");
   }
 
@@ -228,7 +263,7 @@ export async function hapusLaporan(reportId: string) {
   const deleted = await prisma.report.deleteMany({
     where: { 
       id: reportId,
-      pelaporId: session.user.id,
+      pelaporId: validUserId,
       status: "LAPORAN_MASUK"
     },
   });
@@ -256,8 +291,13 @@ export async function editLaporan(reportId: string, formData: FormData) {
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "PELAPOR") throw new Error("Forbidden");
 
+  const validUserId = await getValidUserId(session.user);
+  if (!validUserId) {
+    throw new Error("Sesi login Anda tidak valid. Silakan logout dan login kembali.");
+  }
+
   const existingReport = await prisma.report.findUnique({ where: { id: reportId } });
-  if (!existingReport || existingReport.pelaporId !== session.user.id) {
+  if (!existingReport || existingReport.pelaporId !== validUserId) {
     throw new Error("Laporan tidak ditemukan atau Anda tidak berhak mengeditnya.");
   }
 
@@ -323,7 +363,7 @@ export async function editLaporan(reportId: string, formData: FormData) {
     await prisma.report.update({
       where: { 
         id: reportId,
-        pelaporId: session.user.id,
+        pelaporId: validUserId,
         status: "LAPORAN_MASUK"
       },
       data: dataToUpdate,
