@@ -1,33 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, MapPin } from "lucide-react";
+import LandingReportsList from "@/components/LandingReportsList";
 
 export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
-
-function getStatusBadge(status: string) {
-  switch (status) {
-    case "SELESAI":
-      return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Selesai
-        </span>
-      );
-    case "MENUNGGU_APPROVAL":
-      return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Menunggu Validasi
-        </span>
-      );
-    case "LAPORAN_MASUK":
-    default:
-      return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" /> Laporan Masuk
-        </span>
-      );
-  }
-}
 
 export default async function LandingPage() {
   const allReports = await prisma.report.findMany({
@@ -85,7 +61,7 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* All Reports Showcase (Tanpa Gambar) */}
+        {/* All Reports Showcase (Tanpa Gambar, 3 Laporan Awal + Tombol Lihat Semua) */}
         <section className="space-y-6 pb-16">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-sibersih-primary/10 pb-4">
             <div>
@@ -103,96 +79,7 @@ export default async function LandingPage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {allReports.length > 0 ? (
-              allReports.map((report) => {
-                const pelaporNama = report.pelapor?.nama || "Civitas Akademika";
-                const petugasNama = report.petugas?.nama || "Belum Ditugaskan";
-
-                return (
-                  <div 
-                    key={report.id} 
-                    className="bg-white rounded-xl border border-sibersih-primary/10 shadow-xs hover:shadow-sm transition-all p-4 sm:p-5 flex flex-col justify-between"
-                  >
-                    <div>
-                      {/* Lokasi & Status */}
-                      <div className="flex items-start justify-between gap-2.5 mb-2.5">
-                        <div className="min-w-0 flex-1">
-                          <span className="text-[10px] font-mono font-medium text-sibersih-primary/50 bg-sibersih-primary/5 px-1.5 py-0.5 rounded border border-sibersih-primary/10 inline-block mb-1">
-                            #{report.id.substring(0, 8)}
-                          </span>
-                          <h3 className="font-bold text-sibersih-primary text-sm sm:text-base line-clamp-1 flex items-center gap-1.5">
-                            <MapPin size={14} className="text-sibersih-primary/50 shrink-0" />
-                            <span className="truncate">{report.lokasi}</span>
-                          </h3>
-                        </div>
-                        {getStatusBadge(report.status)}
-                      </div>
-
-                      {/* Detail Laporan & Catatan Petugas */}
-                      <div className="space-y-2.5 mb-4">
-                        <div>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-sibersih-primary/50 block">
-                            Deskripsi Laporan:
-                          </span>
-                          <p className="text-xs sm:text-sm text-sibersih-primary/80 leading-relaxed mt-0.5">
-                            {report.deskripsi}
-                          </p>
-                        </div>
-
-                        {report.deskripsiPetugas && (
-                          <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 text-xs">
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-800 block mb-0.5">
-                              Catatan Petugas:
-                            </span>
-                            <p className="text-emerald-950/80 leading-relaxed">
-                              {report.deskripsiPetugas}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Metadata: Pelapor, Petugas, dan Waktu */}
-                    <div className="pt-3 border-t border-sibersih-primary/10 flex flex-col gap-1.5 text-xs text-sibersih-primary/60">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="truncate">
-                          Pelapor: <strong className="text-sibersih-primary font-medium">{pelaporNama}</strong>
-                        </span>
-                        <span className="truncate text-right">
-                          Petugas: <strong className="text-sibersih-primary font-medium">{petugasNama}</strong>
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-sibersih-primary/5 text-[11px] text-sibersih-primary/50">
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} className="shrink-0" />
-                          {new Date(report.createdAt).toLocaleDateString("id-ID", { 
-                            day: "numeric", 
-                            month: "short", 
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          })}
-                        </span>
-                        {report.status === "SELESAI" && (
-                          <span className="text-emerald-700 font-medium">
-                            Selesai: {new Date(report.updatedAt).toLocaleDateString("id-ID", {
-                              day: "numeric",
-                              month: "short"
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="col-span-full py-12 text-center text-sm text-sibersih-primary/50 bg-white rounded-xl border border-dashed border-sibersih-primary/15">
-                Belum ada laporan kebersihan saat ini.
-              </div>
-            )}
-          </div>
+          <LandingReportsList reports={allReports} />
         </section>
       </main>
 
