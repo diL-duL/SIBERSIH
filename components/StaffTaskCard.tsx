@@ -195,10 +195,10 @@ export default function StaffTaskCard({
                   <Link
                     href={`/staff/${task.id}`}
                     className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-lg text-xs font-semibold hover:bg-amber-100 dark:hover:bg-amber-900/40 shadow-2xs transition-colors"
-                    title="Edit Bukti Pengerjaan"
+                    title="Edit"
                   >
                     <Pencil size={12} />
-                    <span>Edit Bukti</span>
+                    <span>Edit</span>
                   </Link>
                 )}
               </div>
@@ -276,7 +276,7 @@ export default function StaffTaskCard({
                   className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors shrink-0 self-start sm:self-center"
                 >
                   <Pencil size={13} />
-                  <span>Edit Bukti Pengerjaan</span>
+                  <span>Edit</span>
                 </Link>
               </div>
             )}
