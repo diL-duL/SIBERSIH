@@ -1,18 +1,39 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
+import { Clock, MapPin } from "lucide-react";
 
 export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
 
+function getStatusBadge(status: string) {
+  switch (status) {
+    case "SELESAI":
+      return (
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Selesai
+        </span>
+      );
+    case "MENUNGGU_APPROVAL":
+      return (
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Menunggu Validasi
+        </span>
+      );
+    case "LAPORAN_MASUK":
+    default:
+      return (
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" /> Laporan Masuk
+        </span>
+      );
+  }
+}
+
 export default async function LandingPage() {
-  const recentReports = await prisma.report.findMany({
-    where: {
-      status: "SELESAI",
-      fotoBuktiUrl: { not: null },
-    },
-    orderBy: { updatedAt: "desc" },
-    take: 9,
+  const allReports = await prisma.report.findMany({
+    orderBy: { createdAt: "desc" },
     include: {
+      pelapor: { select: { nama: true } },
       petugas: { select: { nama: true } },
     },
   });
@@ -64,54 +85,103 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* Recent Reports Showcase */}
+        {/* All Reports Showcase (Tanpa Gambar) */}
         <section className="space-y-6 pb-16">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">Hasil Pembersihan Terverifikasi</h2>
-            <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
-              Dokumentasi fasilitas dan area kampus yang telah selesai dibersihkan dan disetujui oleh pimpinan.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-sibersih-primary/10 pb-4">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">
+                Daftar Laporan Kebersihan
+              </h2>
+              <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
+                Semua laporan fasilitas dan area kampus dengan seluruh status penanganan secara transparan.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-3 py-1 bg-white border border-sibersih-primary/15 rounded-full text-sibersih-primary shadow-2xs">
+                {allReports.length} Laporan Tercatat
+              </span>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {recentReports.length > 0 ? (
-              recentReports.map((report, index) => {
-                const petugasNama = report.petugas?.nama || "Petugas Kebersihan";
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {allReports.length > 0 ? (
+              allReports.map((report) => {
+                const pelaporNama = report.pelapor?.nama || "Civitas Akademika";
+                const petugasNama = report.petugas?.nama || "Belum Ditugaskan";
 
                 return (
                   <div 
                     key={report.id} 
-                    className="bg-white rounded-xl overflow-hidden border border-sibersih-primary/10 shadow-xs flex flex-col"
+                    className="bg-white rounded-xl border border-sibersih-primary/10 shadow-xs hover:shadow-sm transition-all p-4 sm:p-5 flex flex-col justify-between"
                   >
-                    <div className="relative w-full h-44 bg-gray-100 overflow-hidden">
-                      <Image 
-                        src={report.fotoBuktiUrl!} 
-                        alt={`Foto pembersihan ${report.lokasi}`} 
-                        fill 
-                        priority={index === 0}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover" 
-                      />
-                    </div>
-                    <div className="p-4 flex-1 flex flex-col">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-semibold text-sibersih-primary text-sm line-clamp-1">
-                          {report.lokasi}
-                        </h3>
-                        <span className="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
-                          Disetujui
-                        </span>
+                    <div>
+                      {/* Lokasi & Status */}
+                      <div className="flex items-start justify-between gap-2.5 mb-2.5">
+                        <div className="min-w-0 flex-1">
+                          <span className="text-[10px] font-mono font-medium text-sibersih-primary/50 bg-sibersih-primary/5 px-1.5 py-0.5 rounded border border-sibersih-primary/10 inline-block mb-1">
+                            #{report.id.substring(0, 8)}
+                          </span>
+                          <h3 className="font-bold text-sibersih-primary text-sm sm:text-base line-clamp-1 flex items-center gap-1.5">
+                            <MapPin size={14} className="text-sibersih-primary/50 shrink-0" />
+                            <span className="truncate">{report.lokasi}</span>
+                          </h3>
+                        </div>
+                        {getStatusBadge(report.status)}
                       </div>
-                      <p className="text-xs text-sibersih-primary/65 line-clamp-2 mb-4 flex-1">
-                        {report.deskripsiPetugas || report.deskripsi}
-                      </p>
-                      <div className="flex items-center justify-between mt-auto pt-3 border-t border-sibersih-primary/10 text-xs text-sibersih-primary/60">
-                        <span className="line-clamp-1">
+
+                      {/* Detail Laporan & Catatan Petugas */}
+                      <div className="space-y-2.5 mb-4">
+                        <div>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-sibersih-primary/50 block">
+                            Deskripsi Laporan:
+                          </span>
+                          <p className="text-xs sm:text-sm text-sibersih-primary/80 leading-relaxed mt-0.5">
+                            {report.deskripsi}
+                          </p>
+                        </div>
+
+                        {report.deskripsiPetugas && (
+                          <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 text-xs">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-800 block mb-0.5">
+                              Catatan Petugas:
+                            </span>
+                            <p className="text-emerald-950/80 leading-relaxed">
+                              {report.deskripsiPetugas}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Metadata: Pelapor, Petugas, dan Waktu */}
+                    <div className="pt-3 border-t border-sibersih-primary/10 flex flex-col gap-1.5 text-xs text-sibersih-primary/60">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="truncate">
+                          Pelapor: <strong className="text-sibersih-primary font-medium">{pelaporNama}</strong>
+                        </span>
+                        <span className="truncate text-right">
                           Petugas: <strong className="text-sibersih-primary font-medium">{petugasNama}</strong>
                         </span>
-                        <span className="text-[11px] shrink-0 ml-2">
-                          {new Date(report.updatedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                      </div>
+                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-sibersih-primary/5 text-[11px] text-sibersih-primary/50">
+                        <span className="flex items-center gap-1">
+                          <Clock size={12} className="shrink-0" />
+                          {new Date(report.createdAt).toLocaleDateString("id-ID", { 
+                            day: "numeric", 
+                            month: "short", 
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
                         </span>
+                        {report.status === "SELESAI" && (
+                          <span className="text-emerald-700 font-medium">
+                            Selesai: {new Date(report.updatedAt).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "short"
+                            })}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -119,7 +189,7 @@ export default async function LandingPage() {
               })
             ) : (
               <div className="col-span-full py-12 text-center text-sm text-sibersih-primary/50 bg-white rounded-xl border border-dashed border-sibersih-primary/15">
-                Belum ada dokumentasi pembersihan yang disetujui pimpinan.
+                Belum ada laporan kebersihan saat ini.
               </div>
             )}
           </div>
