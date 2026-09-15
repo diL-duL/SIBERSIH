@@ -22,7 +22,7 @@ export default async function PelaporDashboard() {
         prisma.report.findMany({
             where: { pelaporId: userId },
             orderBy: { createdAt: 'desc' },
-            take: 3
+            take: 5
         }),
     ]);
     const processing = Math.max(0, total - completed);

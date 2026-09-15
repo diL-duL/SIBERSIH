@@ -16,7 +16,7 @@ export default async function PetugasDashboard() {
         prisma.report.count({ where: { status: "SELESAI" } }),
         prisma.report.findMany({
             orderBy: { createdAt: "desc" },
-            take: 3
+            take: 5
         })
     ]);
 

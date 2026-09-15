@@ -15,7 +15,7 @@ export default async function PimpinanDashboard() {
         prisma.report.count({ where: { status: "SELESAI" } }),
         prisma.report.findMany({
             orderBy: { createdAt: "desc" },
-            take: 3
+            take: 5
         })
     ]);
 
@@ -93,7 +93,9 @@ export default async function PimpinanDashboard() {
                                 {recentReports.map((report, index) => (
                                     <div
                                         key={report.id}
-                                        className="bg-white p-3 sm:p-4 rounded-xl border border-sibersih-primary/10 shadow-2xs hover:shadow-xs transition-all flex flex-row gap-3 sm:gap-4 items-start sm:items-center"
+                                        className={`bg-white p-3 sm:p-4 rounded-xl border border-sibersih-primary/10 shadow-2xs hover:shadow-xs transition-all flex-row gap-3 sm:gap-4 items-start sm:items-center ${
+                                            index >= 2 ? "hidden sm:flex" : "flex"
+                                        }`}
                                     >
                                         <div className="relative w-20 h-20 sm:w-28 sm:h-24 bg-gray-100 rounded-xl overflow-hidden shrink-0 border border-orange-200 shadow-2xs">
                                             <Image 

@@ -16,8 +16,8 @@ export default function StaffDashboardTasks({
   newTasksCount = 0,
   className = "",
 }: StaffDashboardTasksProps) {
-  // Menampilkan hingga 3 tugas terakhir
-  const displayTasks = tasks.slice(0, 3);
+  // Menampilkan hingga 5 tugas terakhir (pada mobile dibatasi maksimal 2 tugas via CSS)
+  const displayTasks = tasks.slice(0, 5);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -43,7 +43,7 @@ export default function StaffDashboardTasks({
         </div>
       </div>
 
-      {/* LIST 3 TUGAS TERAKHIR */}
+      {/* LIST TUGAS TERAKHIR (MOBILE: 2 TUGAS, DESKTOP: HINGGA 5 TUGAS) */}
       <div className="bg-sibersih-bg/30 p-3 sm:p-4 flex flex-col gap-3 sm:gap-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
         {displayTasks.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-sibersih-primary/40 gap-3 py-10 flex-1">
@@ -57,7 +57,10 @@ export default function StaffDashboardTasks({
         ) : (
           <>
             {displayTasks.map((task, index) => (
-              <div key={task.id}>
+              <div
+                key={task.id}
+                className={index >= 2 ? "hidden sm:block" : "block"}
+              >
                 <StaffTaskCard
                   task={task}
                   priorityImage={index === 0}

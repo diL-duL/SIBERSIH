@@ -14,8 +14,8 @@ export default function ReporterDashboardReports({
   reports,
   className = "",
 }: ReporterDashboardReportsProps) {
-  // Menampilkan hingga 3 laporan terakhir
-  const displayReports = reports.slice(0, 3);
+  // Menampilkan hingga 5 laporan terakhir (pada mobile dibatasi maksimal 2 laporan via CSS)
+  const displayReports = reports.slice(0, 5);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -34,7 +34,7 @@ export default function ReporterDashboardReports({
         </p>
       </div>
 
-      {/* LIST 3 LAPORAN TERAKHIR */}
+      {/* LIST LAPORAN TERAKHIR (MOBILE: 2 LAPORAN, DESKTOP: HINGGA 5 LAPORAN) */}
       <div className="bg-sibersih-bg/30 p-3 sm:p-4 flex flex-col gap-3 sm:gap-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
         {displayReports.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-sibersih-primary/40 gap-3 py-10 flex-1">
@@ -48,7 +48,10 @@ export default function ReporterDashboardReports({
         ) : (
           <>
             {displayReports.map((report, index) => (
-              <div key={report.id}>
+              <div
+                key={report.id}
+                className={index >= 2 ? "hidden sm:block" : "block"}
+              >
                 <ReporterReportCard
                   report={report}
                   priorityImage={index === 0}
