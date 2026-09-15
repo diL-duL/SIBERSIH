@@ -503,14 +503,6 @@ export default function StaffTaskCard({
                       />
                       Sesudah (Bukti Hasil Petugas)
                     </span>
-                    {isReviewing && (
-                      <Link
-                        href={`/staff/${task.id}`}
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 dark:text-amber-400 hover:underline"
-                      >
-                        <Pencil size={11} /> Edit
-                      </Link>
-                    )}
                   </div>
 
                   {task.fotoBuktiUrl ? (
