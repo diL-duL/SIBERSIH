@@ -544,18 +544,10 @@ export default function StaffTaskCard({
                   {/* KETERANGAN FOTO SESUDAH */}
                   {task.deskripsiPetugas ? (
                     <div className="p-2 rounded bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 text-xs text-sibersih-primary">
-                      <div className="flex items-center justify-between mb-0.5">
+                      <div className="mb-0.5">
                         <span className="font-semibold text-[10px] uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
                           Catatan Hasil Kerja Petugas:
                         </span>
-                        {isReviewing && (
-                          <Link
-                            href={`/staff/${task.id}`}
-                            className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-0.5"
-                          >
-                            <Pencil size={10} /> Ubah Catatan
-                          </Link>
-                        )}
                       </div>
                       <p className="text-xs text-sibersih-primary/80">
                         {task.deskripsiPetugas}
