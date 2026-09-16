@@ -25,7 +25,7 @@ Sistem Informasi Kebersihan Kampus berbasis web yang mengintegrasikan pelaporan,
 
 - **Anti-DDoS & Caching Ekstrem (ISR)**: Landing Page dibangun menggunakan *Incremental Static Regeneration* (`revalidate: 60`). Sistem menyajikan _file_ statis ke jutaan pengunjung dan hanya membebani database (GET Query) 1 kali setiap 60 detik.
 - **Anti-Brute Force & Spam**: Implementasi *In-Memory Rate Limiter* pada level *Server Actions* untuk melindungi formulir pendaftaran dan _login_. Memblokir skrip bot secara instan berdasarkan deteksi IP dan Email sebelum menyentuh _database_.
-- **SaaS Premium UI & UX**: Formulir pendaftaran/login dirancang menyerupai standar *Startup/SaaS* modern, dengan elemen *Glassmorphism*, penempatan ikon interaktif, mikro-animasi pada komponen tombol, serta navigasi bawah (*BottomNav*) yang responsif.
+- **SaaS Premium UI & UX**: Formulir pendaftaran/login dirancang menyerupai standar *Startup/SaaS* modern, dengan elemen *Glassmorphism*, penempatan ikon interaktif, mikro-animasi pada komponen tombol, serta tata letak dasbor yang ramah ibu jari.
 - **Performa LCP Maksimal**: Penggunaan komponen `<Image />` bawaan Next.js dengan deteksi LCP otomatis (prioritizing), pengoptimalan resolusi, kualitas (*qualities config*), dan format _WebP_ modern.
 - **Type-Safety & Efisiensi Database**: Basis kode murni TypeScript tanpa `any`, ditambah lapisan *B-Tree Indexing* (`@@index`) di skema Prisma pada parameter relasional kunci untuk mempercepat operasi kueri tabel berskala besar.
 

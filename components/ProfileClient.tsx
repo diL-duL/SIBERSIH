@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useActionState, useEffect } from 'react';
+import { useState, useActionState, useEffect } from 'react';
 import Link from 'next/link';
 import { User as UserIcon, Mail, Key, ShieldCheck, Edit, LogOut, ArrowLeft } from 'lucide-react';
 import { logoutAction, changePasswordAction, updateProfileAction, deleteAccountAction } from '@/app/actions/user';
