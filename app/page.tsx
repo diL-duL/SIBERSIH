@@ -6,13 +6,17 @@ import LandingReportsList from "@/components/LandingReportsList";
 export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
 
 export default async function LandingPage() {
-  const allReports = await prisma.report.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      pelapor: { select: { nama: true } },
-      petugas: { select: { nama: true } },
-    },
-  });
+  const [allReports, totalReportsCount] = await Promise.all([
+    prisma.report.findMany({
+      take: 50,
+      orderBy: { createdAt: "desc" },
+      include: {
+        pelapor: { select: { nama: true } },
+        petugas: { select: { nama: true } },
+      },
+    }),
+    prisma.report.count(),
+  ]);
 
   return (
     <div className="min-h-screen bg-sibersih-bg font-sans flex flex-col">
@@ -74,7 +78,9 @@ export default async function LandingPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold px-3 py-1 bg-white border border-sibersih-primary/15 rounded-full text-sibersih-primary shadow-2xs">
-                {allReports.length} Laporan Tercatat
+                {totalReportsCount > allReports.length
+                  ? `${allReports.length} dari ${totalReportsCount} Laporan`
+                  : `${allReports.length} Laporan Tercatat`}
               </span>
             </div>
           </div>
