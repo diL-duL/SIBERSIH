@@ -26,10 +26,10 @@ export default function ApproveReportButton({ reportId }: { reportId: string }) 
       type="button"
       onClick={handleApprove}
       disabled={isPending}
-      className="w-full bg-sibersih-primary hover:bg-sibersih-primary/90 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm"
+      className="w-full h-10 bg-sibersih-primary hover:bg-sibersih-primary/90 text-white font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs sm:text-sm shadow-xs active:scale-[0.98]"
     >
-      <Check size={16} />
-      {isPending ? "Memproses..." : "Setujui Pekerjaan"}
+      <Check size={16} className="stroke-[2.5]" />
+      <span>{isPending ? "Memproses..." : "Setujui Pekerjaan"}</span>
     </Button>
   );
 }
