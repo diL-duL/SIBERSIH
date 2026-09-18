@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import ApproveReportButton from "@/components/ApproveReportButton";
+import RejectReportButton from "@/components/RejectReportButton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 
@@ -100,8 +101,13 @@ export default async function PimpinanValidations() {
                             </CardContent>
                         </div>
 
-                        <CardFooter className="p-4 sm:p-5 bg-sibersih-bg/40 border-t border-sibersih-primary/10">
-                            <ApproveReportButton reportId={item.id} />
+                        <CardFooter className="p-3.5 sm:p-4 bg-sibersih-bg/30 border-t border-sibersih-primary/10 flex items-center gap-2.5">
+                            <div className="flex-1 min-w-0">
+                                <ApproveReportButton reportId={item.id} />
+                            </div>
+                            <div className="shrink-0">
+                                <RejectReportButton reportId={item.id} reportLocation={item.lokasi} variant="validation" />
+                            </div>
                         </CardFooter>
                     </Card>
                 ))}

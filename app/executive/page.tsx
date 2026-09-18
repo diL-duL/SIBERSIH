@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import DashboardMapClient from "@/components/DashboardMapClient";
+import RejectReportButton from "@/components/RejectReportButton";
 
 export default async function PimpinanDashboard() {
     const session = await auth();
@@ -145,19 +146,24 @@ export default async function PimpinanDashboard() {
                                                 <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5 sm:mt-1 line-clamp-2">{report.deskripsi}</p>
                                             </div>
                                             <div className="mt-2.5 flex items-center justify-between gap-2">
-                                                {report.status === "MENUNGGU_APPROVAL" ? (
-                                                    <Link href="/executive/validations" className="text-xs font-bold px-3.5 py-1.5 bg-sibersih-primary text-white rounded-lg hover:bg-sibersih-primary/90 shadow-2xs transition-transform active:scale-95 inline-flex items-center justify-center">
-                                                        Review &amp; Setujui
-                                                    </Link>
-                                                ) : report.status === "SELESAI" ? (
-                                                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
-                                                        <CheckSquare size={12} /> Tervalidasi
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
-                                                        Dalam Antrean
-                                                    </span>
-                                                )}
+                                                <div className="flex items-center gap-2">
+                                                    {report.status === "MENUNGGU_APPROVAL" ? (
+                                                        <Link href="/executive/validations" className="text-xs font-bold px-3.5 py-1.5 bg-sibersih-primary text-white rounded-lg hover:bg-sibersih-primary/90 shadow-2xs transition-transform active:scale-95 inline-flex items-center justify-center">
+                                                            Review &amp; Setujui
+                                                        </Link>
+                                                    ) : report.status === "SELESAI" ? (
+                                                        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                                                            <CheckSquare size={12} /> Tervalidasi
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                                                            Dalam Antrean
+                                                        </span>
+                                                    )}
+                                                    {report.status !== "SELESAI" && (
+                                                        <RejectReportButton reportId={report.id} reportLocation={report.lokasi} variant="compact" />
+                                                    )}
+                                                </div>
                                                 <span className="text-[11px] text-sibersih-primary/40 hidden sm:inline">
                                                     {new Date(report.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
                                                 </span>

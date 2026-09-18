@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "./prisma";
-import { uploadImageToCloudinary, deleteImageFromCloudinary } from "./cloudinary";
+import { uploadImageToCloudinary, deleteImageFromCloudinary, deleteMultipleImagesFromCloudinary } from "./cloudinary";
 import { getValidUserId } from "./session-user";
 
 function sanitizeTextInput(input: unknown): string {
@@ -237,6 +237,51 @@ export async function approveLaporan(reportId: string) {
   revalidatePath("/reporter");
   revalidatePath("/reporter/history");
   revalidatePath("/staff");
+  revalidatePath("/staff/history");
+}
+
+export async function tolakLaporanPalsu(reportId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (session.user.role !== "PIMPINAN") {
+    throw new Error("Forbidden: Hanya Pimpinan yang berwenang menolak atau menghapus laporan palsu.");
+  }
+
+  const report = await prisma.report.findUnique({
+    where: { id: reportId },
+    select: {
+      id: true,
+      fotoLaporanUrl: true,
+      fotoBuktiUrl: true,
+    },
+  });
+
+  if (!report) {
+    throw new Error("Laporan tidak ditemukan atau sudah dihapus.");
+  }
+
+  // Hapus rekaman dari database
+  await prisma.report.delete({
+    where: { id: reportId },
+  });
+
+  // Hapus aset Cloudinary untuk membersihkan kuota penyimpanan
+  const imagesToDelete = [report.fotoLaporanUrl, report.fotoBuktiUrl].filter(
+    (url): url is string => Boolean(url)
+  );
+  if (imagesToDelete.length > 0) {
+    await deleteMultipleImagesFromCloudinary(imagesToDelete);
+  }
+
+  // Cross-role cache invalidation
+  revalidatePath("/");
+  revalidatePath("/executive");
+  revalidatePath("/executive/validations");
+  revalidatePath("/executive/history");
+  revalidatePath("/reporter");
+  revalidatePath("/reporter/history");
+  revalidatePath("/staff");
+  revalidatePath("/staff/tasks");
   revalidatePath("/staff/history");
 }
 
