@@ -67,9 +67,25 @@ export default async function PimpinanDashboard() {
             </div>
 
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-5 sm:gap-6 flex-1">
-                {/* KOLOM UTAMA (DESKTOP KIRI / MOBILE URUTAN KE-3: SETELAH PETA) */}
+                {/* 1. PETA PENGAWASAN WILAYAH (MOBILE: URUTAN PERTAMA DI ATAS / DESKTOP: URUTAN KETIGA DI PALING BAWAH) */}
+                <div className="order-1 lg:order-3 lg:col-span-3 bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex flex-col h-[260px] sm:h-[300px] lg:h-[340px] shrink-0">
+                    <div className="p-3.5 sm:p-4 border-b border-sibersih-primary/5 flex justify-between items-center shrink-0">
+                        <div>
+                            <h2 className="text-xs sm:text-sm font-semibold text-sibersih-primary">Peta Pengawasan Wilayah</h2>
+                            <p className="text-[11px] text-sibersih-primary/50 mt-0.5">Pemetaan sebaran laporan kebersihan seluruh area kampus</p>
+                        </div>
+                        <span className="text-[11px] font-medium text-sibersih-primary/60 bg-sibersih-primary/5 px-2.5 py-1 rounded-full border border-sibersih-primary/10">
+                            Fakultas Teknik
+                        </span>
+                    </div>
+                    <div className="w-full h-full flex-1 relative z-0 min-h-[190px]">
+                        <DashboardMapClient />
+                    </div>
+                </div>
+
+                {/* 2. KOLOM UTAMA (DESKTOP: KIRI 2-KOLOM / MOBILE: URUTAN KEDUA SETELAH PETA) */}
                 <div className="order-2 lg:order-1 lg:col-span-2 flex flex-col min-h-0">
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col overflow-hidden max-h-[500px] sm:max-h-[540px] lg:max-h-none lg:h-[580px]">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 flex flex-col overflow-hidden max-h-[500px] sm:max-h-[540px] lg:max-h-none lg:h-[420px]">
                         <div className="p-3.5 sm:p-4 border-b border-sibersih-primary/5 flex justify-between items-center gap-2 bg-gray-50/50 rounded-t-xl shrink-0">
                             <div>
                                 <h2 className="text-sm font-semibold text-sibersih-primary">Daftar Laporan Terakhir</h2>
@@ -166,10 +182,10 @@ export default async function PimpinanDashboard() {
                     </div>
                 </div>
 
-                {/* KOLOM SEKUNDER (DESKTOP KANAN / MOBILE URUTAN KE-2: SEBELUM DAFTAR VALIDASI) */}
-                <div className="order-1 lg:order-2 lg:col-span-1 flex flex-col gap-5 sm:gap-6 lg:h-[580px]">
+                {/* 3. KOLOM SEKUNDER (DESKTOP: KANAN 1-KOLOM / MOBILE: DISEMBUNYIKAN) */}
+                <div className="hidden lg:flex lg:order-2 lg:col-span-1 flex-col justify-between gap-5 sm:gap-6 lg:h-[420px]">
                     {/* STATISTIK KHUSUS DESKTOP */}
-                    <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden shrink-0">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden shrink-0">
                         <div className="p-4 border-b border-sibersih-primary/5 flex items-center justify-between">
                             <h2 className="text-sm font-semibold text-sibersih-primary">Ringkasan Validasi</h2>
                             <Link href="/executive/history" className="text-xs font-semibold text-sibersih-primary hover:underline">Riwayat</Link>
@@ -193,7 +209,7 @@ export default async function PimpinanDashboard() {
                     </div>
 
                     {/* MANAJEMEN PETUGAS DESKTOP */}
-                    <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden shrink-0">
+                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden shrink-0">
                         <div className="p-4 border-b border-sibersih-primary/5">
                             <h2 className="text-sm font-semibold text-sibersih-primary">Manajemen Petugas</h2>
                         </div>
@@ -202,17 +218,6 @@ export default async function PimpinanDashboard() {
                             <Link href="/executive/staff-management" className="flex items-center justify-center gap-2 bg-sibersih-accent/20 text-sibersih-primary px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-sibersih-accent/40 transition">
                                 <UserPlus size={16} /> Kelola Petugas
                             </Link>
-                        </div>
-                    </div>
-
-                    {/* MINIMAP FAKULTAS TEKNIK */}
-                    <div className="bg-white rounded-xl shadow-sm border border-sibersih-primary/10 overflow-hidden flex flex-col h-[260px] sm:h-[300px] lg:h-auto lg:flex-1 lg:min-h-0">
-                        <div className="p-3.5 sm:p-4 border-b border-sibersih-primary/5 flex justify-between items-center shrink-0">
-                            <h2 className="text-xs sm:text-sm font-semibold text-sibersih-primary">Peta Pengawasan Wilayah</h2>
-                            <span className="text-[11px] text-sibersih-primary/50">Fakultas Teknik</span>
-                        </div>
-                        <div className="w-full h-full flex-1 relative z-0 min-h-[190px]">
-                            <DashboardMapClient />
                         </div>
                     </div>
                 </div>
