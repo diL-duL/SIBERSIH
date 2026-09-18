@@ -8,7 +8,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-sibersih-primary/10 bg-white text-sibersih-primary shadow-sm transition-all hover:border-sibersih-primary/20",
+      "rounded-2xl border border-sibersih-primary/10 bg-white text-sibersih-primary transition-all hover:border-sibersih-primary/20",
       className
     )}
     {...props}
@@ -22,7 +22,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6 border-b border-sibersih-primary/5 bg-sibersih-bg/50", className)}
+    className={cn("flex flex-col space-y-1.5 p-5 sm:p-6 border-b border-sibersih-primary/5 bg-sibersih-bg/40", className)}
     {...props}
   />
 ));
@@ -34,7 +34,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("text-lg font-semibold leading-none tracking-tight text-sibersih-primary", className)}
+    className={cn("text-lg font-medium leading-none tracking-tight text-sibersih-primary", className)}
     {...props}
   />
 ));
@@ -46,7 +46,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-sibersih-primary/60", className)}
+    className={cn("text-sm text-sibersih-primary/60 leading-relaxed", className)}
     {...props}
   />
 ));
@@ -56,7 +56,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6", className)} {...props} />
+  <div ref={ref} className={cn("p-5 sm:p-6", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
 
@@ -66,7 +66,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center p-6 pt-0 border-t border-sibersih-primary/5 bg-sibersih-bg/30", className)}
+    className={cn("flex items-center p-5 sm:p-6 pt-0 border-t border-sibersih-primary/5 bg-sibersih-bg/20", className)}
     {...props}
   />
 ));

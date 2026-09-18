@@ -21,7 +21,7 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen bg-sibersih-bg font-sans flex flex-col">
       {/* Navbar */}
-      <header className="w-full bg-white/80 backdrop-blur-md border-b border-sibersih-primary/10 sticky top-0 z-50">
+      <header className="w-full bg-sibersih-bg/90 backdrop-blur-md border-b border-sibersih-primary/10 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center py-1">
             <div className="relative h-11 w-24 sm:w-28">
@@ -38,7 +38,7 @@ export default async function LandingPage() {
           <div className="flex items-center gap-3">
             <Link 
               href="/login" 
-              className="px-4 py-2 bg-sibersih-primary text-white rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"
+              className="px-5 py-2 bg-sibersih-primary text-snow-white rounded-full font-medium text-sm hover:bg-sibersih-primary/90 transition-all"
             >
               Masuk
             </Link>
@@ -49,7 +49,7 @@ export default async function LandingPage() {
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-10">
         {/* Hero Section */}
         <section className="text-center max-w-2xl mx-auto space-y-4 pt-6 pb-4">
-          <h1 className="text-3xl sm:text-4xl font-bold text-sibersih-primary tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-light text-sibersih-primary tracking-tight">
             Sistem Pelaporan Kebersihan Kampus
           </h1>
           <p className="text-sm sm:text-base text-sibersih-primary/70 leading-relaxed">
@@ -58,7 +58,7 @@ export default async function LandingPage() {
           <div className="pt-2 flex items-center justify-center">
             <Link 
               href="/login" 
-              className="px-6 py-2.5 bg-sibersih-primary text-white rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"
+              className="px-7 py-2.5 bg-sibersih-primary text-snow-white rounded-full font-medium text-sm hover:bg-sibersih-primary/90 transition-all"
             >
               Mulai Melapor
             </Link>
@@ -69,7 +69,7 @@ export default async function LandingPage() {
         <section className="space-y-6 pb-16">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-sibersih-primary/10 pb-4">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">
+              <h2 className="text-xl sm:text-2xl font-normal text-sibersih-primary tracking-tight">
                 Daftar Laporan Kebersihan
               </h2>
               <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
@@ -77,7 +77,7 @@ export default async function LandingPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold px-3 py-1 bg-white border border-sibersih-primary/15 rounded-full text-sibersih-primary shadow-2xs">
+              <span className="text-xs font-mono font-medium px-3.5 py-1 bg-warm-stone border border-sibersih-primary/10 rounded-full text-sibersih-primary">
                 {totalReportsCount > allReports.length
                   ? `${allReports.length} dari ${totalReportsCount} Laporan`
                   : `${allReports.length} Laporan Tercatat`}

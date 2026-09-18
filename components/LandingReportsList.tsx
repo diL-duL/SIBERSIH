@@ -27,21 +27,21 @@ function getStatusBadge(status: string) {
   switch (status) {
     case "SELESAI":
       return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Selesai
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-forest-depths bg-lime-pulse px-3 py-0.5 rounded-full shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-forest-depths" /> Selesai
         </span>
       );
     case "MENUNGGU_APPROVAL":
       return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Menunggu Validasi
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-forest-depths bg-warm-stone px-3 py-0.5 rounded-full border border-sibersih-primary/10 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-olive-gold" /> Menunggu Validasi
         </span>
       );
     case "LAPORAN_MASUK":
     default:
       return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" /> Laporan Masuk
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-sage-moss bg-snow-white px-3 py-0.5 rounded-full border border-sage-moss/30 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-sage-moss" /> Laporan Masuk
         </span>
       );
   }
@@ -53,7 +53,7 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
 
   if (reports.length === 0) {
     return (
-      <div className="py-12 text-center text-sm text-sibersih-primary/50 bg-white rounded-xl border border-dashed border-sibersih-primary/15">
+      <div className="py-12 text-center text-sm text-sibersih-primary/50 bg-white rounded-2xl border border-dashed border-sibersih-primary/15">
         Belum ada laporan kebersihan saat ini.
       </div>
     );
@@ -69,16 +69,16 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
           return (
             <div
               key={report.id}
-              className="bg-white rounded-xl border border-sibersih-primary/10 shadow-xs hover:shadow-sm transition-all p-4 sm:p-5 flex flex-col justify-between"
+              className="bg-white rounded-2xl border border-sibersih-primary/10 hover:border-sibersih-primary/25 transition-all p-5 sm:p-6 flex flex-col justify-between"
             >
               <div>
                 {/* Lokasi & Status */}
                 <div className="flex items-start justify-between gap-2.5 mb-2.5">
                   <div className="min-w-0 flex-1">
-                    <span className="text-[10px] font-mono font-medium text-sibersih-primary/50 bg-sibersih-primary/5 px-1.5 py-0.5 rounded border border-sibersih-primary/10 inline-block mb-1">
+                    <span className="text-[10px] font-mono tracking-wider font-medium text-sibersih-primary/60 bg-warm-stone px-2 py-0.5 rounded-full border border-sibersih-primary/10 inline-block mb-1">
                       #{report.id.substring(0, 8)}
                     </span>
-                    <h3 className="font-bold text-sibersih-primary text-sm sm:text-base line-clamp-1 flex items-center gap-1.5">
+                    <h3 className="font-medium text-sibersih-primary text-base line-clamp-1 flex items-center gap-1.5">
                       <MapPin size={14} className="text-sibersih-primary/50 shrink-0" />
                       <span className="truncate">{report.lokasi}</span>
                     </h3>
@@ -89,7 +89,7 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
                 {/* Detail Laporan & Catatan Petugas */}
                 <div className="space-y-2.5 mb-4">
                   <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-sibersih-primary/50 block">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-sibersih-primary/50 block">
                       Deskripsi Laporan:
                     </span>
                     <p className="text-xs sm:text-sm text-sibersih-primary/80 leading-relaxed mt-0.5">
@@ -98,11 +98,11 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
                   </div>
 
                   {report.deskripsiPetugas && (
-                    <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100 text-xs">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-800 block mb-0.5">
+                    <div className="p-3 rounded-xl bg-warm-stone/70 border border-sibersih-primary/10 text-xs">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-sibersih-primary/60 block mb-0.5">
                         Catatan Petugas:
                       </span>
-                      <p className="text-emerald-950/80 leading-relaxed">
+                      <p className="text-sibersih-primary/90 leading-relaxed">
                         {report.deskripsiPetugas}
                       </p>
                     </div>
@@ -132,7 +132,7 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
                     })}
                   </span>
                   {report.status === "SELESAI" && (
-                    <span className="text-emerald-700 font-medium">
+                    <span className="text-forest-depths font-medium">
                       Selesai:{" "}
                       {new Date(report.updatedAt).toLocaleDateString("id-ID", {
                         day: "numeric",
@@ -153,7 +153,7 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
           <button
             type="button"
             onClick={() => setShowAll((prev) => !prev)}
-            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl border border-sibersih-primary/15 bg-white hover:bg-sibersih-bg text-sibersih-primary font-semibold text-xs sm:text-sm shadow-2xs hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-full border border-sibersih-primary/20 bg-white hover:bg-warm-stone text-sibersih-primary font-medium text-xs sm:text-sm active:scale-[0.99] transition-all cursor-pointer"
           >
             <span>
               {showAll ? "Tampilkan Lebih Sedikit" : "Lihat Semua Laporan"}

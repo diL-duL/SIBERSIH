@@ -3,28 +3,64 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #fafafa;
-  --foreground: #1F4B2C;
-  --color-sibersih-bg: #fafafa;
-  --color-sibersih-primary: #1F4B2C;
-  --color-sibersih-accent: #91EAAF;
+  /* Seed Color Tokens */
+  --color-forest-depths: #1c3a13;
+  --color-lime-pulse: #d3fa99;
+  --color-sage-moss: #757c5d;
+  --color-olive-gold: #9f995b;
+  --color-eucalyptus: #698e79;
+  --color-snow-white: #fcfcf7;
+  --color-warm-stone: #eeeee9;
+  --color-frosted-glass: #c4c7c4;
+  --color-ash: #b3b3b3;
+  --color-pewter: #666666;
+  --color-ink: #000000;
+
+  /* SIBERSIH Semantic Tokens Mapped to Seed Botanical-Clinical */
+  --background: #fcfcf7;
+  --foreground: #1c3a13;
+  --color-sibersih-bg: #fcfcf7;
+  --color-sibersih-primary: #1c3a13;
+  --color-sibersih-accent: #d3fa99;
+
+  /* Surfaces */
+  --surface-page-canvas: #fcfcf7;
+  --surface-card-surface: #ffffff;
+  --surface-warm-stone: #eeeee9;
+  --surface-dark-section: #1c3a13;
+  --surface-accent-highlight: #d3fa99;
+
   color-scheme: light;
 }
 
 .dark {
-  --background: #0d1117;
-  --foreground: #f0f6fc;
-  --color-sibersih-bg: #0d1117;
-  --color-sibersih-primary: #3fb950;
-  --color-sibersih-accent: #2ea043;
+  --background: #10190e;
+  --foreground: #fcfcf7;
+  --color-sibersih-bg: #10190e;
+  --color-sibersih-primary: #d3fa99;
+  --color-sibersih-accent: #757c5d;
   color-scheme: dark;
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Seed Palette */
+  --color-forest-depths: #1c3a13;
+  --color-lime-pulse: #d3fa99;
+  --color-sage-moss: #757c5d;
+  --color-olive-gold: #9f995b;
+  --color-eucalyptus: #698e79;
+  --color-snow-white: #fcfcf7;
+  --color-warm-stone: #eeeee9;
+  --color-frosted-glass: #c4c7c4;
+  --color-ash: #b3b3b3;
+  --color-pewter: #666666;
+  --color-ink: #000000;
+
   /* SIBERSIH Custom Palette */
   --color-sibersih-bg: var(--color-sibersih-bg);
   --color-sibersih-primary: var(--color-sibersih-primary);
@@ -33,11 +69,39 @@
 
 body {
   background-color: var(--color-sibersih-bg);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-sibersih-primary);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   margin: 0;
   padding: 0;
   transition: background-color 0.25s ease, color 0.25s ease;
+  letter-spacing: -0.01em;
+}
+
+/* Seed Typography Restraint: Whisper-light headline weights (300-350) with tight tracking */
+h1 {
+  font-weight: 350 !important;
+  letter-spacing: -0.025em !important;
+}
+
+h2 {
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+}
+
+h3 {
+  font-weight: 500 !important;
+  letter-spacing: -0.015em !important;
+}
+
+/* Seed Aesthetic: Shadowless & Flat surfaces */
+.shadow-sm,
+.shadow-md,
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl,
+.shadow-xs,
+.shadow-2xs {
+  box-shadow: none !important;
 }
 
 /* Dark Mode Overrides for Global Theme Consistency (Neutral Slate + Forest Green) */

@@ -42,7 +42,7 @@ export default function RejectReportButton({
           type="button"
           onClick={() => setOpen(true)}
           title="Tolak & Hapus Laporan Palsu"
-          className={`inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 hover:text-red-700 bg-red-50/80 hover:bg-red-100/80 border border-red-200/70 px-2 py-1 rounded-md transition-colors active:scale-95 cursor-pointer ${className}`}
+          className={`inline-flex items-center gap-1 text-[11px] font-medium text-red-700 hover:text-red-800 bg-red-50/80 hover:bg-red-100 border border-red-200/80 px-2.5 py-1 rounded-full transition-colors active:scale-95 cursor-pointer ${className}`}
         >
           <Trash2 size={12} className="shrink-0" />
           <span>Tolak</span>
@@ -52,16 +52,16 @@ export default function RejectReportButton({
           type="button"
           onClick={() => setOpen(true)}
           title="Tolak & Hapus Laporan Palsu"
-          className={`h-10 px-3.5 sm:px-4 bg-white hover:bg-red-50 text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs sm:text-sm shadow-2xs active:scale-[0.98] cursor-pointer shrink-0 ${className}`}
+          className={`h-10 px-4 bg-white hover:bg-red-50 text-red-700 hover:text-red-800 border border-red-200 hover:border-red-300 font-medium rounded-full transition-all flex items-center justify-center gap-1.5 text-xs sm:text-sm active:scale-[0.98] cursor-pointer shrink-0 ${className}`}
         >
-          <Trash2 size={15} className="shrink-0 text-red-500" />
+          <Trash2 size={15} className="shrink-0 text-red-600" />
           <span>Tolak<span className="hidden sm:inline"> Laporan</span></span>
         </button>
       ) : (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className={`w-full h-10 bg-white hover:bg-red-50 text-red-600 hover:text-red-700 border border-red-200/80 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-2xs active:scale-[0.98] cursor-pointer ${className}`}
+          className={`w-full h-10 bg-white hover:bg-red-50 text-red-700 hover:text-red-800 border border-red-200/80 font-medium py-2.5 rounded-full transition-all flex items-center justify-center gap-2 text-sm active:scale-[0.98] cursor-pointer ${className}`}
         >
           <Trash2 size={15} />
           <span>Tolak Laporan Palsu</span>

@@ -3,21 +3,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-medium tracking-tight transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-sibersih-primary text-white shadow hover:bg-sibersih-primary/90",
+          "border-transparent bg-sibersih-primary text-snow-white hover:bg-sibersih-primary/90",
         secondary:
-          "border-transparent bg-sibersih-accent/30 text-sibersih-primary hover:bg-sibersih-accent/40",
+          "border-transparent bg-warm-stone text-sibersih-primary hover:bg-frosted-glass/40",
         destructive:
-          "border-transparent bg-red-100 text-red-700 hover:bg-red-200",
+          "border-transparent bg-red-100 text-red-800 hover:bg-red-200",
         warning:
-          "border-transparent bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/50",
+          "border border-sibersih-primary/10 bg-warm-stone text-sibersih-primary",
         success:
-          "border-transparent bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
-        outline: "text-sibersih-primary border border-sibersih-primary/20",
+          "border-transparent bg-lime-pulse text-forest-depths font-semibold",
+        outline: "text-sibersih-primary border border-sibersih-primary/20 bg-transparent",
       },
     },
     defaultVariants: {
