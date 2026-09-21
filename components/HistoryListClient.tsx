@@ -28,6 +28,7 @@ interface HistoryListClientProps {
   itemHrefPrefix?: string; // Optional prefix if item is clickable (e.g. "/staff/")
   pageSize?: number;
   role?: "PELAPOR" | "PETUGAS" | "PIMPINAN";
+  showDeleteButton?: boolean;
 }
 
 export default function HistoryListClient({
@@ -35,6 +36,7 @@ export default function HistoryListClient({
   itemHrefPrefix,
   pageSize = 5,
   role,
+  showDeleteButton = true,
 }: HistoryListClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -216,7 +218,7 @@ export default function HistoryListClient({
               <ReporterReportCard
                 key={item.id}
                 report={item}
-                showDeleteButton={false}
+                showDeleteButton={showDeleteButton && role !== "PIMPINAN"}
               />
             );
           })

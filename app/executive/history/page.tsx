@@ -28,7 +28,7 @@ export default async function ExecutiveHistoryPage() {
                     </p>
                 </header>
 
-                <HistoryListClient reports={completedTasks} />
+                <HistoryListClient reports={completedTasks} role="PIMPINAN" />
             </div>
         </div>
     );

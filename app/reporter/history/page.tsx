@@ -32,7 +32,7 @@ export default async function ReporterHistoryPage() {
                     </p>
                 </header>
 
-                <HistoryListClient reports={historyData} />
+                <HistoryListClient reports={historyData} role="PELAPOR" />
             </div>
         </div>
     );

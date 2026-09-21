@@ -266,13 +266,18 @@ export default function ReporterReportCard({
                   </div>
                 </div>
 
-                <Link
-                  href={`/reporter/report/${report.id}/edit`}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors shrink-0 self-start sm:self-center"
-                >
-                  <Pencil size={13} />
-                  <span>Edit Laporan</span>
-                </Link>
+                <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+                  <Link
+                    href={`/reporter/report/${report.id}/edit`}
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors shrink-0"
+                  >
+                    <Pencil size={13} />
+                    <span>Edit Laporan</span>
+                  </Link>
+                  {showDeleteButton && (
+                    <DeleteReportButton reportId={report.id} showText />
+                  )}
+                </div>
               </div>
             )}
 
