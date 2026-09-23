@@ -161,5 +161,4 @@ Proyek ini telah dikonfigurasi dengan mode `output: "standalone"` di `next.confi
 
 ## Lisensi & Kontribusi
 
-Dikembangkan untuk **Fakultas Teknik, Universitas Tadulako**.  
-Hak Cipta © 2026 SiBersih. Seluruh hak cipta dilindungi undang-undang.
+Dikembangkan untuk **Fakultas Teknik, Universitas Tadulako**.
