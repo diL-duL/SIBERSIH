@@ -43,7 +43,7 @@ export default function LoginPage() {
           
           <div className="space-y-4 pb-8 max-w-lg">
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.15] drop-shadow-lg">
-              Sistem Pelaporan Kebersihan Kampus
+              Sistem Pelaporan Kebersihan Fatek
             </h1>
             <p className="text-base sm:text-lg text-white/85 leading-relaxed drop-shadow-sm font-normal">
               Fakultas Teknik, Universitas Tadulako. Laporkan fasilitas dan area yang memerlukan penanganan kebersihan secara langsung dan transparan.

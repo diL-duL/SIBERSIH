@@ -63,7 +63,7 @@ export default async function LandingPage() {
             />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-sibersih-primary tracking-tight">
-            Sistem Pelaporan Kebersihan Kampus
+            Sistem Pelaporan Kebersihan Fatek
           </h1>
           <p className="text-sm sm:text-base text-sibersih-primary/70 leading-relaxed">
             Fakultas Teknik, Universitas Tadulako. Laporkan fasilitas dan area yang memerlukan penanganan kebersihan untuk segera ditindaklanjuti oleh petugas.
