@@ -156,20 +156,10 @@ export default function ProfileClient({ user }: ProfileProps) {
               {/* Personal Info Tab */}
               {activeTab === 'personal' && (
                 <div className="animate-in fade-in duration-500">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold tracking-tight text-sibersih-primary flex items-center gap-2">
-                      <UserIcon className="w-5 h-5 text-sibersih-primary/80" />
-                      Informasi Pribadi
-                    </h2>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('edit')}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-sibersih-primary/15 bg-white text-sibersih-primary text-xs font-semibold hover:bg-sibersih-bg transition-colors shadow-2xs cursor-pointer"
-                    >
-                      <Edit size={13} />
-                      <span>Ubah Profil</span>
-                    </button>
-                  </div>
+                  <h2 className="text-xl font-bold tracking-tight text-sibersih-primary mb-6 flex items-center gap-2">
+                    <UserIcon className="w-5 h-5 text-sibersih-primary/80" />
+                    Informasi Pribadi
+                  </h2>
                   
                   <div className="grid grid-cols-1 gap-4">
                     <div className="p-4 rounded-xl bg-sibersih-bg border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300">
