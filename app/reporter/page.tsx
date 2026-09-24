@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CheckSquare, Hourglass, Megaphone, Plus, User } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -31,9 +32,14 @@ export default async function PelaporDashboard() {
         <div className="pb-16 pt-6 sm:pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 w-full">
             {/* HEADER */}
             <header className="flex flex-row justify-between items-center mb-5 sm:mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
-                <div className="min-w-0 flex-1">
-                    <h1 className="text-lg sm:text-2xl font-bold text-sibersih-primary truncate">Halo, {userName}</h1>
-                    <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">Civitas Akademik / Pelapor</p>
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden shadow-2xs shrink-0 border border-sibersih-primary/10 bg-white">
+                        <Image src="/sibersihLogo.webp" alt="SiBersih" fill className="object-contain" priority sizes="44px" />
+                    </div>
+                    <div className="min-w-0">
+                        <h1 className="text-lg sm:text-2xl font-bold text-sibersih-primary truncate">Halo, {userName}</h1>
+                        <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">Civitas Akademik / Pelapor</p>
+                    </div>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <Link

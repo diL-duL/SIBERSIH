@@ -23,17 +23,20 @@ export default async function LandingPage() {
       {/* Navbar */}
       <header className="w-full bg-white/80 backdrop-blur-md border-b border-sibersih-primary/10 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center py-1">
-            <div className="relative h-11 w-24 sm:w-28">
+          <Link href="/" className="flex items-center gap-2.5 py-1">
+            <div className="relative h-10 w-10 sm:h-11 sm:w-11">
               <Image 
-                src="/newlogowithtext.png" 
+                src="/sibersihLogo.webp" 
                 alt="SiBersih" 
                 fill 
                 priority 
-                className="object-contain object-left dark:brightness-0 dark:invert transition-[filter]" 
-                sizes="120px" 
+                className="object-contain" 
+                sizes="44px" 
               />
             </div>
+            <span className="font-bold text-xl sm:text-2xl text-sibersih-primary tracking-tight">
+              SiBersih
+            </span>
           </Link>
           <div className="flex items-center gap-3">
             <Link 
@@ -48,7 +51,17 @@ export default async function LandingPage() {
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-10">
         {/* Hero Section */}
-        <section className="text-center max-w-2xl mx-auto space-y-4 pt-6 pb-4">
+        <section className="text-center max-w-2xl mx-auto space-y-4 pt-4 pb-4 flex flex-col items-center">
+          <div className="relative h-20 w-20 sm:h-24 sm:w-24 mb-1 drop-shadow-sm">
+            <Image 
+              src="/sibersihLogo.webp" 
+              alt="Logo SiBersih" 
+              fill 
+              priority 
+              className="object-contain" 
+              sizes="96px" 
+            />
+          </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-sibersih-primary tracking-tight">
             Sistem Pelaporan Kebersihan Kampus
           </h1>
@@ -90,8 +103,11 @@ export default async function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-sibersih-primary/10 py-6 text-center text-xs text-sibersih-primary/50">
-        © {new Date().getFullYear()} SiBersih — Fakultas Teknik, Universitas Tadulako
+      <footer className="border-t border-sibersih-primary/10 py-6 text-center text-xs text-sibersih-primary/50 flex items-center justify-center gap-2">
+        <div className="relative h-4 w-4 opacity-75">
+          <Image src="/sibersihLogo.webp" alt="SiBersih" fill className="object-contain" sizes="16px" />
+        </div>
+        <span>© {new Date().getFullYear()} SiBersih — Fakultas Teknik, Universitas Tadulako</span>
       </footer>
     </div>
   );

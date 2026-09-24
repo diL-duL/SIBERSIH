@@ -18,6 +18,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SiBersih | Pelaporan Sampah",
   description: "Aplikasi pelaporan dan manajemen kebersihan",
+  icons: {
+    icon: "/sibersihLogo.webp",
+    apple: "/sibersihLogo.webp",
+  },
 };
 
 export default function RootLayout({

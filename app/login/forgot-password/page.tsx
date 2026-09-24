@@ -40,7 +40,20 @@ export default function ForgotPasswordPage() {
         {/* Subtle gradient overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
-        <div className="absolute inset-0 flex flex-col justify-end p-12 text-white">
+        <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
+          <div className="flex items-center gap-3">
+             <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg border border-white/30 bg-white">
+               <Image 
+                 src="/sibersihLogo.webp" 
+                 alt="SiBersih" 
+                 fill 
+                 priority 
+                 sizes="44px" 
+                 className="object-contain" 
+               />
+             </div>
+             <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md">SiBersih</span>
+          </div>
           
           <div className="space-y-5 pb-8">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl max-w-lg leading-tight">
@@ -55,10 +68,11 @@ export default function ForgotPasswordPage() {
 
       {/* Right side - Form */}
       <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 lg:w-1/2 xl:px-24">
-        <div className="mx-auto w-full max-w-md flex justify-center -mb-6">
-           <div className="relative h-48 w-full max-w-[420px]">
-             <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain dark:brightness-0 dark:invert" priority sizes="(max-width: 768px) 100vw, 420px" />
+        <div className="mx-auto w-full max-w-md flex flex-col items-center justify-center -mb-2">
+           <div className="relative h-16 w-16 mb-2">
+             <Image src="/sibersihLogo.webp" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="64px" />
            </div>
+           <span className="font-bold text-xl text-sibersih-primary tracking-tight">SiBersih</span>
         </div>
         <div className="mx-auto w-full max-w-sm space-y-8">
           <div className="space-y-2 text-center lg:text-left">

@@ -28,8 +28,15 @@ export default function RegisterPage() {
         
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-xl shadow-lg border border-white/30">
-               S
+             <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg border border-white/30 bg-white">
+               <Image 
+                 src="/sibersihLogo.webp" 
+                 alt="SiBersih" 
+                 fill 
+                 priority 
+                 sizes="44px" 
+                 className="object-contain" 
+               />
              </div>
              <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md">SiBersih</span>
           </div>
@@ -50,10 +57,11 @@ export default function RegisterPage() {
         <div className="mx-auto w-full max-w-md flex flex-col gap-8">
           
           {/* Mobile Logo */}
-          <div className="flex items-center justify-center lg:hidden -mb-4">
-            <div className="relative h-16 w-48">
-              <Image src="/newlogowithtext.png" alt="SIBERSIH Logo" fill className="object-contain dark:brightness-0 dark:invert" priority sizes="(max-width: 1024px) 192px, 0px" />
+          <div className="flex flex-col items-center justify-center lg:hidden -mb-4">
+            <div className="relative h-16 w-16 mb-1">
+              <Image src="/sibersihLogo.webp" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="64px" />
             </div>
+            <span className="font-bold text-xl text-sibersih-primary tracking-tight">SiBersih</span>
           </div>
 
           <div className="space-y-2 text-center lg:text-left">
