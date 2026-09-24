@@ -19,8 +19,14 @@ export const metadata: Metadata = {
   title: "SiBersih | Pelaporan Sampah",
   description: "Aplikasi pelaporan dan manajemen kebersihan",
   icons: {
-    icon: "/sibersihLogo.webp",
-    apple: "/sibersihLogo.webp",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: "/sibersihLogo.webp", type: "image/webp" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
