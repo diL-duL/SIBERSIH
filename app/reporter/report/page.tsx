@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon, MapPin } from "lucide-react";
+import { UploadCloud, ArrowLeft, Eye, RefreshCw, Camera, ImageIcon, MapPin, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useActionState, useRef, useEffect } from "react";
@@ -124,7 +124,7 @@ export default function ReportPage() {
                 dataTransfer.items.add(file);
                 mainFileInputRef.current.files = dataTransfer.files;
             }
-            setPreviewUrl(URL.createObjectURL(file));
+            updatePreview(file);
         }
     };
 
@@ -201,45 +201,45 @@ export default function ReportPage() {
                         </div>
 
                         {/* 3. Upload Foto Section */}
-                        <div className="space-y-2">
+                        <div className="space-y-2.5">
                             <label className="text-xs sm:text-sm font-bold text-sibersih-primary flex items-center justify-between">
                                 <span>3. Foto Bukti Sampah <span className="text-red-500">*</span></span>
                                 {previewUrl && (
-                                    <span className="text-[10px] text-green-700 font-semibold bg-green-100 px-2 py-0.5 rounded-full">
-                                        ✓ Foto Terpilih
+                                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-800/60 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                        <CheckCircle2 size={12} /> Foto Terpilih
                                     </span>
                                 )}
                             </label>
 
                             <div 
-                                className={`flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed rounded-2xl transition-all overflow-hidden bg-sibersih-bg/40 ${
+                                className={`flex flex-col items-center justify-center p-5 sm:p-7 border border-dashed rounded-xl transition-all overflow-hidden bg-slate-50/50 dark:bg-slate-800/20 ${
                                     isDragging 
-                                        ? 'border-sibersih-accent bg-sibersih-accent/15 scale-[1.01]' 
-                                        : 'border-sibersih-primary/20 hover:border-sibersih-primary/40'
+                                        ? 'border-sibersih-primary bg-sibersih-primary/5' 
+                                        : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
                                 }`}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
                             >
                                 {previewUrl ? (
-                                    <div className="relative w-full h-56 rounded-xl overflow-hidden shadow-inner group">
+                                    <div className="relative w-full h-56 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xs group">
                                         <Image src={previewUrl} alt="Preview Foto Laporan" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                                        <div className="absolute inset-0 bg-black/60 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
+                                        <div className="absolute inset-0 bg-slate-950/50 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5 p-2 backdrop-blur-[1px]">
                                             <Button 
                                                 type="button"
                                                 variant="secondary"
                                                 size="sm"
                                                 onClick={(e) => openLightbox(previewUrl, e)}
-                                                className="gap-1.5 text-xs font-semibold shadow-md bg-white text-sibersih-primary hover:bg-sibersih-bg"
+                                                className="gap-1.5 text-xs font-semibold shadow-xs bg-white/95 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 hover:bg-white"
                                             >
-                                                <Eye size={14} /> Lihat Full
+                                                <Eye size={13} /> Lihat Foto Penuh
                                             </Button>
                                             
                                             <label 
                                                 htmlFor="file-upload-change"
-                                                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-white text-sibersih-primary border border-sibersih-primary/20 rounded-lg shadow-sm hover:bg-sibersih-bg cursor-pointer transition-all"
+                                                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-white/95 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xs hover:bg-white cursor-pointer transition-all"
                                             >
-                                                <RefreshCw size={14} className="pointer-events-none" />
+                                                <RefreshCw size={13} className="pointer-events-none" />
                                                 <span className="pointer-events-none">Ganti Foto</span>
                                                 <input 
                                                     id="file-upload-change" 
@@ -254,19 +254,19 @@ export default function ReportPage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-4 text-center py-2 w-full flex flex-col items-center">
-                                        <div className="w-14 h-14 rounded-full bg-sibersih-primary/10 border border-sibersih-primary/15 flex items-center justify-center shadow-xs">
-                                            <UploadCloud className="h-7 w-7 text-sibersih-primary" />
+                                        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-center text-slate-500 dark:text-slate-400">
+                                            <UploadCloud className="h-6 w-6" />
                                         </div>
 
-                                        {/* Mobile Native Labels with Hidden File Inputs */}
+                                        {/* Native Labels with Hidden File Inputs */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-sm">
                                             {/* Camera Label/Input */}
                                             <label 
                                                 htmlFor="file-upload-camera"
                                                 onClick={handleDesktopCameraClick}
-                                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-all cursor-pointer select-none"
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 hover:border-slate-300 text-slate-700 dark:text-slate-200 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-medium shadow-2xs transition-all cursor-pointer select-none"
                                             >
-                                                <Camera size={18} className="pointer-events-none shrink-0 text-emerald-600" />
+                                                <Camera size={16} className="pointer-events-none shrink-0 text-slate-500 dark:text-slate-400" />
                                                 <span className="pointer-events-none">Ambil Foto</span>
                                                 <input 
                                                     id="file-upload-camera" 
@@ -282,10 +282,10 @@ export default function ReportPage() {
                                             {/* Gallery Label/Input */}
                                             <label 
                                                 htmlFor="file-upload-gallery"
-                                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sibersih-primary/20 hover:bg-sibersih-bg text-sibersih-primary active:scale-[0.98] rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-all cursor-pointer select-none"
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 hover:border-slate-300 text-slate-700 dark:text-slate-200 active:scale-[0.98] rounded-xl text-xs sm:text-sm font-medium shadow-2xs transition-all cursor-pointer select-none"
                                             >
-                                                <ImageIcon size={18} className="pointer-events-none shrink-0 text-sibersih-primary/60" />
-                                                <span className="pointer-events-none">Galeri HP</span>
+                                                <ImageIcon size={16} className="pointer-events-none shrink-0 text-slate-500 dark:text-slate-400" />
+                                                <span className="pointer-events-none">Pilih dari Galeri</span>
                                                 <input 
                                                     id="file-upload-gallery" 
                                                     name="file-upload-gallery"
@@ -297,8 +297,8 @@ export default function ReportPage() {
                                             </label>
                                         </div>
 
-                                        <p className="text-[10px] sm:text-xs text-sibersih-primary/50">
-                                            Format PNG, JPG atau WEBP (Otomatis dikompresi)
+                                        <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                                            Format PNG, JPG atau WEBP (Maksimal 5MB)
                                         </p>
                                     </div>
                                 )}
