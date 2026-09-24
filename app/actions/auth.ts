@@ -147,3 +147,21 @@ export async function registerAction(prevState: string | undefined, formData: Fo
   
   redirect('/login');
 }
+
+export async function loginWithGoogleAction(prevState?: string | undefined) {
+  const googleId = process.env.AUTH_GOOGLE_ID || process.env.GOOGLE_CLIENT_ID;
+  const googleSecret = process.env.AUTH_GOOGLE_SECRET || process.env.GOOGLE_CLIENT_SECRET;
+
+  if (!googleId || !googleSecret) {
+    return 'Konfigurasi Google OAuth belum disetel di file .env (AUTH_GOOGLE_ID / AUTH_GOOGLE_SECRET).';
+  }
+
+  try {
+    await signIn('google', { redirectTo: '/' });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return 'Terjadi kesalahan saat masuk dengan Google.';
+    }
+    throw error;
+  }
+}

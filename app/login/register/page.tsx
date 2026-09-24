@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useActionState } from "react";
 import { registerAction } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/SubmitButton";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
@@ -171,6 +172,14 @@ export default function RegisterPage() {
               Daftar
             </SubmitButton>
           </form>
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-gray-200 w-full" />
+            <span className="bg-white px-3 text-xs text-sibersih-primary/50 uppercase font-medium">atau</span>
+            <div className="border-t border-gray-200 w-full" />
+          </div>
+
+          <GoogleSignInButton text="Daftar dengan Google" />
 
           <div className="text-center text-sm text-sibersih-primary/60 flex items-center justify-center gap-1">
             Sudah punya akun?

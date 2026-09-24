@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useActionState } from "react";
 import { loginAction } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/SubmitButton";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
@@ -130,6 +131,14 @@ export default function LoginPage() {
               Masuk
             </SubmitButton>
           </form>
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-gray-200 w-full" />
+            <span className="bg-white px-3 text-xs text-sibersih-primary/50 uppercase font-medium">atau</span>
+            <div className="border-t border-gray-200 w-full" />
+          </div>
+
+          <GoogleSignInButton text="Masuk dengan Google" />
 
           <div className="text-center text-sm text-sibersih-primary/60 flex items-center justify-center gap-1">
             Belum punya akun?
