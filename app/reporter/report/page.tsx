@@ -16,7 +16,10 @@ type ActionState = { message: string | null; error: string | null };
 
 async function formAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
     try {
-        await buatLaporan(formData);
+        const result = await buatLaporan(formData);
+        if (result && !result.success) {
+            return { message: null, error: result.error || "Gagal mengirim laporan" };
+        }
         return { message: "Laporan berhasil dikirim", error: null };
     } catch (e: unknown) {
         const error = e as Error;
@@ -80,6 +83,8 @@ export default function ReportPage() {
                 mainFileInputRef.current.files = dataTransfer.files;
             }
             updatePreview(file);
+            // Reset nilai elemen input target agar event onChange tetap terpanggil jika memilih ulang file yang sama
+            e.target.value = '';
         }
     };
 
@@ -243,7 +248,6 @@ export default function ReportPage() {
                                                 <span className="pointer-events-none">Ganti Foto</span>
                                                 <input 
                                                     id="file-upload-change" 
-                                                    name="file-upload-change-input"
                                                     type="file" 
                                                     accept="image/*" 
                                                     className="hidden" 
@@ -270,7 +274,6 @@ export default function ReportPage() {
                                                 <span className="pointer-events-none">Ambil Foto</span>
                                                 <input 
                                                     id="file-upload-camera" 
-                                                    name="file-upload-camera"
                                                     type="file" 
                                                     accept="image/*" 
                                                     capture="environment" 
@@ -288,7 +291,6 @@ export default function ReportPage() {
                                                 <span className="pointer-events-none">Pilih dari Galeri</span>
                                                 <input 
                                                     id="file-upload-gallery" 
-                                                    name="file-upload-gallery"
                                                     type="file" 
                                                     accept="image/*" 
                                                     className="hidden" 

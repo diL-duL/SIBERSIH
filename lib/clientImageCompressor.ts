@@ -64,6 +64,10 @@ export async function compressImageClient(
           return;
         }
 
+        // Isi latar belakang dengan warna putih solid untuk mencegah artefak hitam pada gambar PNG transparan
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, width, height);
+
         // Gambar ulang di canvas dengan resolusi yang telah disesuaikan
         ctx.drawImage(img, 0, 0, width, height);
 
@@ -82,8 +86,9 @@ export async function compressImageClient(
               lastModified: Date.now(),
             });
 
-            // Hanya gunakan hasil kompresi jika ukurannya memang lebih kecil
-            if (compressedFile.size < file.size) {
+            // Gunakan hasil kompresi jika ukurannya lebih kecil atau jika file aslinya PNG berukuran besar
+            const isLargePng = (file.type === "image/png" || file.name.toLowerCase().endsWith(".png")) && compressedFile.size <= 2 * 1024 * 1024;
+            if (compressedFile.size < file.size || isLargePng) {
               resolve(compressedFile);
             } else {
               resolve(file);

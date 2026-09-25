@@ -16,7 +16,10 @@ type ActionState = { message: string | null; error: string | null };
 async function formAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
     try {
         const reportId = formData.get("reportId") as string;
-        await ajukanPenyelesaian(reportId, formData);
+        const result = await ajukanPenyelesaian(reportId, formData);
+        if (result && !result.success) {
+            return { message: null, error: result.error || "Gagal menyimpan bukti" };
+        }
         return { message: "Bukti berhasil disimpan", error: null };
     } catch (e: unknown) {
         const error = e as Error;
@@ -62,6 +65,8 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                 mainFileInputRef.current.files = dataTransfer.files;
             }
             updatePreview(file);
+            // Reset nilai elemen input target agar event onChange tetap terpanggil jika memilih ulang file yang sama
+            e.target.value = '';
         }
     };
 
@@ -300,7 +305,6 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                     <span className="pointer-events-none">Ganti Foto</span>
                                                     <input 
                                                         id="file-upload-change-staff" 
-                                                        name="file-upload-change-staff-input"
                                                         type="file" 
                                                         accept="image/*" 
                                                         className="hidden" 
@@ -328,7 +332,6 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                     <span className="pointer-events-none">Ambil Foto</span>
                                                     <input 
                                                         id="file-upload-camera-staff" 
-                                                        name="file-upload-camera"
                                                         type="file" 
                                                         accept="image/*" 
                                                         capture="environment" 
@@ -347,7 +350,6 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                                     <span className="pointer-events-none">Pilih dari Galeri</span>
                                                     <input 
                                                         id="file-upload-gallery-staff" 
-                                                        name="file-upload-gallery"
                                                         type="file" 
                                                         accept="image/*" 
                                                         className="hidden" 

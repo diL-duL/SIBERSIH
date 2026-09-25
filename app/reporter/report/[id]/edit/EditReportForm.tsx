@@ -58,7 +58,10 @@ export default function EditReportForm({ report }: { report: ReportData }) {
     formData: FormData
   ): Promise<ActionState> => {
     try {
-      await editLaporan(report.id, formData);
+      const result = await editLaporan(report.id, formData);
+      if (result && !result.success) {
+        return { message: null, error: result.error || "Gagal memperbarui laporan" };
+      }
       return { message: "Laporan berhasil diperbarui", error: null };
     } catch (e: unknown) {
       const error = e as Error;
@@ -85,6 +88,8 @@ export default function EditReportForm({ report }: { report: ReportData }) {
         mainFileInputRef.current.files = dataTransfer.files;
       }
       setPreviewUrl(URL.createObjectURL(file));
+      // Reset nilai elemen input target agar event onChange tetap terpanggil jika memilih ulang file yang sama
+      e.target.value = '';
     }
   };
 
@@ -230,7 +235,6 @@ export default function EditReportForm({ report }: { report: ReportData }) {
                         <span className="pointer-events-none">Ganti Foto</span>
                         <input
                           id="file-upload-change"
-                          name="file-upload-change-input"
                           type="file"
                           accept="image/*"
                           className="hidden"
@@ -255,7 +259,6 @@ export default function EditReportForm({ report }: { report: ReportData }) {
                         <span className="pointer-events-none">Ambil Foto Baru</span>
                         <input
                           id="file-upload-camera"
-                          name="file-upload-camera"
                           type="file"
                           accept="image/*"
                           capture="environment"
@@ -272,7 +275,6 @@ export default function EditReportForm({ report }: { report: ReportData }) {
                         <span className="pointer-events-none">Pilih dari Galeri</span>
                         <input
                           id="file-upload-gallery"
-                          name="file-upload-gallery"
                           type="file"
                           accept="image/*"
                           className="hidden"
