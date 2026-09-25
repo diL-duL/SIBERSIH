@@ -4,6 +4,7 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import type { AppRole } from '@/types/next-auth';
 
 // Dummy bcrypt hash untuk mencegah timing attack / email enumeration
@@ -60,7 +61,10 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
           if (!dbUser) {
             // Auto register sebagai role PELAPOR jika akun belum terdaftar
-            const randomPassword = await bcrypt.hash(crypto.randomUUID(), 10);
+            const randomSeed = typeof crypto !== 'undefined' && crypto.randomUUID 
+              ? crypto.randomUUID() 
+              : (crypto.randomBytes ? crypto.randomBytes(16).toString('hex') : Math.random().toString(36).substring(2));
+            const randomPassword = await bcrypt.hash(randomSeed, 10);
             dbUser = await prisma.user.create({
               data: {
                 nama: user.name || 'Pengguna Google',

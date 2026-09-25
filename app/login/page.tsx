@@ -93,12 +93,9 @@ export default function LoginPage() {
 
               {/* Password Input */}
               <div className="space-y-1.5 text-left group">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="password" className="text-sm font-semibold text-sibersih-primary">Kata Sandi</label>
-                  <Link href="/login/forgot-password" className="text-xs font-semibold text-sibersih-primary/60 hover:text-sibersih-primary transition-colors">
-                    Lupa sandi?
-                  </Link>
-                </div>
+                <label htmlFor="password" className="block text-sm font-semibold text-sibersih-primary">
+                  Kata Sandi
+                </label>
                 <div className="relative flex items-center">
                   <Lock className="absolute left-3.5 text-sibersih-primary/40 group-focus-within:text-sibersih-primary transition-colors" size={18} />
                   <input
