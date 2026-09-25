@@ -11,7 +11,7 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 - **Styling & Tema:** Tailwind CSS v4, Lucide Icons, Seed Botanical-Clinical Theme
 - **Database:** Supabase (PostgreSQL via Connection Pooler Port 6543)
 - **ORM:** Prisma 7.9+ (Custom Client Output di `app/generated/prisma`)
-- **Autentikasi & Otorisasi:** Auth.js (NextAuth v5 beta) dengan Credentials Provider & JWT Session
+- **Autentikasi & Otorisasi:** Auth.js (NextAuth v5 beta) dengan Credentials Provider, Google OAuth 2.0 (SSO), & JWT Session
 - **Penyimpanan Media (Cloud Storage):** Cloudinary API (dengan kompresi cerdas `f_auto,q_auto`)
 - **Peta Interaktif:** Leaflet & React-Leaflet (Koordinat Fakultas Teknik Universitas Tadulako)
 - **Deployment Ready:** Vercel & Shared Hosting cPanel / Rumahweb (`output: "standalone"`)
@@ -20,25 +20,30 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 
 ## Fitur Utama Berdasarkan Peran
 
-### 1. Publik & Beranda (Landing Page)
+### 1. Autentikasi Modern (Google OAuth & Kredensial)
+- **Masuk & Daftar dengan Google (One-Click SSO):** Pengguna dapat masuk atau mendaftar langsung menggunakan akun Google resmi.
+- **Auto-Provisioning Akun Baru:** Pengguna Google yang belum terdaftar otomatis dibuatkan akun dengan peran `PELAPOR` secara aman.
+- **Dukungan Kredensial Email & Password (Petugas & Pimpinan):** Form login kredensial berproteksi Bcrypt dan anti-brute force rate limiter khusus untuk akun staf internal (Petugas dan Pimpinan). Pendaftaran pelapor/mahasiswa dikhususkan melalui One-Click Google OAuth.
+
+### 2. Publik & Beranda (Landing Page)
 - **Showcase Laporan Transparan:** Menampilkan hingga 50 laporan fasilitas kampus terkini mencakup seluruh status (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) secara transparan kepada seluruh civitas.
 - **Tampilan Awal Ringkas & Toggle Interaktif:** Menampilkan 3 laporan awal dengan tombol toggle *"Lihat Semua Laporan"* / *"Tampilkan Lebih Sedikit"*.
 - **Hemat Kuota & Cepat (Tanpa Gambar Publik):** Daftar laporan publik sengaja tidak memuat aset gambar, menjaga kecepatan *load* instan dan menghemat kuota cloud.
 - **Anti-DDoS via ISR Caching:** Menggunakan *Incremental Static Regeneration* (`revalidate: 60`), melayani ribuan pengunjung langsung dari CDN Edge tanpa membebani database.
 
-### 2. Pelapor (Mahasiswa / Civitas Akademika)
+### 3. Pelapor (Mahasiswa / Civitas Akademika)
 - **Pelaporan Presisi Berbasis Peta:** Menentukan titik tumpukan sampah menggunakan peta interaktif (*Leaflet*), drag-and-drop foto, atau kamera langsung (WebRTC).
 - **Edit & Batalkan Laporan:** Pelapor dapat mengedit deskripsi, titik peta, foto, atau membatalkan/menghapus laporan selama statusnya masih `LAPORAN_MASUK`.
 - **Hapus Laporan di Halaman Riwayat:** Tombol hapus laporan yang belum diproses kini tersedia di dasbor utama maupun di halaman riwayat lengkap (`/reporter/history`).
 - **Pelacakan Status Real-time:** Mengetahui posisi penanganan laporan (Menunggu Petugas, Menunggu Validasi, atau Selesai).
 
-### 3. Petugas Kebersihan (Staff)
+### 4. Petugas Kebersihan (Staff)
 - **Daftar Tugas Baru:** Dasbor interaktif dan halaman tugas (`/staff/tasks`) untuk memantau fasilitas yang membutuhkan penanganan.
 - **Unggah Bukti Pengerjaan:** Petugas mengunggah foto sesudah dibersihkan dan catatan tindakan hasil kerja.
 - **Mode Edit Bukti:** Petugas dapat memperbarui foto bukti dan catatan kerja selama laporan belum disetujui oleh pimpinan.
 - **Riwayat Penanganan:** Arsip seluruh tugas yang pernah dikerjakan oleh petugas terkait.
 
-### 4. Pimpinan (Executive)
+### 5. Pimpinan (Executive)
 - **Peta Pengawasan Wilayah Responsif:** Peta pemantauan sebaran laporan kampus yang adaptif (berada di posisi atas pada perangkat mobile, dan berada di bagian bawah membentang 3 kolom pada layar desktop).
 - **Panel Validasi Komparasi (Sebelum vs Sesudah):** Meninjau foto laporan awal pelapor bersanding langsung dengan foto bukti petugas dan catatan penanganan.
 - **Tolak / Hapus Laporan Palsu & Konten Tidak Senonoh:** Hak akses khusus pimpinan untuk menolak dan menghapus laporan palsu/spam langsung dari Dasbor atau Panel Validasi, dengan pembersihan permanen file foto dari Cloudinary untuk mencegah pemborosan kuota.
@@ -68,10 +73,13 @@ SiBersih menerapkan bahasa visual terinspirasi dari **Seed Style Reference** (*"
 
 1. **Anti-Brute Force Rate Limiting:** *In-Memory Rate Limiter* pada level Server Actions untuk melindungi endpoint otentikasi dari serangan bot dan spam.
 2. **HTTP Security Headers OWASP:** Dilengkapi proteksi `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, serta `Permissions-Policy` untuk akses kamera dan geolokasi.
-3. **Pembersihan Otomatis Cloudinary:** Utilitas `deleteMultipleImagesFromCloudinary` berbasis `Promise.allSettled` untuk menghapus foto secara paralel saat laporan dibatalkan atau ditolak.
-4. **Optimasi B-Tree Database Supabase:** Eliminasi indeks redundan dan penambahan *composite indexes* (`@@index([petugasId, status, updatedAt(sort: Desc)])`) untuk kueri cepat dengan latensi rendah (15–30 ms).
-5. **Session-Level Caching:** Memanfaatkan data JWT session pengguna untuk menghindari kueri SQL `findUnique` berulang pada setiap render dasbor.
-6. **Zero External Date Libraries:** Format tanggal menggunakan `Intl.DateTimeFormat` bawaan JavaScript tanpa dependensi eksternal tambahan.
+3. **Kompresi Gambar Sisi Klien & Anti-Payload-Limit:** Modul `clientImageCompressor.ts` mengompresi foto pelapor dan petugas di browser menjadi WebP < 250 KB sebelum dikirim ke server. Dilengkapi normalisasi latar belakang putih solid untuk PNG transparan dan eliminasi pengiriman ganda (*double file payload*).
+4. **Optimasi Bandwidth Query Database (Landing Page):** Query publik di `app/page.tsx` menggunakan `select` eksplisit tanpa mengambil field gambar besar (`fotoLaporanUrl` & `fotoBuktiUrl`), menghemat kuota transfer database Supabase.
+5. **Pembersihan Otomatis Cloudinary:** Utilitas `deleteMultipleImagesFromCloudinary` berbasis `Promise.allSettled` untuk menghapus foto secara paralel saat laporan dibatalkan, ditolak, atau akun dihapus.
+6. **Optimasi B-Tree Database Supabase:** Eliminasi indeks redundan dan penambahan *composite indexes* (`@@index([petugasId, status, updatedAt(sort: Desc)])`) untuk kueri cepat dengan latensi rendah (15–30 ms).
+7. **Session-Level Caching:** Memanfaatkan data JWT session pengguna untuk menghindari kueri SQL `findUnique` berulang pada setiap render dasbor.
+8. **Dukungan Domain Kustom & Reverse Proxy:** Penyetelan `trustHost: true` dan `AUTH_TRUST_HOST` memastikan otentikasi NextAuth v5 berjalan mulus di server hosting/cPanel (`sibersih.my.id`).
+9. **Zero External Date Libraries:** Format tanggal menggunakan `Intl.DateTimeFormat` bawaan JavaScript tanpa dependensi eksternal tambahan.
 
 ---
 
@@ -102,8 +110,14 @@ DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-ap-southeast-
 # Direct Connection untuk Prisma Migrations (Port 5432)
 DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres"
 
-# NextAuth Secret (Generate via: npx auth secret)
+# NextAuth Configuration
 AUTH_SECRET="your-generated-auth-secret"
+AUTH_URL="http://localhost:3000"
+AUTH_TRUST_HOST="true"
+
+# Google OAuth 2.0 (Google Cloud Console Credentials)
+AUTH_GOOGLE_ID="your-google-client-id.apps.googleusercontent.com"
+AUTH_GOOGLE_SECRET="your-google-client-secret"
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME="your-cloud-name"
