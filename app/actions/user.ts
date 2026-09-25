@@ -16,6 +16,9 @@ export async function changePasswordAction(prevState: unknown, formData: FormDat
   try {
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };
+    if (session.user.role === 'PELAPOR') {
+      return { error: 'Akun pelapor menggunakan autentikasi Google dan tidak memiliki fitur ubah kata sandi.' };
+    }
 
     const oldPassword = formData.get('oldPassword') as string;
     const newPassword = formData.get('newPassword') as string;

@@ -195,18 +195,20 @@ export default function ProfileClient({ user }: ProfileProps) {
                   </h2>
                   
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
-                      <div>
-                        <h3 className="text-sibersih-primary font-semibold text-sm">Ubah Kata Sandi</h3>
-                        <p className="text-xs text-sibersih-primary/60 mt-1">Perbarui kata sandi secara berkala</p>
+                    {user.role !== 'PELAPOR' && (
+                      <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
+                        <div>
+                          <h3 className="text-sibersih-primary font-semibold text-sm">Ubah Kata Sandi</h3>
+                          <p className="text-xs text-sibersih-primary/60 mt-1">Perbarui kata sandi secara berkala</p>
+                        </div>
+                        <button 
+                          onClick={() => setIsChangePasswordModalOpen(true)}
+                          className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm cursor-pointer"
+                        >
+                          Ubah
+                        </button>
                       </div>
-                      <button 
-                        onClick={() => setIsChangePasswordModalOpen(true)}
-                        className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm cursor-pointer"
-                      >
-                        Ubah
-                      </button>
-                    </div>
+                    )}
 
                     <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
                       <div>
@@ -261,14 +263,12 @@ export default function ProfileClient({ user }: ProfileProps) {
 
                     <div>
                       <label className="block text-sm font-medium text-sibersih-primary/80 mb-1">Peran</label>
-                      <div className="relative">
-                        <select disabled className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 bg-sibersih-primary/5 text-sibersih-primary/60 cursor-not-allowed focus:outline-none transition-all appearance-none text-sm">
-                          <option>{getRoleDisplay()}</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                          <svg className="w-4 h-4 text-sibersih-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                      </div>
+                      <input 
+                        type="text" 
+                        value={getRoleDisplay()} 
+                        disabled 
+                        className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 bg-sibersih-primary/5 text-sibersih-primary/60 cursor-not-allowed focus:outline-none transition-all text-sm" 
+                      />
                     </div>
                     
                     {updateProfileState?.error && (
@@ -318,7 +318,7 @@ export default function ProfileClient({ user }: ProfileProps) {
       )}
 
       {/* Change Password Modal */}
-      {isChangePasswordModalOpen && (
+      {user.role !== 'PELAPOR' && isChangePasswordModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-in zoom-in-95 duration-200">
             <h3 className="text-lg font-bold text-sibersih-primary mb-2">Ubah Kata Sandi</h3>
