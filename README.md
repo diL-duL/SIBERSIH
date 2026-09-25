@@ -23,7 +23,8 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 ### 1. Autentikasi Modern (Google OAuth & Kredensial)
 - **Masuk & Daftar dengan Google (One-Click SSO):** Pengguna dapat masuk atau mendaftar langsung menggunakan akun Google resmi.
 - **Auto-Provisioning Akun Baru:** Pengguna Google yang belum terdaftar otomatis dibuatkan akun dengan peran `PELAPOR` secara aman.
-- **Dukungan Kredensial Email & Password (Petugas & Pimpinan):** Form login kredensial berproteksi Bcrypt dan anti-brute force rate limiter khusus untuk akun staf internal (Petugas dan Pimpinan). Pendaftaran pelapor/mahasiswa dikhususkan melalui One-Click Google OAuth.
+- **Dukungan Kredensial Email & Password (Petugas & Pimpinan):** Form login kredensial berproteksi Bcrypt dan anti-brute force rate limiter khusus untuk akun staf internal (Petugas dan Pimpinan). Fitur registrasi publik mandiri dan lupa sandi ditiadakan demi keamanan akun internal kampus.
+- **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer login dan terdaftar pada sitemap.
 
 ### 2. Publik & Beranda (Landing Page)
 - **Showcase Laporan Transparan:** Menampilkan hingga 50 laporan fasilitas kampus terkini mencakup seluruh status (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) secara transparan kepada seluruh civitas.
@@ -124,6 +125,7 @@ CLOUDINARY_CLOUD_NAME="your-cloud-name"
 CLOUDINARY_API_KEY="your-api-key"
 CLOUDINARY_API_SECRET="your-api-secret"
 ```
+> **Tips Database Password:** Jika kata sandi database Supabase Anda mengandung karakter khusus (seperti simbol `@`), pastikan karakter tersebut di-encode dalam format URL (misalnya `@` menjadi `%40`) agar koneksi string dapat diparsing dengan benar oleh Node.js dan PostgreSQL pooler.
 
 ### 4. Sinkronisasi Database (Prisma)
 Generate klien Prisma kustom dan sinkronkan skema ke Supabase:
