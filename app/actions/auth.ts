@@ -2,9 +2,6 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
-import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 
 // --- In-Memory Rate Limiter Setup ---
@@ -84,71 +81,7 @@ export async function loginAction(prevState: string | undefined, formData: FormD
   }
 }
 
-export async function registerAction(prevState: string | undefined, formData: FormData) {
-  try {
-    const headersList = await headers();
-    const xForwardedFor = headersList.get('x-forwarded-for');
-    const ip = xForwardedFor ? xForwardedFor.split(',')[0].trim() : 'unknown-ip';
-    
-    const name = (formData.get('name') as string)?.trim();
-    const emailRaw = formData.get('email') as string;
-    const email = emailRaw ? emailRaw.trim().toLowerCase() : '';
-    const password = formData.get('password') as string;
-    const confirmPassword = formData.get('confirmPassword') as string;
-
-    // ID unik untuk memblokir berdasarkan kombinasi IP dan Email
-    const identifier = `reg_${ip}_${email}`;
-    
-    // Untuk Register, batasnya lebih ketat (3 kali) untuk mencegah spam bot pembuat akun
-    if (isRateLimited(identifier, 3)) {
-      return 'Terlalu banyak percobaan pendaftaran. Harap tunggu 1 menit.';
-    }
-    recordFailedAttempt(identifier);
-
-    if (!name || !email || !password || !confirmPassword) {
-      return 'Semua kolom wajib diisi.';
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return 'Format email tidak valid.';
-    }
-
-    if (password.length < 6) {
-      return 'Kata sandi minimal 6 karakter.';
-    }
-
-    if (password !== confirmPassword) {
-      return 'Kata sandi tidak cocok.';
-    }
-
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      return 'Email sudah digunakan.';
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await prisma.user.create({
-      data: {
-        nama: name,
-        email,
-        password: hashedPassword,
-        role: 'PELAPOR', // Default role for new users
-      },
-    });
-
-  } catch {
-    return 'Terjadi kesalahan saat mendaftar.';
-  }
-  
-  redirect('/login');
-}
-
-export async function loginWithGoogleAction(prevState?: string | undefined) {
+export async function loginWithGoogleAction() {
   const googleId = process.env.AUTH_GOOGLE_ID || process.env.GOOGLE_CLIENT_ID;
   const googleSecret = process.env.AUTH_GOOGLE_SECRET || process.env.GOOGLE_CLIENT_SECRET;
 
@@ -165,3 +98,4 @@ export async function loginWithGoogleAction(prevState?: string | undefined) {
     throw error;
   }
 }
+
