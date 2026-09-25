@@ -158,18 +158,59 @@ Buka peramban di `http://localhost:3000`.
 3. Deploy otomatis berjalan via CI/CD.
 
 ### Opsi B: Deployment ke cPanel / Rumahweb (Standalone Mode)
-Proyek ini telah dikonfigurasi dengan mode `output: "standalone"` di `next.config.ts`:
-1. Jalankan kompilasi di laptop:
-   ```bash
-   npm run build
-   ```
-2. Salin aset statis ke folder standalone:
-   ```bash
-   cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
-   ```
-3. Kompres seluruh isi folder `.next/standalone/` ke format `.zip` dan unggah ke File Manager cPanel.
-4. Buat aplikasi di menu **"Setup Node.js App"** cPanel Rumahweb (Node.js 20 LTS, Startup file: `server.js`).
-5. Masukkan Environment Variables di cPanel dan jalankan aplikasi.
+Proyek ini telah dikonfigurasi dengan mode `output: "standalone"` di `next.config.ts`, memungkinkan aplikasi berjalan ringan tanpa perlu instalasi `node_modules` berat di cPanel:
+
+#### 1. Persiapan Berkas di Laptop (Build Standalone)
+Jalankan kompilasi produksi di terminal lokal:
+```bash
+npm run build
+```
+Salin aset statis (`public` dan `.next/static`) ke dalam folder standalone agar gambar dan CSS dapat dilayani oleh server:
+```bash
+cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+```
+Kompres isi folder standalone menjadi berkas `.zip` (ringan, ~46 MB):
+```bash
+cd .next/standalone && zip -r ../../deploy.zip . && cd ../..
+```
+
+#### 2. Buat Aplikasi di "Setup Node.js App" cPanel
+1. Masuk ke **cPanel Rumahweb** dan buka menu **"Setup Node.js App"** (kelompok *Software*).
+2. Klik tombol **"Create Application"** di pojok kanan atas.
+3. Isi parameter aplikasi:
+   - **Node.js version:** Pilih versi **20.x** (disarankan 20 LTS).
+   - **Application mode:** Pilih **Production**.
+   - **Application root:** Ketik nama folder aplikasi, misal `sibersih` (berada di `/home/username/sibersih`).
+   - **Application URL:** Pilih domain yang digunakan (misal: `sibersih.my.id`).
+   - **Application startup file:** Ketik `server.js`.
+4. Klik tombol **Create**.
+
+#### 3. Unggah & Ekstrak Berkas via File Manager
+1. Buka menu **File Manager** di cPanel.
+2. Masuk ke folder penampung yang telah dibuat (folder `sibersih`). Hapus file default cPanel (seperti `app.js`) jika ada.
+3. Klik tombol **Upload** di bilah atas, lalu unggah berkas `deploy.zip`.
+4. Setelah proses upload mencapai 100%, kembali ke File Manager, klik kanan `deploy.zip` dan pilih **Extract**.
+5. Pastikan folder `sibersih` memiliki struktur: `server.js`, `package.json`, `.next/`, `public/`, dan `node_modules/`.
+
+#### 4. Masukkan Environment Variables di cPanel
+1. Kembali ke menu **"Setup Node.js App"** dan klik tombol pensil (**Edit**) pada aplikasi Anda.
+2. Gulir ke bagian **Environment variables**, lalu klik **Add Variable** untuk menambahkan:
+   - `DATABASE_URL`: `postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true`
+   - `DIRECT_URL`: `postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres`
+   - `AUTH_SECRET`: *[Secret NextAuth Anda]*
+   - `AUTH_URL`: `https://sibersih.my.id`
+   - `AUTH_TRUST_HOST`: `true`
+   - `AUTH_GOOGLE_ID`: *[Google Client ID Anda]*
+   - `AUTH_GOOGLE_SECRET`: *[Google Client Secret Anda]*
+   - `CLOUDINARY_CLOUD_NAME`: *[Cloud Name Cloudinary]*
+   - `CLOUDINARY_API_KEY`: *[API Key Cloudinary]*
+   - `CLOUDINARY_API_SECRET`: *[API Secret Cloudinary]*
+   - `NODE_ENV`: `production`
+3. Klik tombol **Save** di bagian atas halaman edit aplikasi.
+
+#### 5. Restart & Jalankan Aplikasi
+1. Klik tombol **"Restart"** (ikon putar hijau).
+2. Akses aplikasi melalui peramban di `https://sibersih.my.id`.
 
 ---
 
