@@ -139,6 +139,16 @@ export default function LoginPage() {
           </div>
 
           <GoogleSignInButton text="Masuk dengan Google" />
+
+          <div className="pt-2 text-center text-xs text-sibersih-primary/50 flex items-center justify-center gap-3">
+            <Link href="/privacy" className="hover:text-sibersih-primary underline underline-offset-2 transition-colors">
+              Kebijakan Privasi
+            </Link>
+            <span>•</span>
+            <Link href="/terms" className="hover:text-sibersih-primary underline underline-offset-2 transition-colors">
+              Ketentuan Layanan
+            </Link>
+          </div>
         </div>
       </div>
     </div>
