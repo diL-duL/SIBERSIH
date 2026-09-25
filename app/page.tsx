@@ -10,7 +10,14 @@ export default async function LandingPage() {
     prisma.report.findMany({
       take: 50,
       orderBy: { createdAt: "desc" },
-      include: {
+      select: {
+        id: true,
+        lokasi: true,
+        deskripsi: true,
+        deskripsiPetugas: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
         pelapor: { select: { nama: true } },
         petugas: { select: { nama: true } },
       },
