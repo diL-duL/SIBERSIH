@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/login', '/privacy', '/terms'],
+        allow: ['/', '/login', '/login/register', '/privacy', '/terms'],
         disallow: ['/reporter/', '/staff/', '/executive/', '/api/'],
       },
     ],

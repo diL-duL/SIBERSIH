@@ -15,13 +15,16 @@ export const authConfig = {
       if (path === '/') {
         if (isLoggedIn) {
            const role = auth.user.role;
-           if (role === 'PELAPOR') return Response.redirect(new URL('/reporter', nextUrl));
+           if (role === 'PELAPOR') {
+             const isGoogle = nextUrl.searchParams.get('auth_provider') === 'google';
+             return Response.redirect(new URL(isGoogle ? '/reporter?auth_provider=google' : '/reporter', nextUrl));
+           }
            if (role === 'PETUGAS') return Response.redirect(new URL('/staff', nextUrl));
            if (role === 'PIMPINAN') return Response.redirect(new URL('/executive', nextUrl));
         }
         return true;
       }
-      if (path === '/login') {
+      if (path === '/login' || path === '/login/register') {
         if (isLoggedIn) {
            const role = auth.user.role;
            if (role === 'PELAPOR') return Response.redirect(new URL('/reporter', nextUrl));

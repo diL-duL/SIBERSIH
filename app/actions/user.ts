@@ -16,9 +16,6 @@ export async function changePasswordAction(prevState: unknown, formData: FormDat
   try {
     const session = await auth();
     if (!session?.user?.email) return { error: 'Unauthorized' };
-    if (session.user.role === 'PELAPOR') {
-      return { error: 'Akun pelapor menggunakan autentikasi Google dan tidak memiliki fitur ubah kata sandi.' };
-    }
 
     const oldPassword = formData.get('oldPassword') as string;
     const newPassword = formData.get('newPassword') as string;
@@ -55,6 +52,40 @@ export async function changePasswordAction(prevState: unknown, formData: FormDat
     return { success: 'Kata sandi berhasil diubah!' };
   } catch {
     return { error: 'Terjadi kesalahan pada server.' };
+  }
+}
+
+// 2b. Set Password Langsung (Untuk Popup Pasca-Login Google)
+export async function setPasswordDirectAction(prevState: unknown, formData: FormData) {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) return { error: 'Sesi tidak valid, silakan login kembali.' };
+
+    const newPassword = formData.get('newPassword') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (!newPassword || !confirmPassword) {
+      return { error: 'Kata sandi baru dan konfirmasi kata sandi wajib diisi.' };
+    }
+
+    if (newPassword.length < 6) {
+      return { error: 'Kata sandi minimal 6 karakter.' };
+    }
+
+    if (newPassword !== confirmPassword) {
+      return { error: 'Konfirmasi kata sandi tidak cocok.' };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { email: session.user.email },
+      data: { password: hashedPassword }
+    });
+
+    return { success: 'Kata sandi berhasil dibuat! Anda kini dapat masuk menggunakan email & kata sandi ini.' };
+  } catch {
+    return { error: 'Gagal mengatur kata sandi.' };
   }
 }
 

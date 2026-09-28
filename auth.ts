@@ -56,7 +56,8 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
         try {
           let dbUser = await prisma.user.findUnique({
-            where: { email }
+            where: { email },
+            select: { id: true, role: true, nama: true }
           });
 
           if (!dbUser) {
@@ -71,7 +72,8 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
                 email,
                 password: randomPassword,
                 role: 'PELAPOR'
-              }
+              },
+              select: { id: true, role: true, nama: true }
             });
           }
 
@@ -95,7 +97,8 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       if ((!token.role || !token.id) && token.email) {
         try {
           const dbUser = await prisma.user.findUnique({
-            where: { email: (token.email as string).trim().toLowerCase() }
+            where: { email: (token.email as string).trim().toLowerCase() },
+            select: { id: true, role: true }
           });
           if (dbUser) {
             token.role = dbUser.role;

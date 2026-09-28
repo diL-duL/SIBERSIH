@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getValidUserId } from "@/lib/session-user";
 import DashboardMapClient from "@/components/DashboardMapClient";
 import ReporterDashboardReports from "@/components/ReporterDashboardReports";
+import SetPasswordModal from "@/components/SetPasswordModal";
 
 export default async function PelaporDashboard() {
     const session = await auth();
@@ -30,6 +31,7 @@ export default async function PelaporDashboard() {
 
     return (
         <div className="pb-16 pt-6 sm:pt-8 min-h-screen bg-sibersih-bg flex flex-col max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 w-full">
+            <SetPasswordModal />
             {/* HEADER */}
             <header className="flex flex-row justify-between items-center mb-5 sm:mb-8 gap-4 border-b border-sibersih-primary/10 pb-4">
                 <div className="flex items-center gap-3 min-w-0 flex-1">

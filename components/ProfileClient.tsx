@@ -2,7 +2,7 @@
 
 import { useState, useActionState, useEffect } from 'react';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Key, ShieldCheck, Edit, LogOut, ArrowLeft } from 'lucide-react';
+import { User as UserIcon, Mail, Key, ShieldCheck, Edit, LogOut, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { logoutAction, changePasswordAction, updateProfileAction, deleteAccountAction } from '@/app/actions/user';
 import { SubmitButton } from './SubmitButton';
 
@@ -21,6 +21,9 @@ export default function ProfileClient({ user }: ProfileProps) {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // States for actions
   const [changePwdState, changePwdAction] = useActionState(changePasswordAction, undefined);
@@ -195,20 +198,18 @@ export default function ProfileClient({ user }: ProfileProps) {
                   </h2>
                   
                   <div className="space-y-4">
-                    {user.role !== 'PELAPOR' && (
-                      <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
-                        <div>
-                          <h3 className="text-sibersih-primary font-semibold text-sm">Ubah Kata Sandi</h3>
-                          <p className="text-xs text-sibersih-primary/60 mt-1">Perbarui kata sandi secara berkala</p>
-                        </div>
-                        <button 
-                          onClick={() => setIsChangePasswordModalOpen(true)}
-                          className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm cursor-pointer"
-                        >
-                          Ubah
-                        </button>
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
+                      <div>
+                        <h3 className="text-sibersih-primary font-semibold text-sm">Ubah Kata Sandi</h3>
+                        <p className="text-xs text-sibersih-primary/60 mt-1">Perbarui kata sandi secara berkala</p>
                       </div>
-                    )}
+                      <button 
+                        onClick={() => setIsChangePasswordModalOpen(true)}
+                        className="px-4 py-2 bg-white border border-sibersih-primary/10 text-sibersih-primary hover:bg-sibersih-primary/5 rounded-lg font-medium transition-colors duration-300 text-xs shadow-sm cursor-pointer"
+                      >
+                        Ubah
+                      </button>
+                    </div>
 
                     <div className="flex items-center justify-between p-4 rounded-xl border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300 bg-sibersih-bg">
                       <div>
@@ -318,7 +319,7 @@ export default function ProfileClient({ user }: ProfileProps) {
       )}
 
       {/* Change Password Modal */}
-      {user.role !== 'PELAPOR' && isChangePasswordModalOpen && (
+      {isChangePasswordModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-in zoom-in-95 duration-200">
             <h3 className="text-lg font-bold text-sibersih-primary mb-2">Ubah Kata Sandi</h3>
@@ -328,32 +329,56 @@ export default function ProfileClient({ user }: ProfileProps) {
             
             <form action={changePwdAction}>
               <div className="space-y-3 mb-6">
-                <div>
+                <div className="relative flex items-center">
                   <input 
                     name="oldPassword"
-                    type="password" 
+                    type={showOldPassword ? "text" : "password"} 
                     placeholder="Kata Sandi Lama" 
-                    className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
+                    className="w-full px-4 pr-10 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowOldPassword(!showOldPassword)}
+                    className="absolute right-3 text-sibersih-primary/40 hover:text-sibersih-primary transition-colors cursor-pointer"
+                    aria-label={showOldPassword ? "Sembunyikan kata sandi lama" : "Tampilkan kata sandi lama"}
+                  >
+                    {showOldPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-                <div>
+                <div className="relative flex items-center">
                   <input 
                     name="newPassword"
-                    type="password" 
+                    type={showNewPassword ? "text" : "password"} 
                     placeholder="Kata Sandi Baru" 
-                    className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
+                    className="w-full px-4 pr-10 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 text-sibersih-primary/40 hover:text-sibersih-primary transition-colors cursor-pointer"
+                    aria-label={showNewPassword ? "Sembunyikan kata sandi baru" : "Tampilkan kata sandi baru"}
+                  >
+                    {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-                <div>
+                <div className="relative flex items-center">
                   <input 
                     name="confirmPassword"
-                    type="password" 
+                    type={showConfirmPassword ? "text" : "password"} 
                     placeholder="Konfirmasi Kata Sandi Baru" 
-                    className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
+                    className="w-full px-4 pr-10 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/40 text-sibersih-primary" 
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 text-sibersih-primary/40 hover:text-sibersih-primary transition-colors cursor-pointer"
+                    aria-label={showConfirmPassword ? "Sembunyikan konfirmasi kata sandi" : "Tampilkan konfirmasi kata sandi"}
+                  >
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
                 
                 {changePwdState?.error && (

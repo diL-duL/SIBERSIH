@@ -90,7 +90,7 @@ export async function loginWithGoogleAction() {
   }
 
   try {
-    await signIn('google', { redirectTo: '/' });
+    await signIn('google', { redirectTo: '/?auth_provider=google' });
   } catch (error) {
     if (error instanceof AuthError) {
       return 'Terjadi kesalahan saat masuk dengan Google.';
