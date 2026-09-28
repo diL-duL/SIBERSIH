@@ -22,9 +22,11 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 
 ### 1. Autentikasi Modern (Google OAuth & Kredensial)
 - **Masuk & Daftar dengan Google (One-Click SSO):** Pengguna dapat masuk atau mendaftar langsung menggunakan akun Google resmi.
-- **Auto-Provisioning Akun Baru:** Pengguna Google yang belum terdaftar otomatis dibuatkan akun dengan peran `PELAPOR` secara aman.
-- **Dukungan Kredensial Email & Password (Petugas & Pimpinan):** Form login kredensial berproteksi Bcrypt dan anti-brute force rate limiter khusus untuk akun staf internal (Petugas dan Pimpinan). Fitur registrasi publik mandiri dan lupa sandi ditiadakan demi keamanan akun internal kampus.
-- **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer login dan terdaftar pada sitemap.
+- **Halaman Registrasi Khusus Google Sign-Up (`/login/register`):** Menyediakan rute pendaftaran khusus bagi civitas akademika tanpa formulir manual berbelit-belit, terhubung dengan tautan *"Belum punya akun? Daftar sekarang"* pada halaman login.
+- **Auto-Provisioning & Modal Atur Sandi Pasca-Login Google:** Pengguna Google yang belum terdaftar otomatis dibuatkan akun dengan peran `PELAPOR`. Setelah login Google berhasil, modal pop-up interaktif akan muncul (opsional) menawarkan pengguna untuk menyetel kata sandi manual, lengkap dengan opsi *"Lewati / Nanti Saja"*.
+- **Fitur Ubah Kata Sandi & Vision Toggle (Semua Peran):** Seluruh peran (Pelapor, Petugas, dan Pimpinan) dapat memperbarui kata sandi melalui tab Pengaturan Akun di profil. Dilengkapi tombol ikon interaktif **Vision Toggle (`Eye` / `EyeOff`)** pada setiap kolom kata sandi lama, baru, dan konfirmasi.
+- **Dukungan Kredensial Email & Password (Petugas & Pimpinan):** Form login kredensial berproteksi Bcrypt dan anti-brute force rate limiter khusus untuk staf internal (Petugas dan Pimpinan).
+- **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer form autentikasi dan terdaftar pada sitemap.
 
 ### 2. Publik & Beranda (Landing Page)
 - **Showcase Laporan Transparan:** Menampilkan hingga 50 laporan fasilitas kampus terkini mencakup seluruh status (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) secara transparan kepada seluruh civitas.
@@ -37,18 +39,20 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 - **Edit & Batalkan Laporan:** Pelapor dapat mengedit deskripsi, titik peta, foto, atau membatalkan/menghapus laporan selama statusnya masih `LAPORAN_MASUK`.
 - **Hapus Laporan di Halaman Riwayat:** Tombol hapus laporan yang belum diproses kini tersedia di dasbor utama maupun di halaman riwayat lengkap (`/reporter/history`).
 - **Pelacakan Status Real-time:** Mengetahui posisi penanganan laporan (Menunggu Petugas, Menunggu Validasi, atau Selesai).
+- **Riwayat Terproteksi:** Kueri riwayat dibatasi hingga 100 laporan terkini dengan fitur pencarian teks langsung dan filter status.
 
 ### 4. Petugas Kebersihan (Staff)
 - **Daftar Tugas Baru:** Dasbor interaktif dan halaman tugas (`/staff/tasks`) untuk memantau fasilitas yang membutuhkan penanganan.
 - **Unggah Bukti Pengerjaan:** Petugas mengunggah foto sesudah dibersihkan dan catatan tindakan hasil kerja.
 - **Mode Edit Bukti:** Petugas dapat memperbarui foto bukti dan catatan kerja selama laporan belum disetujui oleh pimpinan.
-- **Riwayat Penanganan:** Arsip seluruh tugas yang pernah dikerjakan oleh petugas terkait.
+- **Riwayat Penanganan:** Arsip hingga 100 tugas terakhir yang pernah dikerjakan oleh petugas terkait, dilengkapi pencarian langsung dan paginasi.
 
 ### 5. Pimpinan (Executive)
 - **Peta Pengawasan Wilayah Responsif:** Peta pemantauan sebaran laporan kampus yang adaptif (berada di posisi atas pada perangkat mobile, dan berada di bagian bawah membentang 3 kolom pada layar desktop).
-- **Panel Validasi Komparasi (Sebelum vs Sesudah):** Meninjau foto laporan awal pelapor bersanding langsung dengan foto bukti petugas dan catatan penanganan.
-- **Tolak / Hapus Laporan Palsu & Konten Tidak Senonoh:** Hak akses khusus pimpinan untuk menolak dan menghapus laporan palsu/spam langsung dari Dasbor atau Panel Validasi, dengan pembersihan permanen file foto dari Cloudinary untuk mencegah pemborosan kuota.
-- **Proteksi Status Selesai:** Laporan yang sudah divalidasi `SELESAI` otomatis mengunci tombol tolak agar data riwayat valid tidak sengaja terhapus.
+- **Panel Validasi Komparasi (Sebelum vs Sesudah):** Meninjau foto laporan awal pelapor bersanding langsung dengan foto bukti petugas dan catatan penanganan (`/executive/validations`).
+- **Tolak / Hapus Laporan Palsu & Status Selesai:** Hak akses khusus pimpinan untuk menolak dan menghapus laporan palsu/spam pada antrean, serta memiliki otoritas menghapus laporan yang sudah berstatus `SELESAI` baik dari Dasbor Utama maupun Riwayat.
+- **Pembersihan Otomatis Cloud Storage:** Penghapusan laporan otomatis membersihkan seluruh file foto terkait di Cloudinary untuk mencegah pemborosan kuota penyimpanan.
+- **Pemantauan Seluruh Status Laporan (`/executive/history`):** Memantau hingga 200 laporan terkini dari segala tahapan (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) untuk mengawasi laporan baru maupun laporan yang mangkrak.
 - **Manajemen Akun Petugas:** Menambah akun petugas baru (`buatAkunPetugas`) dan mencabut akses petugas (`hapusAkunPetugas`) dengan sanitasi data dan transaksi ACID database.
 
 ---
@@ -75,12 +79,15 @@ SiBersih menerapkan bahasa visual terinspirasi dari **Seed Style Reference** (*"
 1. **Anti-Brute Force Rate Limiting:** *In-Memory Rate Limiter* pada level Server Actions untuk melindungi endpoint otentikasi dari serangan bot dan spam.
 2. **HTTP Security Headers OWASP:** Dilengkapi proteksi `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, serta `Permissions-Policy` untuk akses kamera dan geolokasi.
 3. **Kompresi Gambar Sisi Klien & Anti-Payload-Limit:** Modul `clientImageCompressor.ts` mengompresi foto pelapor dan petugas di browser menjadi WebP < 250 KB sebelum dikirim ke server. Dilengkapi normalisasi latar belakang putih solid untuk PNG transparan dan eliminasi pengiriman ganda (*double file payload*).
-4. **Optimasi Bandwidth Query Database (Landing Page):** Query publik di `app/page.tsx` menggunakan `select` eksplisit tanpa mengambil field gambar besar (`fotoLaporanUrl` & `fotoBuktiUrl`), menghemat kuota transfer database Supabase.
-5. **Pembersihan Otomatis Cloudinary:** Utilitas `deleteMultipleImagesFromCloudinary` berbasis `Promise.allSettled` untuk menghapus foto secara paralel saat laporan dibatalkan, ditolak, atau akun dihapus.
-6. **Optimasi B-Tree Database Supabase:** Eliminasi indeks redundan dan penambahan *composite indexes* (`@@index([petugasId, status, updatedAt(sort: Desc)])`) untuk kueri cepat dengan latensi rendah (15–30 ms).
-7. **Session-Level Caching:** Memanfaatkan data JWT session pengguna untuk menghindari kueri SQL `findUnique` berulang pada setiap render dasbor.
-8. **Dukungan Domain Kustom & Reverse Proxy:** Penyetelan `trustHost: true` dan `AUTH_TRUST_HOST` memastikan otentikasi NextAuth v5 berjalan mulus di server hosting/cPanel (`sibersih.my.id`).
-9. **Zero External Date Libraries:** Format tanggal menggunakan `Intl.DateTimeFormat` bawaan JavaScript tanpa dependensi eksternal tambahan.
+4. **Batas Aman Kueri Database (Bounded History Queries):** Kueri riwayat dibatasi secara terukur (`take: 200` untuk pimpinan, `take: 100` untuk petugas & civitas, `take: 50` untuk validasi & landing page), menjamin kestabilan memori server jangka panjang tanpa batas waktu.
+5. **Optimasi Payload Kueri JWT & Google OAuth:** Kueri sinkronisasi user dan sesi di `auth.ts` menggunakan klausul `select` spesifik, mencegah transfer hash password melalui jaringan.
+6. **Optimasi Bandwidth Query Database (Landing Page):** Query publik di `app/page.tsx` menggunakan `select` eksplisit tanpa mengambil field gambar besar (`fotoLaporanUrl` & `fotoBuktiUrl`), menghemat kuota transfer database Supabase.
+7. **Pembersihan Otomatis Cloudinary:** Utilitas `deleteMultipleImagesFromCloudinary` berbasis `Promise.allSettled` untuk menghapus foto secara paralel saat laporan dibatalkan, ditolak, atau akun dihapus.
+8. **Optimasi B-Tree Database Supabase:** Eliminasi indeks redundan dan penambahan *composite indexes* (`@@index([petugasId, status, updatedAt(sort: Desc)])`) untuk kueri cepat dengan latensi rendah (15–30 ms).
+9. **Keep-Alive Endpoint Supabase Free Tier (`/api/health`):** Endpoint ringan penghitung latensi database untuk mencegah proyek Supabase free-tier dinonaktifkan otomatis (*auto-paused*) oleh Supabase setelah 7 hari tidak ada traffic.
+10. **Session-Level Caching:** Memanfaatkan data JWT session pengguna untuk menghindari kueri SQL `findUnique` berulang pada setiap render dasbor.
+11. **Dukungan Domain Kustom & Reverse Proxy:** Penyetelan `trustHost: true` dan `AUTH_TRUST_HOST` memastikan otentikasi NextAuth v5 berjalan mulus di server hosting/cPanel (`sibersih.my.id`).
+12. **Zero External Date Libraries:** Format tanggal menggunakan `Intl.DateTimeFormat` bawaan JavaScript tanpa dependensi eksternal tambahan.
 
 ---
 
@@ -213,6 +220,25 @@ cd .next/standalone && zip -r ../../deploy.zip . && cd ../..
 #### 5. Restart & Jalankan Aplikasi
 1. Klik tombol **"Restart"** (ikon putar hijau).
 2. Akses aplikasi melalui peramban di `https://sibersih.my.id`.
+
+---
+
+## Otomasi Keep-Alive Supabase (Anti-Pause Free Tier)
+
+Supabase Free Tier otomatis menonaktifkan (*pause*) database jika tidak menerima traffic selama 7 hari berturut-turut. Untuk memastikan database selalu aktif, SiBersih menyediakan endpoint probe ringan:
+
+* **Endpoint URL:** `https://sibersih.my.id/api/health`
+* **Metode:** `GET`
+* **Respon Sukses:** HTTP 200 `{ "status": "healthy", "database": "connected", "latencyMs": 15 }`
+
+### Panduan Setup Otomatis via cron-job.org:
+1. Buka dan buat akun gratis di [cron-job.org](https://cron-job.org).
+2. Klik **"Create Cronjob"**.
+3. Isi parameter:
+   - **Title:** `SiBersih Supabase Keepalive`
+   - **URL:** `https://sibersih.my.id/api/health` *(Pastikan menggunakan HTTPS domain Anda)*
+   - **Schedule:** Setiap 1 hari sekali atau setiap 12 jam (contoh: `0 6 * * *`).
+4. Klik **Create** untuk mengaktifkan. Database Supabase kini dijamin tetap aktif 24/7 tanpa risiko terjeda.
 
 ---
 
