@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-export function getCloudinaryPublicId(url: string): string | null {
+function getCloudinaryPublicId(url: string): string | null {
   if (!url || !url.includes("cloudinary.com")) return null;
   try {
     const parts = url.split("/image/upload/");

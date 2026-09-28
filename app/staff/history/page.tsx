@@ -18,7 +18,8 @@ export default async function StaffHistoryPage() {
             petugasId: validUserId,
             status: { in: ["MENUNGGU_APPROVAL", "SELESAI"] } 
         },
-        orderBy: { updatedAt: "desc" }
+        orderBy: { updatedAt: "desc" },
+        take: 100,
     });
 
     return (

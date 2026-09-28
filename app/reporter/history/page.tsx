@@ -15,7 +15,8 @@ export default async function ReporterHistoryPage() {
 
     const historyData = await prisma.report.findMany({
         where: { pelaporId: validUserId },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        take: 100,
     });
 
     return (
