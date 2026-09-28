@@ -38,7 +38,7 @@ export default async function PimpinanValidations() {
                     <h1 className="text-2xl font-semibold text-sibersih-primary">Validasi Pekerjaan</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">Laporan yang membutuhkan persetujuan Anda</p>
                 </div>
-                <Link href="/executive/history" className="text-xs font-medium text-sibersih-primary hover:underline">Riwayat Validasi</Link>
+                <Link href="/executive/history" className="text-xs font-medium text-sibersih-primary hover:underline">Semua Laporan</Link>
             </header>
 
             {butuhApproval.length === 0 ? (

@@ -9,9 +9,9 @@ export default async function ExecutiveHistoryPage() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const completedTasks = await prisma.report.findMany({
-        where: { status: "SELESAI" },
-        orderBy: { updatedAt: "desc" }
+    const allReports = await prisma.report.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 200,
     });
 
     return (
@@ -22,13 +22,13 @@ export default async function ExecutiveHistoryPage() {
                 </Link>
 
                 <header className="mb-6">
-                    <h1 className="text-2xl font-semibold text-sibersih-primary">Riwayat Validasi</h1>
+                    <h1 className="text-2xl font-semibold text-sibersih-primary">Riwayat &amp; Pemantauan Laporan</h1>
                     <p className="text-sm text-sibersih-primary/60 mt-1">
-                        Daftar laporan kebersihan yang telah disetujui.
+                        Daftar dan pemantauan seluruh laporan kebersihan civitas akademika.
                     </p>
                 </header>
 
-                <HistoryListClient reports={completedTasks} role="PIMPINAN" />
+                <HistoryListClient reports={allReports} role="PIMPINAN" />
             </div>
         </div>
     );

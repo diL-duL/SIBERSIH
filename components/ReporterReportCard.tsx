@@ -17,6 +17,7 @@ import {
   Pencil,
 } from "lucide-react";
 import DeleteReportButton from "@/components/DeleteReportButton";
+import RejectReportButton from "@/components/RejectReportButton";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { Badge } from "@/components/ui/badge";
 
@@ -40,6 +41,7 @@ interface ReporterReportCardProps {
   showDeleteButton?: boolean;
   isOpen?: boolean;
   onToggle?: () => void;
+  role?: "PELAPOR" | "PETUGAS" | "PIMPINAN";
 }
 
 function formatDate(date: Date | string) {
@@ -59,6 +61,7 @@ export default function ReporterReportCard({
   showDeleteButton = true,
   isOpen: controlledIsOpen,
   onToggle,
+  role,
 }: ReporterReportCardProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
@@ -185,6 +188,16 @@ export default function ReporterReportCard({
                 {/* TOMBOL HAPUS */}
                 {isPending && showDeleteButton && (
                   <DeleteReportButton reportId={report.id} />
+                )}
+
+                {/* HAPUS LAPORAN KHUSUS PIMPINAN (TERMASUK STATUS SELESAI) */}
+                {role === "PIMPINAN" && (
+                  <RejectReportButton
+                    reportId={report.id}
+                    reportLocation={report.lokasi}
+                    variant="compact"
+                    isCompleted={isCompleted}
+                  />
                 )}
               </div>
             </div>

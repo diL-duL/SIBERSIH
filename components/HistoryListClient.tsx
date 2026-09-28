@@ -218,6 +218,7 @@ export default function HistoryListClient({
               <ReporterReportCard
                 key={item.id}
                 report={item}
+                role={role}
                 showDeleteButton={showDeleteButton && role !== "PIMPINAN"}
               />
             );

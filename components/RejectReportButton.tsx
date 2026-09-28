@@ -11,6 +11,7 @@ interface RejectReportButtonProps {
   reportLocation?: string;
   variant?: "compact" | "validation" | "full";
   className?: string;
+  isCompleted?: boolean;
 }
 
 export default function RejectReportButton({
@@ -18,6 +19,7 @@ export default function RejectReportButton({
   reportLocation,
   variant = "compact",
   className = "",
+  isCompleted = false,
 }: RejectReportButtonProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -26,11 +28,15 @@ export default function RejectReportButton({
     startTransition(async () => {
       try {
         await tolakLaporanPalsu(reportId);
-        toast.success("Laporan berhasil ditolak dan dihapus permanen dari sistem.");
+        toast.success(
+          isCompleted
+            ? "Laporan berhasil dihapus permanen dari sistem."
+            : "Laporan berhasil ditolak dan dihapus permanen dari sistem."
+        );
         setOpen(false);
       } catch (err: unknown) {
         const error = err as Error;
-        toast.error(error.message || "Gagal menolak laporan.");
+        toast.error(error.message || (isCompleted ? "Gagal menghapus laporan." : "Gagal menolak laporan."));
       }
     });
   };
@@ -41,21 +47,21 @@ export default function RejectReportButton({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          title="Tolak & Hapus Laporan Palsu"
+          title={isCompleted ? "Hapus Laporan Selesai" : "Tolak & Hapus Laporan Palsu"}
           className={`inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 hover:text-red-700 bg-red-50/80 hover:bg-red-100/80 border border-red-200/70 px-2 py-1 rounded-md transition-colors active:scale-95 cursor-pointer ${className}`}
         >
           <Trash2 size={12} className="shrink-0" />
-          <span>Tolak</span>
+          <span>{isCompleted ? "Hapus" : "Tolak"}</span>
         </button>
       ) : variant === "validation" ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          title="Tolak & Hapus Laporan Palsu"
+          title={isCompleted ? "Hapus Laporan" : "Tolak & Hapus Laporan Palsu"}
           className={`h-10 px-3.5 sm:px-4 bg-white hover:bg-red-50 text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs sm:text-sm shadow-2xs active:scale-[0.98] cursor-pointer shrink-0 ${className}`}
         >
           <Trash2 size={15} className="shrink-0 text-red-500" />
-          <span>Tolak<span className="hidden sm:inline"> Laporan</span></span>
+          <span>{isCompleted ? "Hapus" : "Tolak"}<span className="hidden sm:inline"> Laporan</span></span>
         </button>
       ) : (
         <button
@@ -64,14 +70,14 @@ export default function RejectReportButton({
           className={`w-full h-10 bg-white hover:bg-red-50 text-red-600 hover:text-red-700 border border-red-200/80 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-2xs active:scale-[0.98] cursor-pointer ${className}`}
         >
           <Trash2 size={15} />
-          <span>Tolak Laporan Palsu</span>
+          <span>{isCompleted ? "Hapus Laporan" : "Tolak Laporan Palsu"}</span>
         </button>
       )}
 
       <AlertDialog
         open={open}
         onOpenChange={setOpen}
-        title="Tolak & Hapus Laporan Palsu?"
+        title={isCompleted ? "Hapus Laporan Ini?" : "Tolak & Hapus Laporan Palsu?"}
         description={`Laporan ${
           reportLocation ? `di "${reportLocation}" ` : ""
         }akan dihapus secara permanen dari sistem, termasuk seluruh file foto yang tersimpan di cloud storage. Tindakan ini tidak dapat dibatalkan.`}

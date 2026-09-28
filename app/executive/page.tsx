@@ -165,9 +165,12 @@ export default async function PimpinanDashboard() {
                                                             Dalam Antrean
                                                         </span>
                                                     )}
-                                                    {report.status !== "SELESAI" && (
-                                                        <RejectReportButton reportId={report.id} reportLocation={report.lokasi} variant="compact" />
-                                                    )}
+                                                    <RejectReportButton 
+                                                        reportId={report.id} 
+                                                        reportLocation={report.lokasi} 
+                                                        variant="compact" 
+                                                        isCompleted={report.status === "SELESAI"} 
+                                                    />
                                                 </div>
                                                 <span className="text-[11px] text-sibersih-primary/40 hidden sm:inline">
                                                     {new Date(report.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
