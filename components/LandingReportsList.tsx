@@ -122,14 +122,22 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
               </div>
 
               {/* Metadata: Pelapor, Petugas, dan Waktu */}
-              <div className="pt-3 border-t border-sibersih-primary/10 flex flex-col gap-1.5 text-xs text-sibersih-primary/60">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate">
-                    Pelapor: <strong className="text-sibersih-primary font-medium">{pelaporNama}</strong>
-                  </span>
-                  <span className="truncate text-right">
-                    Petugas: <strong className="text-sibersih-primary font-medium">{petugasNama}</strong>
-                  </span>
+              <div className="pt-3 border-t border-sibersih-primary/10 flex flex-col gap-2 text-xs">
+                {/* Baris Pelapor & Petugas yang Lega dan Bebas Terpotong */}
+                <div className="flex flex-col gap-1.5 text-xs text-sibersih-primary/70">
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <span className="text-[11px] text-sibersih-primary/50 shrink-0 font-medium">Pelapor:</span>
+                    <span className="font-semibold text-sibersih-primary truncate text-right min-w-0" title={pelaporNama}>
+                      {pelaporNama}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <span className="text-[11px] text-sibersih-primary/50 shrink-0 font-medium">Petugas:</span>
+                    <span className="font-semibold text-sibersih-primary truncate text-right min-w-0" title={petugasNama}>
+                      {petugasNama}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between gap-2 pt-1 border-t border-sibersih-primary/5 text-[11px] text-sibersih-primary/50">
                   <span className="flex items-center gap-1">
