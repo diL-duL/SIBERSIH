@@ -1,6 +1,6 @@
 # SiBersih
 
-Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pelaporan fasilitas kotor/sampah, penugasan petugas kebersihan, serta validasi dan pengawasan oleh pimpinan kampus dalam satu platform terpusat yang transparan, aman, dan akuntabel.
+Sistem Informasi Kebersihan dan Sarana Prasarana Kampus berbasis web modern yang mengintegrasikan pelaporan fasilitas kotor/rusak, penugasan petugas kebersihan, serta validasi dan pengawasan oleh pimpinan kampus dalam satu platform terpusat yang transparan, aman, dan akuntabel.
 
 ---
 
@@ -8,7 +8,7 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 
 - **Framework Utama:** Next.js 16.2.10 (App Router, Server Actions, Turbopack)
 - **Library UI:** React 19.2.4
-- **Styling & Tema:** Tailwind CSS v4, Lucide Icons, Seed Botanical-Clinical Theme
+- **Styling & Tema:** Tailwind CSS v4, Lucide Icons, Institutional Botanical Theme (`#1F4B2C`)
 - **Database:** Supabase (PostgreSQL via Connection Pooler Port 6543)
 - **ORM:** Prisma 7.9+ (Custom Client Output di `app/generated/prisma`)
 - **Autentikasi & Otorisasi:** Auth.js (NextAuth v5 beta) dengan Credentials Provider, Google OAuth 2.0 (SSO), & JWT Session
@@ -22,33 +22,44 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 
 ### 1. Autentikasi Modern (Google OAuth & Kredensial)
 - **Masuk & Daftar dengan Google (One-Click SSO):** Pengguna dapat masuk atau mendaftar langsung menggunakan akun Google resmi.
-- **Halaman Registrasi Khusus Google Sign-Up (`/login/register`):** Menyediakan rute pendaftaran khusus bagi civitas akademika tanpa formulir manual berbelit-belit, terhubung dengan tautan *"Belum punya akun? Daftar sekarang"* pada halaman login.
-- **Auto-Provisioning & Modal Atur Sandi Pasca-Login Google:** Pengguna Google yang belum terdaftar otomatis dibuatkan akun dengan peran `PELAPOR`. Setelah login Google berhasil, modal pop-up interaktif akan muncul (opsional) menawarkan pengguna untuk menyetel kata sandi manual, lengkap dengan opsi *"Lewati / Nanti Saja"*.
-- **Fitur Ubah Kata Sandi & Vision Toggle (Semua Peran):** Seluruh peran (Pelapor, Petugas, dan Pimpinan) dapat memperbarui kata sandi melalui tab Pengaturan Akun di profil. Dilengkapi tombol ikon interaktif **Vision Toggle (`Eye` / `EyeOff`)** pada setiap kolom kata sandi lama, baru, dan konfirmasi.
+- **Halaman Registrasi Khusus Google Sign-Up (`/login/register`):** Rute pendaftaran khusus bagi civitas akademika tanpa formulir manual berbelit-belit.
+- **Auto-Provisioning & Modal Atur Sandi Pasca-Login Google:** Pengguna Google baru otomatis dibuatkan akun dengan peran `PELAPOR`. Modal pop-up interaktif menawarkan pengguna untuk menyetel kata sandi manual (opsional) agar akun dapat diakses baik via Google maupun email/password.
+- **Wajib Nomor HP Pasca-Registrasi / Login:** Modal khusus (`RequirePhoneNumberModal`) mewajibkan pelapor melengkapi nomor HP/WhatsApp aktif demi kemudahan verifikasi dan koordinasi petugas di lapangan.
+- **UX Form Login Cerdas:**
+  - Klik pada logo SiBersih (desktop maupun mobile) langsung mengarahkan pengguna kembali ke Beranda (*Landing Page*).
+  - Jika proses masuk gagal, alamat email pengguna tetap tertulis di formulir, sementara kolom kata sandi otomatis terhapus dan kursor langsung terfokus kembali ke kolom sandi.
+- **Fitur Ubah Kata Sandi & Vision Toggle (Semua Peran):** Seluruh peran dapat memperbarui kata sandi melalui tab Pengaturan Akun di profil, dilengkapi tombol **Vision Toggle (`Eye` / `EyeOff`)** pada setiap kolom kata sandi lama, baru, dan konfirmasi.
 - **Dukungan Kredensial Email & Password (Petugas & Pimpinan):** Form login kredensial berproteksi Bcrypt dan anti-brute force rate limiter khusus untuk staf internal (Petugas dan Pimpinan).
-- **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer form autentikasi dan terdaftar pada sitemap.
+- **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer autentikasi.
 
 ### 2. Publik & Beranda (Landing Page)
+- **Pintasan Aplikasi Resmi Untad (*Untad App Shortcuts*):** Kartu navigasi terintegrasi ke layanan resmi Universitas Tadulako (SIGA, SIDAMPAK, E-Learning, Portal Untad, MBKM Untad, dan Kepegawaian).
+- **Kontak Tanggap Darurat Pemadam Kebakaran (*Emergency Hotline*):** Kartu kontak siaga terintegrasi dengan akses panggilan cepat ke Posko Damkar Palu `(0451) 423113` dan tautan WhatsApp resmi `+62 821 8823 2113`, didesain selaras dengan palet hijau institusional Sibersih.
 - **Showcase Laporan Transparan:** Menampilkan hingga 50 laporan fasilitas kampus terkini mencakup seluruh status (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) secara transparan kepada seluruh civitas.
 - **Tampilan Awal Ringkas & Toggle Interaktif:** Menampilkan 3 laporan awal dengan tombol toggle *"Lihat Semua Laporan"* / *"Tampilkan Lebih Sedikit"*.
 - **Hemat Kuota & Cepat (Tanpa Gambar Publik):** Daftar laporan publik sengaja tidak memuat aset gambar, menjaga kecepatan *load* instan dan menghemat kuota cloud.
 - **Anti-DDoS via ISR Caching:** Menggunakan *Incremental Static Regeneration* (`revalidate: 60`), melayani ribuan pengunjung langsung dari CDN Edge tanpa membebani database.
 
 ### 3. Pelapor (Mahasiswa / Civitas Akademika)
-- **Pelaporan Presisi Berbasis Peta:** Menentukan titik tumpukan sampah menggunakan peta interaktif (*Leaflet*), drag-and-drop foto, atau kamera langsung (WebRTC).
-- **Edit & Batalkan Laporan:** Pelapor dapat mengedit deskripsi, titik peta, foto, atau membatalkan/menghapus laporan selama statusnya masih `LAPORAN_MASUK`.
-- **Hapus Laporan di Halaman Riwayat:** Tombol hapus laporan yang belum diproses kini tersedia di dasbor utama maupun di halaman riwayat lengkap (`/reporter/history`).
+- **Kategori Laporan (Sampah vs Sarana & Prasarana):** Pelapor dapat membedakan jenis laporan antara tumpukan **Sampah** atau kerusakan **Sarana & Prasarana** (fasilitas toilet, lampu, gedung, jalan). Dilengkapi badge penanda visual yang jelas.
+- **Formulir Pelaporan Sederhana & Cepat:**
+  - Urutan teratas: **1. Foto Bukti** (ambil kamera langsung via WebRTC atau unggah galeri).
+  - Urutan kedua: **2. Lokasi & Titik Peta** (nama lokasi spesifik dan geser pin GPS Leaflet).
+  - **Deskripsi Laporan Bersifat Opsional:** Pelapor dapat langsung mengirim laporan hanya dengan foto dan lokasi tanpa wajib mengetik deskripsi panjang.
+- **Edit & Batalkan Laporan:** Pelapor dapat mengedit kategori, foto, lokasi, atau menghapus laporan selama statusnya masih `LAPORAN_MASUK`.
+- **Hapus Laporan di Halaman Riwayat:** Tombol hapus laporan yang belum diproses tersedia di dasbor utama maupun di halaman riwayat lengkap (`/reporter/history`).
 - **Pelacakan Status Real-time:** Mengetahui posisi penanganan laporan (Menunggu Petugas, Menunggu Validasi, atau Selesai).
 - **Riwayat Terproteksi:** Kueri riwayat dibatasi hingga 100 laporan terkini dengan fitur pencarian teks langsung dan filter status.
 
 ### 4. Petugas Kebersihan (Staff)
 - **Daftar Tugas Baru:** Dasbor interaktif dan halaman tugas (`/staff/tasks`) untuk memantau fasilitas yang membutuhkan penanganan.
-- **Unggah Bukti Pengerjaan:** Petugas mengunggah foto sesudah dibersihkan dan catatan tindakan hasil kerja.
-- **Mode Edit Bukti:** Petugas dapat memperbarui foto bukti dan catatan kerja selama laporan belum disetujui oleh pimpinan.
+- **Unggah Bukti Pengerjaan:** Petugas mengunggah foto sesudah dikerjakan di lokasi.
+- **Deskripsi Hasil Kerja Opsional:** Catatan tindakan pembersihan/perbaikan bersifat fleksibel (opsional) agar tidak menghambat mobilitas kerja petugas di lapangan.
+- **Mode Edit Bukti:** Petugas dapat memperbarui foto bukti atau catatan kerja selama laporan belum disetujui oleh pimpinan.
 - **Riwayat Penanganan:** Arsip hingga 100 tugas terakhir yang pernah dikerjakan oleh petugas terkait, dilengkapi pencarian langsung dan paginasi.
 
 ### 5. Pimpinan (Executive)
-- **Peta Pengawasan Wilayah Responsif:** Peta pemantauan sebaran laporan kampus yang adaptif (berada di posisi atas pada perangkat mobile, dan berada di bagian bawah membentang 3 kolom pada layar desktop).
+- **Peta Pengawasan Wilayah Responsif:** Peta pemantauan sebaran laporan kampus yang adaptif (berada di posisi atas pada perangkat mobile, dan membentang pada layar desktop).
 - **Panel Validasi Komparasi (Sebelum vs Sesudah):** Meninjau foto laporan awal pelapor bersanding langsung dengan foto bukti petugas dan catatan penanganan (`/executive/validations`).
 - **Tolak / Hapus Laporan Palsu & Status Selesai:** Hak akses khusus pimpinan untuk menolak dan menghapus laporan palsu/spam pada antrean, serta memiliki otoritas menghapus laporan yang sudah berstatus `SELESAI` baik dari Dasbor Utama maupun Riwayat.
 - **Pembersihan Otomatis Cloud Storage:** Penghapusan laporan otomatis membersihkan seluruh file foto terkait di Cloudinary untuk mencegah pemborosan kuota penyimpanan.
@@ -57,37 +68,34 @@ Sistem Informasi Kebersihan Kampus berbasis web modern yang mengintegrasikan pel
 
 ---
 
-## Bahasa Desain: "Seed" Botanical-Clinical Aesthetic
+## Bahasa Desain: Institutional Botanical Theme
 
-SiBersih menerapkan bahasa visual terinspirasi dari **Seed Style Reference** (*"living organism under laboratory glass"*):
-- **Palet Warna 93% Akromatik:**
-  - **Snow White (`#fcfcf7`):** Kanvas hangat organik yang bersih.
-  - **Forest Depths (`#1c3a13`):** Hijau pinus tinta pekat untuk teks utama dan tombol kontras tinggi.
-  - **Warm Stone (`#eeeee9`):** Latar panel pendukung dan kotak detail.
-  - **Lime Pulse (`#d3fa99`):** Aksen tunggal fungsional untuk lencana status selesai/sukses.
-- **Tipografi "Whisper-Light":**
-  - Menggunakan Google Fonts **Inter** (bobot 300, 400, 500) dengan *tracking tight* (-0.025em) untuk headline berwibawa layaknya jurnal ilmiah.
-  - Tipografi **JetBrains Mono** untuk ID laporan `#ID`, koordinat GPS, dan penanda waktu bergaya label spesimen laboratorium.
-- **Geometri Komponen Flat & Pill:**
-  - Seluruh tombol kontrol dan lencana (*badge*) berbentuk *pill* penuh (`rounded-full`).
-  - Kartu laporan bersudut lengkung 16px (`rounded-2xl`) tanpa bayangan (*zero drop-shadow / pure flat*).
+SiBersih menerapkan antarmuka modern yang bersih, fungsional, dan bebas dari elemen berlebihan (*AI-slop*):
+- **Palet Warna Institusional:**
+  - **Sibersih Primary (`#1F4B2C`):** Hijau hutan khas Fakultas Teknik / Untad yang berwibawa dan kontras tinggi.
+  - **Soft Surface (`#FCFCF7` / Slate-50):** Kanvas netral bersih untuk kenyamanan membaca dalam jangka panjang.
+  - **Dark Mode Support:** Dukungan tema gelap terintegrasi (`bg-slate-900`, `border-slate-800`).
+- **Tipografi Bersih & Tegas:**
+  - Menggunakan Google Fonts **Inter** dengan bobot seimbang untuk legibilitas optimal pada seluruh ukuran layar.
+- **Geometri Komponen Modern:**
+  - Tombol kontrol dan kartu formulir berlekuk halus (`rounded-xl` / `rounded-2xl`) dengan bayangan halus (`shadow-2xs`), bebas dari animasi berlebihan yang mengganggu kinerja.
 
 ---
 
 ## Keamanan & Performa (Enterprise-Grade)
 
-1. **Anti-Brute Force Rate Limiting:** *In-Memory Rate Limiter* pada level Server Actions untuk melindungi endpoint otentikasi dari serangan bot dan spam.
+1. **Anti-Brute Force Rate Limiting:** *In-Memory Rate Limiter* pada level Server Actions untuk melindungi form autentikasi dari serangan bot dan spam.
 2. **HTTP Security Headers OWASP:** Dilengkapi proteksi `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, serta `Permissions-Policy` untuk akses kamera dan geolokasi.
-3. **Kompresi Gambar Sisi Klien & Anti-Payload-Limit:** Modul `clientImageCompressor.ts` mengompresi foto pelapor dan petugas di browser menjadi WebP < 250 KB sebelum dikirim ke server. Dilengkapi normalisasi latar belakang putih solid untuk PNG transparan dan eliminasi pengiriman ganda (*double file payload*).
-4. **Batas Aman Kueri Database (Bounded History Queries):** Kueri riwayat dibatasi secara terukur (`take: 200` untuk pimpinan, `take: 100` untuk petugas & civitas, `take: 50` untuk validasi & landing page), menjamin kestabilan memori server jangka panjang tanpa batas waktu.
+3. **Kompresi Gambar Sisi Klien & Anti-Payload-Limit:** Modul `clientImageCompressor.ts` mengompresi foto pelapor dan petugas di browser menjadi WebP/JPEG < 350 KB sebelum dikirim ke server. Dilengkapi normalisasi latar belakang putih solid untuk PNG transparan.
+4. **Batas Aman Kueri Database (Bounded History Queries):** Kueri riwayat dibatasi secara terukur (`take: 200` untuk pimpinan, `take: 100` untuk petugas & civitas, `take: 50` untuk validasi & landing page), menjamin kestabilan memori server jangka panjang.
 5. **Optimasi Payload Kueri JWT & Google OAuth:** Kueri sinkronisasi user dan sesi di `auth.ts` menggunakan klausul `select` spesifik, mencegah transfer hash password melalui jaringan.
 6. **Optimasi Bandwidth Query Database (Landing Page):** Query publik di `app/page.tsx` menggunakan `select` eksplisit tanpa mengambil field gambar besar (`fotoLaporanUrl` & `fotoBuktiUrl`), menghemat kuota transfer database Supabase.
 7. **Pembersihan Otomatis Cloudinary:** Utilitas `deleteMultipleImagesFromCloudinary` berbasis `Promise.allSettled` untuk menghapus foto secara paralel saat laporan dibatalkan, ditolak, atau akun dihapus.
-8. **Optimasi B-Tree Database Supabase:** Eliminasi indeks redundan dan penambahan *composite indexes* (`@@index([petugasId, status, updatedAt(sort: Desc)])`) untuk kueri cepat dengan latensi rendah (15–30 ms).
+8. **Optimasi B-Tree Database Supabase:** Skema Prisma dilengkapi *composite indexes* (`@@index([status, createdAt(sort: Desc)])`, `@@index([pelaporId, createdAt(sort: Desc)])`, `@@index([petugasId, status, updatedAt(sort: Desc)])`, `@@index([kategori])`) untuk kueri cepat dengan latensi rendah.
 9. **Keep-Alive Endpoint Supabase Free Tier (`/api/health`):** Endpoint ringan penghitung latensi database untuk mencegah proyek Supabase free-tier dinonaktifkan otomatis (*auto-paused*) oleh Supabase setelah 7 hari tidak ada traffic.
 10. **Session-Level Caching:** Memanfaatkan data JWT session pengguna untuk menghindari kueri SQL `findUnique` berulang pada setiap render dasbor.
 11. **Dukungan Domain Kustom & Reverse Proxy:** Penyetelan `trustHost: true` dan `AUTH_TRUST_HOST` memastikan otentikasi NextAuth v5 berjalan mulus di server hosting/cPanel (`sibersih.my.id`).
-12. **Zero External Date Libraries:** Format tanggal menggunakan `Intl.DateTimeFormat` bawaan JavaScript tanpa dependensi eksternal tambahan.
+12. **Zero Dead Code:** Repositori diaudit bebas dari variabel tak terpakai, fungsi yatim, dan tipe redundan menggunakan integrasi Knip & ESLint.
 
 ---
 
@@ -144,11 +152,11 @@ npx prisma db push
 ### 5. Seeding Akun Default (Opsional)
 Jalankan query SQL berikut di SQL Editor Supabase untuk membuat 3 akun peran pengujian (Password: `password123`):
 ```sql
-INSERT INTO "User" ("id", "nama", "email", "password", "role")
+INSERT INTO "User" ("id", "nama", "email", "password", "nomorHp", "role")
 VALUES 
-    (gen_random_uuid()::text, 'Andi Pelapor', 'pelapor@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PELAPOR'::"Role"),
-    (gen_random_uuid()::text, 'Joko Petugas', 'petugas@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PETUGAS'::"Role"),
-    (gen_random_uuid()::text, 'Budi Pimpinan', 'pimpinan@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', 'PIMPINAN'::"Role");
+    (gen_random_uuid()::text, 'Andi Pelapor', 'pelapor@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567890', 'PELAPOR'::"Role"),
+    (gen_random_uuid()::text, 'Joko Petugas', 'petugas@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567891', 'PETUGAS'::"Role"),
+    (gen_random_uuid()::text, 'Budi Pimpinan', 'pimpinan@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567892', 'PIMPINAN'::"Role");
 ```
 
 ### 6. Menjalankan Server Lokal
@@ -203,18 +211,7 @@ cd .next/standalone && zip -r ../../deploy.zip . && cd ../..
 
 #### 4. Masukkan Environment Variables di cPanel
 1. Kembali ke menu **"Setup Node.js App"** dan klik tombol pensil (**Edit**) pada aplikasi Anda.
-2. Gulir ke bagian **Environment variables**, lalu klik **Add Variable** untuk menambahkan:
-   - `DATABASE_URL`: `postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true`
-   - `DIRECT_URL`: `postgresql://postgres.[REF]:[PASS]@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres`
-   - `AUTH_SECRET`: *[Secret NextAuth Anda]*
-   - `AUTH_URL`: `https://sibersih.my.id`
-   - `AUTH_TRUST_HOST`: `true`
-   - `AUTH_GOOGLE_ID`: *[Google Client ID Anda]*
-   - `AUTH_GOOGLE_SECRET`: *[Google Client Secret Anda]*
-   - `CLOUDINARY_CLOUD_NAME`: *[Cloud Name Cloudinary]*
-   - `CLOUDINARY_API_KEY`: *[API Key Cloudinary]*
-   - `CLOUDINARY_API_SECRET`: *[API Secret Cloudinary]*
-   - `NODE_ENV`: `production`
+2. Gulir ke bagian **Environment variables**, lalu klik **Add Variable** untuk menambahkan variabel `.env`.
 3. Klik tombol **Save** di bagian atas halaman edit aplikasi.
 
 #### 5. Restart & Jalankan Aplikasi
