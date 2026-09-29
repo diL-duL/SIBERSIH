@@ -9,7 +9,7 @@ export default async function ProfilePageWrapper() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, nama: true, email: true, role: true }
+    select: { id: true, nama: true, email: true, role: true, nomorHp: true }
   });
 
   if (!user) redirect('/login');

@@ -89,6 +89,41 @@ export async function setPasswordDirectAction(prevState: unknown, formData: Form
   }
 }
 
+// 2c. Simpan Nomor HP (Wajib Pasca-Registrasi / Login)
+export async function savePhoneNumberAction(prevState: unknown, formData: FormData) {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) return { error: 'Sesi tidak valid, silakan login kembali.' };
+
+    const rawNomorHp = formData.get('nomorHp') as string;
+    const nomorHp = rawNomorHp ? rawNomorHp.trim().replace(/[\s-]/g, '') : '';
+
+    if (!nomorHp) {
+      return { error: 'Nomor HP wajib diisi.' };
+    }
+
+    // Validasi format nomor HP Indonesia (minimal 10 digit, maks 15 digit, diawali 08 atau +628)
+    const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{7,11}$/;
+    if (!phoneRegex.test(nomorHp)) {
+      return { error: 'Format nomor HP tidak valid. Gunakan format seperti 08123456789 atau +628123456789.' };
+    }
+
+    await prisma.user.update({
+      where: { email: session.user.email },
+      data: { nomorHp }
+    });
+
+    revalidatePath('/reporter');
+    revalidatePath('/reporter/profile');
+    revalidatePath('/', 'layout');
+
+    return { success: 'Nomor HP berhasil disimpan!' };
+  } catch (error) {
+    console.error('savePhoneNumberAction error:', error);
+    return { error: 'Gagal menyimpan nomor HP.' };
+  }
+}
+
 // 3. Update Profile
 export async function updateProfileAction(prevState: unknown, formData: FormData) {
   try {
@@ -98,9 +133,25 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
     const nama = (formData.get('nama') as string)?.trim();
     if (!nama || nama.length < 2) return { error: 'Nama minimal 2 karakter.' };
 
+    const rawNomorHp = formData.get('nomorHp') as string;
+    let cleanPhone: string | null = null;
+    if (rawNomorHp !== null && rawNomorHp !== undefined) {
+      const trimmed = rawNomorHp.trim().replace(/[\s-]/g, '');
+      if (trimmed.length > 0) {
+        const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{7,11}$/;
+        if (!phoneRegex.test(trimmed)) {
+          return { error: 'Format nomor HP tidak valid (contoh: 08123456789).' };
+        }
+        cleanPhone = trimmed;
+      }
+    }
+
     await prisma.user.update({
       where: { email: session.user.email },
-      data: { nama }
+      data: {
+        nama,
+        ...(cleanPhone !== null ? { nomorHp: cleanPhone } : {})
+      }
     });
 
     revalidatePath('/', 'layout');

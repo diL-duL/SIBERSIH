@@ -2,7 +2,7 @@
 
 import { useState, useActionState, useEffect } from 'react';
 import Link from 'next/link';
-import { User as UserIcon, Mail, Key, ShieldCheck, Edit, LogOut, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { User as UserIcon, Mail, Key, ShieldCheck, Edit, LogOut, ArrowLeft, Eye, EyeOff, Phone } from 'lucide-react';
 import { logoutAction, changePasswordAction, updateProfileAction, deleteAccountAction } from '@/app/actions/user';
 import { SubmitButton } from './SubmitButton';
 
@@ -12,6 +12,7 @@ type ProfileProps = {
     nama: string;
     email: string;
     role: string;
+    nomorHp?: string | null;
   };
 };
 
@@ -33,13 +34,15 @@ export default function ProfileClient({ user }: ProfileProps) {
   // Handle success closures
   useEffect(() => {
     if (changePwdState?.success) {
-      setTimeout(() => setIsChangePasswordModalOpen(false), 2000);
+      const timer = setTimeout(() => setIsChangePasswordModalOpen(false), 2000);
+      return () => clearTimeout(timer);
     }
   }, [changePwdState]);
 
   useEffect(() => {
     if (updateProfileState?.success) {
-      setTimeout(() => setActiveTab('personal'), 2000);
+      const timer = setTimeout(() => setActiveTab('personal'), 2000);
+      return () => clearTimeout(timer);
     }
   }, [updateProfileState]);
 
@@ -179,6 +182,16 @@ export default function ProfileClient({ user }: ProfileProps) {
                     </div>
 
                     <div className="p-4 rounded-xl bg-sibersih-bg border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300">
+                      <p className="text-xs text-sibersih-primary/60 font-medium mb-1 uppercase tracking-wider">Nomor HP / WhatsApp</p>
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-sibersih-primary/40" />
+                        <p className="text-sibersih-primary font-semibold text-sm">
+                          {user.nomorHp || 'Belum diisi'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-sibersih-bg border border-sibersih-primary/5 hover:border-sibersih-primary/20 transition-colors duration-300">
                       <p className="text-xs text-sibersih-primary/60 font-medium mb-1 uppercase tracking-wider">Peran (Role)</p>
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-sibersih-primary/40" />
@@ -260,6 +273,18 @@ export default function ProfileClient({ user }: ProfileProps) {
                     <div>
                       <label className="block text-sm font-medium text-sibersih-primary/80 mb-1">Email</label>
                       <input type="email" defaultValue={user.email} disabled className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 bg-sibersih-primary/5 text-sibersih-primary/60 cursor-not-allowed focus:outline-none transition-all text-sm" />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-sibersih-primary/80 mb-1">Nomor HP / WhatsApp</label>
+                      <input 
+                        type="tel" 
+                        name="nomorHp"
+                        defaultValue={user.nomorHp || ''} 
+                        placeholder="Contoh: 081234567890"
+                        className="w-full px-4 py-2 rounded-lg border border-sibersih-primary/10 focus:outline-none focus:ring-2 focus:ring-sibersih-accent focus:border-transparent transition-all text-sm placeholder:text-sibersih-primary/60 text-sibersih-primary" 
+                      />
+                      <p className="text-[11px] text-sibersih-primary/50 mt-1">Gunakan awalan 08 atau +628 (10-15 digit).</p>
                     </div>
 
                     <div>
