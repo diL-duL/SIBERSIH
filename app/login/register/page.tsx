@@ -24,8 +24,8 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-sibersih-primary/40 mix-blend-multiply" />
         
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
-          <div className="flex items-center gap-3">
-             <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg border border-white/30 bg-white">
+          <Link href="/" className="flex items-center gap-3 group w-fit cursor-pointer" title="Kembali ke Beranda">
+             <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg border border-white/30 bg-white group-hover:scale-105 transition-transform duration-200">
                <Image 
                  src="/sibersihLogo.webp" 
                  alt="SiBersih" 
@@ -35,8 +35,8 @@ export default function RegisterPage() {
                  className="object-contain" 
                />
              </div>
-             <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md">SiBersih</span>
-          </div>
+             <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md group-hover:text-white transition-colors">SiBersih</span>
+          </Link>
           
           <div className="space-y-4 pb-8 max-w-lg">
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.15] drop-shadow-lg">
@@ -54,12 +54,12 @@ export default function RegisterPage() {
         <div className="mx-auto w-full max-w-md flex flex-col gap-8">
           
           {/* Mobile Logo */}
-          <div className="flex flex-col items-center justify-center lg:hidden -mb-4">
-            <div className="relative h-16 w-16 mb-1">
+          <Link href="/" className="flex flex-col items-center justify-center lg:hidden -mb-4 group cursor-pointer" title="Kembali ke Beranda">
+            <div className="relative h-16 w-16 mb-1 group-hover:scale-105 transition-transform duration-200">
               <Image src="/sibersihLogo.webp" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="64px" />
             </div>
-            <span className="font-bold text-xl text-sibersih-primary tracking-tight">SiBersih</span>
-          </div>
+            <span className="font-bold text-xl text-sibersih-primary tracking-tight group-hover:opacity-90 transition-opacity">SiBersih</span>
+          </Link>
 
           <div className="space-y-2 text-center lg:text-left">
             <h2 className="text-3xl font-bold tracking-tight text-sibersih-primary">

@@ -10,7 +10,11 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, dispatch] = useActionState(loginAction, undefined);
+  const [email, setEmail] = useState("");
+  const [state, dispatch] = useActionState(loginAction, undefined);
+
+  // Email tetap dipertahankan saat login gagal
+  const currentEmail = email || state?.email || "";
 
   return (
     <div className="flex min-h-screen bg-sibersih-bg font-sans">
@@ -27,8 +31,8 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-sibersih-primary/40 mix-blend-multiply" />
         
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
-          <div className="flex items-center gap-3">
-             <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg border border-white/30 bg-white">
+          <Link href="/" className="flex items-center gap-3 group w-fit cursor-pointer" title="Kembali ke Beranda">
+             <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg border border-white/30 bg-white group-hover:scale-105 transition-transform duration-200">
                <Image 
                  src="/sibersihLogo.webp" 
                  alt="SiBersih" 
@@ -38,8 +42,8 @@ export default function LoginPage() {
                  className="object-contain" 
                />
              </div>
-             <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md">SiBersih</span>
-          </div>
+             <span className="font-bold text-2xl tracking-tight text-white/90 drop-shadow-md group-hover:text-white transition-colors">SiBersih</span>
+          </Link>
           
           <div className="space-y-4 pb-8 max-w-lg">
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.15] drop-shadow-lg">
@@ -57,12 +61,12 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-md flex flex-col gap-8">
           
           {/* Mobile Logo */}
-          <div className="flex flex-col items-center justify-center lg:hidden -mb-4">
-            <div className="relative h-16 w-16 mb-1">
+          <Link href="/" className="flex flex-col items-center justify-center lg:hidden -mb-4 group cursor-pointer" title="Kembali ke Beranda">
+            <div className="relative h-16 w-16 mb-1 group-hover:scale-105 transition-transform duration-200">
               <Image src="/sibersihLogo.webp" alt="SIBERSIH Logo" fill className="object-contain" priority sizes="64px" />
             </div>
-            <span className="font-bold text-xl text-sibersih-primary tracking-tight">SiBersih</span>
-          </div>
+            <span className="font-bold text-xl text-sibersih-primary tracking-tight group-hover:opacity-90 transition-opacity">SiBersih</span>
+          </Link>
 
           <div className="space-y-2 text-center lg:text-left">
             <h2 className="text-3xl font-bold tracking-tight text-sibersih-primary">
@@ -75,7 +79,7 @@ export default function LoginPage() {
 
           <form action={dispatch} className="space-y-5">
             <div className="space-y-4">
-              {/* Email Input */}
+              {/* Email Input (Tetap dipertahankan saat login gagal) */}
               <div className="space-y-1.5 text-left group">
                 <label htmlFor="email" className="text-sm font-semibold text-sibersih-primary">Email</label>
                 <div className="relative flex items-center">
@@ -84,6 +88,8 @@ export default function LoginPage() {
                     id="email"
                     name="email"
                     type="email"
+                    value={currentEmail}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="nama@contoh.com"
                     required
                     className="flex h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-4 py-2 text-sm text-sibersih-primary placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-primary/20 focus-visible:border-sibersih-primary focus-visible:bg-white transition-all duration-200"
@@ -91,7 +97,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Password Input */}
+              {/* Password Input (Otomatis ter-reset saat login gagal berkat key attempt) */}
               <div className="space-y-1.5 text-left group">
                 <label htmlFor="password" className="block text-sm font-semibold text-sibersih-primary">
                   Kata Sandi
@@ -99,11 +105,13 @@ export default function LoginPage() {
                 <div className="relative flex items-center">
                   <Lock className="absolute left-3.5 text-sibersih-primary/40 group-focus-within:text-sibersih-primary transition-colors" size={18} />
                   <input
+                    key={state?.attempt ?? 0}
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     required
+                    autoFocus={Boolean(state?.attempt)}
                     className="flex h-12 w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-11 py-2 text-sm text-sibersih-primary placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sibersih-primary/20 focus-visible:border-sibersih-primary focus-visible:bg-white transition-all duration-200"
                   />
                   <button
@@ -117,10 +125,10 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {errorMessage && (
+            {state?.error && (
               <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                {errorMessage}
+                {state.error}
               </div>
             )}
             

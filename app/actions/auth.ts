@@ -42,21 +42,33 @@ function resetRateLimit(identifier: string) {
 }
 // ------------------------------------
 
-export async function loginAction(prevState: string | undefined, formData: FormData) {
+export type LoginState = {
+  error?: string | null;
+  email?: string;
+  attempt?: number;
+};
+
+export async function loginAction(prevState: LoginState | undefined, formData: FormData): Promise<LoginState> {
   let identifier = '';
+  const emailRaw = (formData.get('email') as string) || '';
+  const email = emailRaw ? emailRaw.trim().toLowerCase() : '';
+  const nextAttempt = (prevState?.attempt || 0) + 1;
+
   try {
     const headersList = await headers();
     const xForwardedFor = headersList.get('x-forwarded-for');
     const ip = xForwardedFor ? xForwardedFor.split(',')[0].trim() : 'unknown-ip';
-    const emailRaw = formData.get('email') as string;
-    const email = emailRaw ? emailRaw.trim().toLowerCase() : '';
 
     // ID unik untuk memblokir berdasarkan kombinasi IP dan Email
     identifier = `login_${ip}_${email}`;
     
     // Untuk Login, berikan toleransi 5 percobaan gagal
     if (isRateLimited(identifier, 5)) {
-      return 'Terlalu banyak percobaan masuk yang gagal. Harap tunggu 1 menit.';
+      return {
+        error: 'Terlalu banyak percobaan masuk yang gagal. Harap tunggu 1 menit.',
+        email: emailRaw,
+        attempt: nextAttempt,
+      };
     }
 
     await signIn('credentials', {
@@ -67,14 +79,15 @@ export async function loginAction(prevState: string | undefined, formData: FormD
 
     // Reset limiter jika login berhasil
     resetRateLimit(identifier);
+    return { error: null, email: emailRaw, attempt: nextAttempt };
   } catch (error) {
     if (error instanceof AuthError) {
       if (identifier) recordFailedAttempt(identifier);
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Email atau kata sandi salah.';
+          return { error: 'Email atau kata sandi salah.', email: emailRaw, attempt: nextAttempt };
         default:
-          return 'Terjadi kesalahan saat masuk.';
+          return { error: 'Terjadi kesalahan saat masuk.', email: emailRaw, attempt: nextAttempt };
       }
     }
     throw error;
