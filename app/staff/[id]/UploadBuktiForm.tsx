@@ -10,6 +10,7 @@ import ImageLightboxModal from "@/components/ImageLightboxModal";
 import CameraCaptureModal from "@/components/CameraCaptureModal";
 import { Button } from "@/components/ui/button";
 import { compressImageClient } from "@/lib/clientImageCompressor";
+import CategoryBadge from "@/components/CategoryBadge";
 
 type ActionState = { message: string | null; error: string | null };
 
@@ -28,7 +29,7 @@ async function formAction(prevState: ActionState, formData: FormData): Promise<A
     }
 }
 
-export default function UploadBuktiForm({ report }: { report: { id: string; lokasi: string; deskripsi: string; fotoLaporanUrl: string; fotoBuktiUrl: string | null; deskripsiPetugas: string | null; status: string; } }) {
+export default function UploadBuktiForm({ report }: { report: { id: string; lokasi: string; deskripsi: string; kategori?: string | null; fotoLaporanUrl: string; fotoBuktiUrl: string | null; deskripsiPetugas: string | null; status: string; } }) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(report.fotoBuktiUrl || null);
     const [isDragging, setIsDragging] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -148,7 +149,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                 {isEditMode
                                     ? "Perbarui foto bukti atau catatan hasil kerja sebelum disetujui pimpinan."
-                                    : "Unggah foto bukti hasil pembersihan dan deskripsi pengerjaan."}
+                                    : "Unggah foto bukti hasil pengerjaan di lokasi dan deskripsi (opsional)."}
                             </p>
                         </div>
                         <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border w-fit ${
@@ -205,9 +206,12 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                         </div>
 
                         <div>
-                            <h2 className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-1.5">
-                                Lokasi Pembersihan
-                            </h2>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <h2 className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
+                                    Lokasi & Kategori
+                                </h2>
+                                <CategoryBadge kategori={report.kategori} />
+                            </div>
                             <div className="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 flex items-center gap-2.5 bg-slate-50/70 dark:bg-slate-800/30 p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-800/70">
                                 <MapPin size={16} className="text-slate-500 dark:text-slate-400 shrink-0" />
                                 <span>{report.lokasi}</span>
@@ -219,7 +223,7 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                                 Deskripsi Laporan Pelapor
                             </h2>
                             <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 bg-slate-50/70 dark:bg-slate-800/30 p-3.5 rounded-xl border border-slate-200/70 dark:border-slate-800/70 leading-relaxed font-normal">
-                                {report.deskripsi}
+                                {report.deskripsi || <span className="italic text-slate-400">(Pelapor tidak menyertakan deskripsi tambahan)</span>}
                             </p>
                         </div>
                     </div>
@@ -370,16 +374,15 @@ export default function UploadBuktiForm({ report }: { report: { id: string; loka
                         
                         <div className="space-y-2">
                             <label className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center justify-between">
-                                <span>Deskripsi Hasil Kerja <span className="text-slate-400 dark:text-slate-500 font-normal">*</span></span>
+                                <span>Deskripsi Hasil Kerja <span className="text-slate-400 dark:text-slate-500 font-normal">(Opsional)</span></span>
                             </label>
                             <textarea
                                 name="deskripsiPetugas"
                                 defaultValue={report.deskripsiPetugas || ""}
                                 disabled={isSubmitted}
-                                required
                                 rows={3}
                                 className="w-full bg-slate-50/70 dark:bg-slate-800/30 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-xs sm:text-sm focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-sibersih-primary/20 focus:border-sibersih-primary outline-none transition-all"
-                                placeholder="Jelaskan detail tindakan pembersihan yang telah dilakukan..."
+                                placeholder="Jelaskan detail tindakan yang telah dilakukan (opsional)..."
                             />
                         </div>
 

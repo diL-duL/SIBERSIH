@@ -8,12 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ReporterReportCard from "@/components/ReporterReportCard";
 import StaffTaskCard from "@/components/StaffTaskCard";
+import CategoryBadge from "@/components/CategoryBadge";
 
-export type ReportItem = {
+type ReportItem = {
   id: string;
   lokasi: string;
   deskripsi: string;
   deskripsiPetugas?: string | null;
+  kategori?: "SAMPAH" | "SARANA_PRASARANA" | string | null;
   fotoLaporanUrl: string;
   fotoBuktiUrl?: string | null;
   status: string;
@@ -166,14 +168,23 @@ export default function HistoryListClient({
                 <div className="flex flex-col justify-between flex-1 min-w-0 gap-1.5 sm:gap-2">
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">
-                        {item.lokasi}
-                      </h3>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">
+                          {item.lokasi}
+                        </h3>
+                        <CategoryBadge kategori={item.kategori} />
+                      </div>
                       {getStatusBadge(item.status)}
                     </div>
-                    <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
-                      {item.deskripsi}
-                    </p>
+                    {item.deskripsi ? (
+                      <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
+                        {item.deskripsi}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-sibersih-primary/40 italic line-clamp-1 leading-relaxed">
+                        (Tanpa deskripsi)
+                      </p>
+                    )}
                     {item.deskripsiPetugas && (
                       <div className="mt-1.5 p-1.5 sm:p-2 bg-sibersih-bg/60 border border-sibersih-primary/10 rounded-lg text-xs text-sibersih-primary/80">
                         <span className="font-semibold block text-[10px] uppercase tracking-wider text-sibersih-primary/60">Catatan Petugas:</span>

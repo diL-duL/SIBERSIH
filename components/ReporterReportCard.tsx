@@ -20,11 +20,13 @@ import DeleteReportButton from "@/components/DeleteReportButton";
 import RejectReportButton from "@/components/RejectReportButton";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { Badge } from "@/components/ui/badge";
+import CategoryBadge from "@/components/CategoryBadge";
 
 export type ReportCardData = {
   id: string;
   lokasi: string;
   deskripsi: string;
+  kategori?: "SAMPAH" | "SARANA_PRASARANA" | string | null;
   fotoLaporanUrl: string;
   fotoBuktiUrl?: string | null;
   deskripsiPetugas?: string | null;
@@ -141,11 +143,18 @@ export default function ReporterReportCard({
                 <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">
                   {report.lokasi}
                 </h3>
+                <CategoryBadge kategori={report.kategori} />
               </div>
 
-              <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
-                {report.deskripsi}
-              </p>
+              {report.deskripsi ? (
+                <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
+                  {report.deskripsi}
+                </p>
+              ) : (
+                <p className="text-xs text-sibersih-primary/40 italic line-clamp-1 leading-relaxed">
+                  (Tanpa deskripsi)
+                </p>
+              )}
 
               <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 {/* STATUS BADGE */}
@@ -475,7 +484,7 @@ export default function ReporterReportCard({
                     />
                   </div>
                   <p className="text-xs text-sibersih-primary/70 italic line-clamp-2">
-                    &ldquo;{report.deskripsi}&rdquo;
+                    {report.deskripsi ? `“${report.deskripsi}”` : "(Tanpa deskripsi tambahan)"}
                   </p>
                 </div>
 

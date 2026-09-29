@@ -24,13 +24,15 @@ export async function buatLaporan(formData: FormData): Promise<{ success: boolea
     }
 
     const lokasi = sanitizeTextInput(formData.get("lokasi"));
-    const deskripsi = sanitizeTextInput(formData.get("deskripsi"));
+    const deskripsi = sanitizeTextInput(formData.get("deskripsi")) || "";
+    const rawKategori = formData.get("kategori") as string;
+    const kategori = rawKategori === "SARANA_PRASARANA" ? "SARANA_PRASARANA" : "SAMPAH";
     
     if (!lokasi || lokasi.length < 3 || lokasi.length > 150) {
       return { success: false, error: "Nama lokasi wajib diisi (antara 3 sampai 150 karakter)." };
     }
-    if (!deskripsi || deskripsi.length < 5 || deskripsi.length > 1000) {
-      return { success: false, error: "Deskripsi laporan wajib diisi (antara 5 sampai 1000 karakter)." };
+    if (deskripsi && deskripsi.length > 1000) {
+      return { success: false, error: "Deskripsi laporan maksimal 1000 karakter." };
     }
 
     // Periksa file upload (prioritas input utama terkompresi, fallback input cadangan)
@@ -71,6 +73,7 @@ export async function buatLaporan(formData: FormData): Promise<{ success: boolea
     const dataToSave: {
       lokasi: string;
       deskripsi: string;
+      kategori: "SAMPAH" | "SARANA_PRASARANA";
       fotoLaporanUrl: string;
       pelaporId: string;
       status: "LAPORAN_MASUK" | "MENUNGGU_APPROVAL" | "SELESAI";
@@ -79,6 +82,7 @@ export async function buatLaporan(formData: FormData): Promise<{ success: boolea
     } = {
       lokasi,
       deskripsi,
+      kategori,
       fotoLaporanUrl: imageUrl,
       pelaporId,
       status: "LAPORAN_MASUK",
@@ -151,9 +155,10 @@ export async function ajukanPenyelesaian(reportId: string, formData: FormData): 
     if (!session?.user) return { success: false, error: "Sesi login Anda telah berakhir. Silakan login kembali." };
     if (session.user.role !== "PETUGAS") return { success: false, error: "Hanya akun Petugas yang berhak menyelesaikan laporan." };
 
-    const deskripsiPetugas = sanitizeTextInput(formData.get("deskripsiPetugas"));
-    if (!deskripsiPetugas || deskripsiPetugas.length < 5 || deskripsiPetugas.length > 1000) {
-      return { success: false, error: "Deskripsi hasil kerja wajib diisi (antara 5 sampai 1000 karakter)." };
+    const rawDeskripsi = sanitizeTextInput(formData.get("deskripsiPetugas"));
+    const deskripsiPetugas = rawDeskripsi && rawDeskripsi.trim() !== "" ? rawDeskripsi.trim() : null;
+    if (deskripsiPetugas && deskripsiPetugas.length > 1000) {
+      return { success: false, error: "Deskripsi hasil kerja maksimal 1000 karakter." };
     }
     
     const existingReport = await prisma.report.findUnique({ where: { id: reportId } });
@@ -400,13 +405,15 @@ export async function editLaporan(reportId: string, formData: FormData): Promise
     }
 
     const lokasi = sanitizeTextInput(formData.get("lokasi"));
-    const deskripsi = sanitizeTextInput(formData.get("deskripsi"));
+    const deskripsi = sanitizeTextInput(formData.get("deskripsi")) || "";
+    const rawKategori = formData.get("kategori") as string;
+    const kategori = rawKategori === "SARANA_PRASARANA" ? "SARANA_PRASARANA" : (rawKategori === "SAMPAH" ? "SAMPAH" : undefined);
 
     if (!lokasi || lokasi.length < 3 || lokasi.length > 150) {
       return { success: false, error: "Nama lokasi wajib diisi (antara 3 sampai 150 karakter)." };
     }
-    if (!deskripsi || deskripsi.length < 5 || deskripsi.length > 1000) {
-      return { success: false, error: "Deskripsi laporan wajib diisi (antara 5 sampai 1000 karakter)." };
+    if (deskripsi && deskripsi.length > 1000) {
+      return { success: false, error: "Deskripsi laporan maksimal 1000 karakter." };
     }
 
     let file = formData.get("file-upload") as File | null;
@@ -440,12 +447,14 @@ export async function editLaporan(reportId: string, formData: FormData): Promise
     const dataToUpdate: {
       lokasi: string;
       deskripsi: string;
+      kategori?: "SAMPAH" | "SARANA_PRASARANA";
       fotoLaporanUrl: string;
       latitude?: number | null;
       longitude?: number | null;
     } = {
       lokasi,
       deskripsi,
+      ...(kategori ? { kategori } : {}),
       fotoLaporanUrl: imageUrl,
     };
 

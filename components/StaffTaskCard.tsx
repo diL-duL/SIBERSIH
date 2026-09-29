@@ -19,11 +19,13 @@ import {
 } from "lucide-react";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { Badge } from "@/components/ui/badge";
+import CategoryBadge from "@/components/CategoryBadge";
 
 export type StaffTaskData = {
   id: string;
   lokasi: string;
   deskripsi: string;
+  kategori?: "SAMPAH" | "SARANA_PRASARANA" | string | null;
   fotoLaporanUrl: string;
   fotoBuktiUrl?: string | null;
   deskripsiPetugas?: string | null;
@@ -146,11 +148,18 @@ export default function StaffTaskCard({
                 <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">
                   {task.lokasi}
                 </h3>
+                <CategoryBadge kategori={task.kategori} />
               </div>
 
-              <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
-                {task.deskripsi}
-              </p>
+              {task.deskripsi ? (
+                <p className="text-xs sm:text-sm text-sibersih-primary/70 line-clamp-2 leading-relaxed">
+                  {task.deskripsi}
+                </p>
+              ) : (
+                <p className="text-xs text-sibersih-primary/40 italic line-clamp-1 leading-relaxed">
+                  (Tanpa deskripsi)
+                </p>
+              )}
 
               <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 {/* STATUS BADGE */}
@@ -484,7 +493,7 @@ export default function StaffTaskCard({
                     />
                   </div>
                   <p className="text-xs text-sibersih-primary/70 italic line-clamp-2">
-                    &ldquo;{task.deskripsi}&rdquo;
+                    {task.deskripsi ? `“${task.deskripsi}”` : "(Tanpa deskripsi tambahan)"}
                   </p>
                 </div>
 

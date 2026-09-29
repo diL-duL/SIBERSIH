@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import DashboardMapClient from "@/components/DashboardMapClient";
 import RejectReportButton from "@/components/RejectReportButton";
+import CategoryBadge from "@/components/CategoryBadge";
 
 export default async function PimpinanDashboard() {
     const session = await auth();
@@ -137,7 +138,10 @@ export default async function PimpinanDashboard() {
                                         <div className="flex-1 min-w-0 w-full flex flex-col justify-between">
                                             <div>
                                                 <div className="flex items-center justify-between gap-2">
-                                                    <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">{report.lokasi}</h3>
+                                                    <div className="flex items-center gap-1.5 min-w-0">
+                                                        <h3 className="font-semibold text-sibersih-primary text-sm sm:text-base line-clamp-1">{report.lokasi}</h3>
+                                                        <CategoryBadge kategori={report.kategori} />
+                                                    </div>
                                                     <span className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-md shrink-0 ${
                                                         report.status === "SELESAI"
                                                             ? "text-emerald-700 bg-emerald-50 border border-emerald-200"
@@ -148,7 +152,11 @@ export default async function PimpinanDashboard() {
                                                         {report.status === "SELESAI" ? "Selesai" : report.status === "MENUNGGU_APPROVAL" ? "Butuh Review" : "Baru"}
                                                     </span>
                                                 </div>
-                                                <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5 sm:mt-1 line-clamp-2">{report.deskripsi}</p>
+                                                {report.deskripsi ? (
+                                                    <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5 sm:mt-1 line-clamp-2">{report.deskripsi}</p>
+                                                ) : (
+                                                    <p className="text-xs text-sibersih-primary/40 italic mt-0.5 sm:mt-1">(Tanpa deskripsi)</p>
+                                                )}
                                             </div>
                                             <div className="mt-2.5 flex items-center justify-between gap-2">
                                                 <div className="flex items-center gap-2">

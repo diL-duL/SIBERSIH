@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { Clock, MapPin, ArrowRight, ChevronUp } from "lucide-react";
+import CategoryBadge from "@/components/CategoryBadge";
 
-export interface LandingReportItem {
+interface LandingReportItem {
   id: string;
   lokasi: string;
   deskripsi: string;
   deskripsiPetugas?: string | null;
+  kategori?: string | null;
   status: string;
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -83,18 +85,27 @@ export default function LandingReportsList({ reports }: LandingReportsListProps)
                       <span className="truncate">{report.lokasi}</span>
                     </h3>
                   </div>
-                  {getStatusBadge(report.status)}
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    {getStatusBadge(report.status)}
+                    <CategoryBadge kategori={report.kategori} />
+                  </div>
                 </div>
 
                 {/* Detail Laporan & Catatan Petugas */}
                 <div className="space-y-2.5 mb-4">
                   <div>
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-sibersih-primary/50 block">
-                      Deskripsi Laporan:
+                      Deskripsi:
                     </span>
-                    <p className="text-xs sm:text-sm text-sibersih-primary/80 leading-relaxed mt-0.5">
-                      {report.deskripsi}
-                    </p>
+                    {report.deskripsi ? (
+                      <p className="text-xs sm:text-sm text-sibersih-primary/80 leading-relaxed mt-0.5 line-clamp-3">
+                        {report.deskripsi}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-sibersih-primary/40 italic leading-relaxed mt-0.5">
+                        (Tanpa deskripsi tambahan)
+                      </p>
+                    )}
                   </div>
 
                   {report.deskripsiPetugas && (

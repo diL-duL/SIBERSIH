@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import ApproveReportButton from "@/components/ApproveReportButton";
 import RejectReportButton from "@/components/RejectReportButton";
+import CategoryBadge from "@/components/CategoryBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 
@@ -70,7 +71,10 @@ export default async function PimpinanValidations() {
                                         </p>
                                     </div>
                                 </div>
-                                <Badge variant="warning" className="text-[11px] shrink-0">Butuh Review</Badge>
+                                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                    <Badge variant="warning" className="text-[11px] shrink-0">Butuh Review</Badge>
+                                    <CategoryBadge kategori={item.kategori} />
+                                </div>
                             </CardHeader>
 
                             <CardContent className="p-4 sm:p-5 pt-0 sm:pt-0 flex flex-col gap-3.5 sm:gap-4">
