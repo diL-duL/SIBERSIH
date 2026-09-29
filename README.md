@@ -33,7 +33,7 @@ Sistem Informasi Kebersihan dan Sarana Prasarana Kampus berbasis web modern yang
 - **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer autentikasi.
 
 ### 2. Publik & Beranda (Landing Page)
-- **Pintasan Aplikasi Resmi Untad (*Untad App Shortcuts*):** Kartu navigasi terintegrasi ke layanan resmi Universitas Tadulako (SIGA, SIDAMPAK, E-Learning, Portal Untad, MBKM Untad, dan Kepegawaian).
+- **Pintasan Aplikasi Resmi Untad (*Untad App Shortcuts*):** Kartu navigasi cepat ke 14 sistem informasi terintegrasi Universitas Tadulako dan Fakultas Teknik (SIGA-8, SIDAMPAK, SIPENA, SINEMA, LMS VIBEL, KASIDOI, SIMKEU, SISTER, KLIKPRESENSI, AMI, SIPENAEMAS, SANPARAMA, PELAYANAN/SIPANDU, dan DESK ON).
 - **Kontak Tanggap Darurat Pemadam Kebakaran (*Emergency Hotline*):** Kartu kontak siaga terintegrasi dengan akses panggilan cepat ke Posko Damkar Palu `(0451) 423113` dan tautan WhatsApp resmi `+62 821 8823 2113`, didesain selaras dengan palet hijau institusional Sibersih.
 - **Showcase Laporan Transparan:** Menampilkan hingga 50 laporan fasilitas kampus terkini mencakup seluruh status (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) secara transparan kepada seluruh civitas.
 - **Tampilan Awal Ringkas & Toggle Interaktif:** Menampilkan 3 laporan awal dengan tombol toggle *"Lihat Semua Laporan"* / *"Tampilkan Lebih Sedikit"*.
