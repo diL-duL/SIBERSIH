@@ -12,6 +12,7 @@ model User {
   nama            String
   email           String   @unique
   password        String
+  nomorHp         String?
   role            Role     @default(PELAPOR)
   laporan         Report[] @relation("PelaporLaporan")
   tugasDikerjakan Report[] @relation("PetugasLaporan")
@@ -25,10 +26,16 @@ enum Role {
   PIMPINAN
 }
 
+enum Kategori {
+  SAMPAH
+  SARANA_PRASARANA
+}
+
 model Report {
   id              String   @id @default(uuid())
   lokasi          String
-  deskripsi       String
+  deskripsi       String   @default("")
+  kategori        Kategori @default(SAMPAH)
   fotoLaporanUrl  String
   fotoBuktiUrl    String?
   deskripsiPetugas String?
@@ -46,6 +53,7 @@ model Report {
   @@index([pelaporId, createdAt(sort: Desc)])
   @@index([petugasId, status, updatedAt(sort: Desc)])
   @@index([petugasId])
+  @@index([kategori])
 }
 
 enum Status {
@@ -53,3 +61,4 @@ enum Status {
   MENUNGGU_APPROVAL
   SELESAI
 }
+
