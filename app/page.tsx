@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import LandingReportsList from "@/components/LandingReportsList";
+import UntadAppShortcuts from "@/components/UntadAppShortcuts";
+import EmergencyHotline from "@/components/EmergencyHotline";
 
 export const revalidate = 60; // Regenerate page every 60 seconds (ISR)
 
@@ -15,6 +17,7 @@ export default async function LandingPage() {
         lokasi: true,
         deskripsi: true,
         deskripsiPetugas: true,
+        kategori: true,
         status: true,
         createdAt: true,
         updatedAt: true,
@@ -56,9 +59,9 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-10">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col gap-10">
         {/* Hero Section */}
-        <section className="text-center max-w-2xl mx-auto space-y-4 pt-4 pb-4 flex flex-col items-center">
+        <section className="text-center max-w-2xl mx-auto space-y-4 pt-2 pb-2 flex flex-col items-center">
           <div className="relative h-20 w-20 sm:h-24 sm:w-24 mb-1 drop-shadow-sm">
             <Image 
               src="/sibersihLogo.webp" 
@@ -70,30 +73,36 @@ export default async function LandingPage() {
             />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-sibersih-primary tracking-tight">
-            Sistem Pelaporan Kebersihan Fatek
+            Sistem Pelaporan Kebersihan & Fasilitas Fatek
           </h1>
           <p className="text-sm sm:text-base text-sibersih-primary/70 leading-relaxed">
-            Fakultas Teknik, Universitas Tadulako. Laporkan fasilitas dan area yang memerlukan penanganan kebersihan untuk segera ditindaklanjuti oleh petugas.
+            Fakultas Teknik, Universitas Tadulako. Laporkan fasilitas, tumpukan sampah, dan sarana prasarana yang memerlukan penanganan untuk segera ditindaklanjuti petugas.
           </p>
           <div className="pt-2 flex items-center justify-center">
             <Link 
               href="/login" 
-              className="px-6 py-2.5 bg-sibersih-primary text-white rounded-lg font-medium text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-sibersih-primary text-white rounded-lg font-semibold text-sm hover:bg-sibersih-primary/90 transition-colors shadow-xs"
             >
               Mulai Melapor
             </Link>
           </div>
         </section>
 
-        {/* All Reports Showcase (Tanpa Gambar, 3 Laporan Awal + Tombol Lihat Semua) */}
+        {/* Pemadam Kebakaran & Emergency Hotline */}
+        <EmergencyHotline />
+
+        {/* Untad Ecosystem Applications Shortcuts */}
+        <UntadAppShortcuts />
+
+        {/* All Reports Showcase */}
         <section className="space-y-6 pb-16">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-sibersih-primary/10 pb-4">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">
-                Daftar Laporan Kebersihan
+                Daftar Laporan Terkini
               </h2>
               <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
-                Semua laporan fasilitas dan area kampus dengan seluruh status penanganan secara transparan.
+                Semua laporan kebersihan sampah dan sarana prasarana kampus secara transparan.
               </p>
             </div>
             <div className="flex items-center gap-2">

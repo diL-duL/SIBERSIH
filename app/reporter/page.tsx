@@ -8,6 +8,7 @@ import { getValidUserId } from "@/lib/session-user";
 import DashboardMapClient from "@/components/DashboardMapClient";
 import ReporterDashboardReports from "@/components/ReporterDashboardReports";
 import SetPasswordModal from "@/components/SetPasswordModal";
+import EmergencyHotline from "@/components/EmergencyHotline";
 
 export default async function PelaporDashboard() {
     const session = await auth();
@@ -132,12 +133,17 @@ export default async function PelaporDashboard() {
                 </div>
             </div>
 
+            {/* KONTAK DARURAT PEMADAM KEBAKARAN */}
+            <div className="mt-6 sm:mt-8">
+                <EmergencyHotline />
+            </div>
+
             {/* TOMBOL LAPOR CEPAT MOBILE (LINEAR DI BAWAH LAPORAN TERAKHIR) */}
             <Link
                 href="/reporter/report"
                 className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-sibersih-primary/90 active:scale-[0.99] transition shadow-sm mt-5"
             >
-                <Plus size={17} /> Buat Laporan Kebersihan Baru
+                <Plus size={17} /> Buat Laporan Baru
             </Link>
         </div>
     );
