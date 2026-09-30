@@ -5,21 +5,44 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import DashboardMapClient from "@/components/DashboardMapClient";
+import type { MapReportItem } from "@/components/DashboardMap";
 import StaffDashboardTasks from "@/components/StaffDashboardTasks";
 
 export default async function PetugasDashboard() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const [newTasks, processing, completed, recentTasks] = await Promise.all([
+    const [newTasks, processing, completed, recentTasks, incomingReportsWithCoords] = await Promise.all([
         prisma.report.count({ where: { status: "LAPORAN_MASUK" } }),
         prisma.report.count({ where: { status: "MENUNGGU_APPROVAL" } }),
         prisma.report.count({ where: { status: "SELESAI" } }),
         prisma.report.findMany({
             orderBy: { createdAt: "desc" },
             take: 5
+        }),
+        prisma.report.findMany({
+            where: {
+                status: "LAPORAN_MASUK",
+                latitude: { not: null },
+                longitude: { not: null }
+            },
+            select: {
+                id: true,
+                lokasi: true,
+                deskripsi: true,
+                kategori: true,
+                status: true,
+                fotoLaporanUrl: true,
+                latitude: true,
+                longitude: true,
+                createdAt: true
+            },
+            orderBy: { createdAt: "desc" },
+            take: 50
         })
     ]);
+
+    const mapReports = incomingReportsWithCoords as unknown as MapReportItem[];
 
     const userName = session.user.name || 'Petugas';
 
@@ -120,7 +143,7 @@ export default async function PetugasDashboard() {
                             <span className="text-[11px] text-sibersih-primary/50">Fakultas Teknik</span>
                         </div>
                         <div className="w-full h-full flex-1 relative z-0 min-h-[190px]">
-                            <DashboardMapClient />
+                            <DashboardMapClient reports={mapReports} actionPathPrefix="/staff" />
                         </div>
                     </div>
                 </div>

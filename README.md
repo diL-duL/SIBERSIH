@@ -53,13 +53,14 @@ Sistem Informasi Kebersihan dan Sarana Prasarana Kampus berbasis web modern yang
 
 ### 4. Petugas Kebersihan (Staff)
 - **Daftar Tugas Baru:** Dasbor interaktif dan halaman tugas (`/staff/tasks`) untuk memantau fasilitas yang membutuhkan penanganan.
+- **Peta Sebaran Tugas Interaktif:** Peta Leaflet dinamis memunculkan titik koordinat laporan masuk (`LAPORAN_MASUK`) dengan pin merah (`#ef4444`) dan popup interaktif (foto bukti, lokasi, kategori, waktu, serta tombol pintas langsung ke detail tugas).
 - **Unggah Bukti Pengerjaan:** Petugas mengunggah foto sesudah dikerjakan di lokasi.
 - **Deskripsi Hasil Kerja Opsional:** Catatan tindakan pembersihan/perbaikan bersifat fleksibel (opsional) agar tidak menghambat mobilitas kerja petugas di lapangan.
 - **Mode Edit Bukti:** Petugas dapat memperbarui foto bukti atau catatan kerja selama laporan belum disetujui oleh pimpinan.
 - **Riwayat Penanganan:** Arsip hingga 100 tugas terakhir yang pernah dikerjakan oleh petugas terkait, dilengkapi pencarian langsung dan paginasi.
 
 ### 5. Pimpinan (Executive)
-- **Peta Pengawasan Wilayah Responsif:** Peta pemantauan sebaran laporan kampus yang adaptif (berada di posisi atas pada perangkat mobile, dan membentang pada layar desktop).
+- **Peta Pengawasan Wilayah Dinamis:** Peta pemantauan sebaran laporan kampus adaptif yang memplot seluruh titik koordinat laporan masuk (`LAPORAN_MASUK`) secara visual dengan pin merah dan popup komprehensif.
 - **Panel Validasi Komparasi (Sebelum vs Sesudah):** Meninjau foto laporan awal pelapor bersanding langsung dengan foto bukti petugas dan catatan penanganan (`/executive/validations`).
 - **Tolak / Hapus Laporan Palsu & Status Selesai:** Hak akses khusus pimpinan untuk menolak dan menghapus laporan palsu/spam pada antrean, serta memiliki otoritas menghapus laporan yang sudah berstatus `SELESAI` baik dari Dasbor Utama maupun Riwayat.
 - **Pembersihan Otomatis Cloud Storage:** Penghapusan laporan otomatis membersihkan seluruh file foto terkait di Cloudinary untuk mencegah pemborosan kuota penyimpanan.
