@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { getValidUserId } from "@/lib/session-user";
 import DashboardMapClient from "@/components/DashboardMapClient";
+import type { MapReportItem } from "@/components/DashboardMap";
 import ReporterDashboardReports from "@/components/ReporterDashboardReports";
 import SetPasswordModal from "@/components/SetPasswordModal";
 import EmergencyHotline from "@/components/EmergencyHotline";
@@ -19,7 +20,7 @@ export default async function PelaporDashboard() {
 
     const userName = session.user.name || 'Pengguna';
 
-    const [total, completed, recentReports] = await Promise.all([
+    const [total, completed, recentReports, reporterMapReports] = await Promise.all([
         prisma.report.count({ where: { pelaporId: userId } }),
         prisma.report.count({ where: { pelaporId: userId, status: "SELESAI" } }),
         prisma.report.findMany({
@@ -27,7 +28,29 @@ export default async function PelaporDashboard() {
             orderBy: { createdAt: 'desc' },
             take: 5
         }),
+        prisma.report.findMany({
+            where: {
+                pelaporId: userId,
+                latitude: { not: null },
+                longitude: { not: null }
+            },
+            select: {
+                id: true,
+                lokasi: true,
+                deskripsi: true,
+                kategori: true,
+                status: true,
+                fotoLaporanUrl: true,
+                latitude: true,
+                longitude: true,
+                createdAt: true
+            },
+            orderBy: { createdAt: "desc" },
+            take: 50
+        })
     ]);
+
+    const mapReports = reporterMapReports as unknown as MapReportItem[];
     const processing = Math.max(0, total - completed);
 
     return (
@@ -127,7 +150,7 @@ export default async function PelaporDashboard() {
                             <span className="text-[11px] text-sibersih-primary/50">Fakultas Teknik</span>
                         </div>
                         <div className="w-full h-full flex-1 relative z-0 min-h-[190px]">
-                            <DashboardMapClient />
+                            <DashboardMapClient reports={mapReports} />
                         </div>
                     </div>
                 </div>

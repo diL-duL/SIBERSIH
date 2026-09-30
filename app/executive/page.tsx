@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import DashboardMapClient from "@/components/DashboardMapClient";
+import type { MapReportItem } from "@/components/DashboardMap";
 import RejectReportButton from "@/components/RejectReportButton";
 import CategoryBadge from "@/components/CategoryBadge";
 
@@ -12,14 +13,36 @@ export default async function PimpinanDashboard() {
     const session = await auth();
     if (!session?.user) redirect("/login");
 
-    const [pending, completed, recentReports] = await Promise.all([
+    const [pending, completed, recentReports, incomingReportsWithCoords] = await Promise.all([
         prisma.report.count({ where: { status: "MENUNGGU_APPROVAL" } }),
         prisma.report.count({ where: { status: "SELESAI" } }),
         prisma.report.findMany({
             orderBy: { createdAt: "desc" },
             take: 5
+        }),
+        prisma.report.findMany({
+            where: {
+                status: "LAPORAN_MASUK",
+                latitude: { not: null },
+                longitude: { not: null }
+            },
+            select: {
+                id: true,
+                lokasi: true,
+                deskripsi: true,
+                kategori: true,
+                status: true,
+                fotoLaporanUrl: true,
+                latitude: true,
+                longitude: true,
+                createdAt: true
+            },
+            orderBy: { createdAt: "desc" },
+            take: 50
         })
     ]);
+
+    const mapReports = incomingReportsWithCoords as unknown as MapReportItem[];
 
     const userName = session.user.name || 'Pimpinan';
 
@@ -86,7 +109,7 @@ export default async function PimpinanDashboard() {
                         </span>
                     </div>
                     <div className="w-full h-full flex-1 relative z-0 min-h-[190px]">
-                        <DashboardMapClient />
+                        <DashboardMapClient reports={mapReports} />
                     </div>
                 </div>
 
