@@ -64,7 +64,7 @@ Sistem Informasi Kebersihan dan Sarana Prasarana Kampus berbasis web modern yang
 - **Tolak / Hapus Laporan Palsu & Status Selesai:** Hak akses khusus pimpinan untuk menolak dan menghapus laporan palsu/spam pada antrean, serta memiliki otoritas menghapus laporan yang sudah berstatus `SELESAI` baik dari Dasbor Utama maupun Riwayat.
 - **Pembersihan Otomatis Cloud Storage:** Penghapusan laporan otomatis membersihkan seluruh file foto terkait di Cloudinary untuk mencegah pemborosan kuota penyimpanan.
 - **Pemantauan Seluruh Status Laporan (`/executive/history`):** Memantau hingga 200 laporan terkini dari segala tahapan (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) untuk mengawasi laporan baru maupun laporan yang mangkrak.
-- **Manajemen Akun Petugas:** Menambah akun petugas baru (`buatAkunPetugas`) dan mencabut akses petugas (`hapusAkunPetugas`) dengan sanitasi data dan transaksi ACID database.
+- **Manajemen Akun Petugas:** Menambah akun petugas baru (`buatAkunPetugas`), memperbarui data nama, email, dan kata sandi petugas (`updateAkunPetugas`), serta mencabut akses petugas (`hapusAkunPetugas`) dengan sanitasi data dan transaksi ACID database. Dilengkapi toggle lihat kata sandi (*Vision Toggle*) untuk mempermudah pengecekan kredensial saat pendaftaran maupun pembaruan akun petugas.
 
 ---
 
