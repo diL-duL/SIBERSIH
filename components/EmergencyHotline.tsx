@@ -23,7 +23,7 @@ export default function EmergencyHotline() {
               Pemadam Kebakaran (Damkar Kota Palu)
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
-              Jika terjadi insiden kebakaran atau kondisi bahaya di lingkungan Fakultas Teknik Untad, segera hubungi posko siaga Damkar:
+              Jika terjadi insiden kebakaran atau kondisi bahaya di lingkungan Fakultas Teknik Untad.
             </p>
           </div>
         </div>

@@ -102,7 +102,7 @@ export default async function LandingPage() {
                 Daftar Laporan Terkini
               </h2>
               <p className="text-xs sm:text-sm text-sibersih-primary/60 mt-0.5">
-                Semua laporan kebersihan sampah dan sarana prasarana kampus secara transparan.
+                Semua laporan kebersihan sampah dan sarana prasarana kampus.
               </p>
             </div>
             <div className="flex items-center gap-2">
