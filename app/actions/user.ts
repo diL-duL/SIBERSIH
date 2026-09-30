@@ -305,3 +305,74 @@ export async function hapusAkunPetugas(id: string) {
     return { error: 'Terjadi kesalahan saat menghapus akun petugas.' };
   }
 }
+
+// 7. Update Staff Account (Pimpinan Only)
+export async function updateAkunPetugas(data: {
+  id: string;
+  nama: string;
+  email: string;
+  password?: string;
+}) {
+  try {
+    const session = await auth();
+    if (!session?.user || session.user.role !== 'PIMPINAN') {
+      return { error: 'Unauthorized' };
+    }
+
+    const { id, nama, email, password } = data;
+
+    if (!id || !nama || !email) {
+      return { error: 'Nama dan email wajib diisi.' };
+    }
+
+    const cleanNama = nama.trim();
+    if (cleanNama.length === 0) {
+      return { error: 'Nama tidak boleh kosong.' };
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return { error: 'Format email tidak valid.' };
+    }
+
+    const targetStaff = await prisma.user.findUnique({ where: { id } });
+    if (!targetStaff || targetStaff.role !== 'PETUGAS') {
+      return { error: 'Akun petugas tidak ditemukan.' };
+    }
+
+    // Jika email diubah, pastikan tidak bentrok dengan akun lain
+    if (cleanEmail !== targetStaff.email) {
+      const emailExists = await prisma.user.findUnique({ where: { email: cleanEmail } });
+      if (emailExists) {
+        return { error: 'Email sudah terdaftar untuk pengguna lain.' };
+      }
+    }
+
+    // Cek apakah ada perubahan kata sandi
+    let updatedPasswordHash: string | undefined = undefined;
+    if (password && password.trim().length > 0) {
+      if (password.length < 6) {
+        return { error: 'Kata sandi minimal 6 karakter.' };
+      }
+      updatedPasswordHash = await bcrypt.hash(password, 10);
+    }
+
+    await prisma.user.update({
+      where: { id },
+      data: {
+        nama: cleanNama,
+        email: cleanEmail,
+        ...(updatedPasswordHash ? { password: updatedPasswordHash } : {}),
+      },
+    });
+
+    revalidatePath('/executive/staff-management');
+    revalidatePath('/executive/validations');
+    revalidatePath('/');
+    return { success: 'Data akun petugas berhasil diperbarui!' };
+  } catch (error) {
+    console.error("Error updateAkunPetugas:", error);
+    return { error: 'Terjadi kesalahan saat memperbarui akun petugas.' };
+  }
+}
