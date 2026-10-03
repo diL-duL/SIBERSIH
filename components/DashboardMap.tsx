@@ -1,12 +1,21 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Rectangle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import {
+  FATEK_CENTER,
+  FATEK_BOUNDS,
+  FATEK_CROP_MASKS,
+  FATEK_PAN_BOUNDS,
+  FATEK_MIN_ZOOM,
+  FATEK_MAX_ZOOM,
+  FATEK_DEFAULT_ZOOM,
+} from "@/lib/mapConstants";
 
 export interface MapReportItem {
   id: string;
@@ -27,8 +36,6 @@ interface DashboardMapProps {
 
 // Inline SVG for the pin (solid red #ef4444)
 const svgIcon = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ef4444" width="34" height="34"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
-
-const DEFAULT_CENTER: L.LatLngTuple = [-0.840622, 119.893536]; // Fakultas Teknik Untad
 
 export default function DashboardMap({ reports = [], actionPathPrefix }: DashboardMapProps) {
   // Memoize valid reports filtering to prevent recalculation on unrelated re-renders
@@ -60,14 +67,18 @@ export default function DashboardMap({ reports = [], actionPathPrefix }: Dashboa
   const initialCenter = useMemo<L.LatLngTuple>(() => {
     return validReports.length > 0
       ? [validReports[0].latitude, validReports[0].longitude]
-      : DEFAULT_CENTER;
+      : (FATEK_CENTER as L.LatLngTuple);
   }, [validReports]);
 
   return (
     <div className="w-full h-full relative z-0">
       <MapContainer
         center={initialCenter}
-        zoom={17}
+        zoom={FATEK_DEFAULT_ZOOM}
+        minZoom={FATEK_MIN_ZOOM}
+        maxZoom={FATEK_MAX_ZOOM}
+        maxBounds={FATEK_PAN_BOUNDS}
+        maxBoundsViscosity={0.7}
         scrollWheelZoom={true}
         zoomControl={false}
         attributionControl={false}
@@ -75,9 +86,35 @@ export default function DashboardMap({ reports = [], actionPathPrefix }: Dashboa
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
+        {/* Pemotong Visual Area Luar (Crop Mask): menggelapkan area luar Fatek */}
+        {FATEK_CROP_MASKS.map((maskBounds, idx) => (
+          <Rectangle
+            key={`crop-mask-${idx}`}
+            bounds={maskBounds}
+            pathOptions={{
+              fillColor: "#0f172a",
+              fillOpacity: 0.72,
+              stroke: false,
+              interactive: false,
+            }}
+          />
+        ))}
+
+        {/* Garis batas area Fakultas Teknik Untad */}
+        <Rectangle
+          bounds={FATEK_BOUNDS}
+          pathOptions={{
+            color: "#059669",
+            weight: 2,
+            dashArray: "6, 8",
+            fill: false,
+            interactive: false,
+          }}
+        />
+
         {/* If no reports have coordinates, display default center marker */}
         {icon && validReports.length === 0 && (
-          <Marker position={DEFAULT_CENTER} icon={icon}>
+          <Marker position={FATEK_CENTER as L.LatLngTuple} icon={icon}>
             <Popup>
               <div className="p-1 text-center font-sans">
                 <p className="font-bold text-xs text-sibersih-primary">Fakultas Teknik Untad</p>

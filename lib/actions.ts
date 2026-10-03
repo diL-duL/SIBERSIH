@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { prisma } from "./prisma";
 import { uploadImageToCloudinary, deleteImageFromCloudinary, deleteMultipleImagesFromCloudinary } from "./cloudinary";
 import { getValidUserId } from "./session-user";
+import { isWithinFatekBounds } from "./mapConstants";
 
 function sanitizeTextInput(input: unknown): string {
   if (typeof input !== "string") return "";
@@ -33,6 +34,23 @@ export async function buatLaporan(formData: FormData): Promise<{ success: boolea
     }
     if (deskripsi && deskripsi.length > 1000) {
       return { success: false, error: "Deskripsi laporan maksimal 1000 karakter." };
+    }
+
+    const latStr = formData.get("latitude") as string | null;
+    const lngStr = formData.get("longitude") as string | null;
+    let validLat: number | undefined;
+    let validLng: number | undefined;
+
+    if (latStr && lngStr) {
+      const lat = parseFloat(latStr);
+      const lng = parseFloat(lngStr);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        if (!isWithinFatekBounds(lat, lng)) {
+          return { success: false, error: "Titik lokasi laporan harus berada di dalam kawasan Fakultas Teknik Untad." };
+        }
+        validLat = lat;
+        validLng = lng;
+      }
     }
 
     // Periksa file upload (prioritas input utama terkompresi, fallback input cadangan)
@@ -67,9 +85,6 @@ export async function buatLaporan(formData: FormData): Promise<{ success: boolea
       };
     }
 
-    const latStr = formData.get("latitude") as string | null;
-    const lngStr = formData.get("longitude") as string | null;
-
     const dataToSave: {
       lokasi: string;
       deskripsi: string;
@@ -86,16 +101,8 @@ export async function buatLaporan(formData: FormData): Promise<{ success: boolea
       fotoLaporanUrl: imageUrl,
       pelaporId,
       status: "LAPORAN_MASUK",
+      ...(validLat !== undefined && validLng !== undefined ? { latitude: validLat, longitude: validLng } : {}),
     };
-
-    if (latStr && lngStr) {
-      const lat = parseFloat(latStr);
-      const lng = parseFloat(lngStr);
-      if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-        dataToSave.latitude = lat;
-        dataToSave.longitude = lng;
-      }
-    }
 
     let savedReport = null;
     let lastError: unknown = null;
@@ -416,6 +423,23 @@ export async function editLaporan(reportId: string, formData: FormData): Promise
       return { success: false, error: "Deskripsi laporan maksimal 1000 karakter." };
     }
 
+    const latStr = formData.get("latitude") as string | null;
+    const lngStr = formData.get("longitude") as string | null;
+    let validLat: number | undefined;
+    let validLng: number | undefined;
+
+    if (latStr && lngStr) {
+      const lat = parseFloat(latStr);
+      const lng = parseFloat(lngStr);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        if (!isWithinFatekBounds(lat, lng)) {
+          return { success: false, error: "Titik lokasi laporan harus berada di dalam kawasan Fakultas Teknik Untad." };
+        }
+        validLat = lat;
+        validLng = lng;
+      }
+    }
+
     let file = formData.get("file-upload") as File | null;
     if (!file || file.size === 0) {
       file = formData.get("file-upload-gallery") as File | null;
@@ -441,9 +465,6 @@ export async function editLaporan(reportId: string, formData: FormData): Promise
       }
     }
 
-    const latStr = formData.get("latitude") as string | null;
-    const lngStr = formData.get("longitude") as string | null;
-
     const dataToUpdate: {
       lokasi: string;
       deskripsi: string;
@@ -456,16 +477,8 @@ export async function editLaporan(reportId: string, formData: FormData): Promise
       deskripsi,
       ...(kategori ? { kategori } : {}),
       fotoLaporanUrl: imageUrl,
+      ...(validLat !== undefined && validLng !== undefined ? { latitude: validLat, longitude: validLng } : {}),
     };
-
-    if (latStr && lngStr) {
-      const lat = parseFloat(latStr);
-      const lng = parseFloat(lngStr);
-      if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-        dataToUpdate.latitude = lat;
-        dataToUpdate.longitude = lng;
-      }
-    }
 
     try {
       await prisma.report.update({
