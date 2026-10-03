@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CheckSquare, Hourglass, CheckCircle, UserPlus, User, ArrowRight } from "lucide-react";
+import { CheckSquare, Hourglass, CheckCircle, UserPlus, User } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -218,7 +218,6 @@ export default async function PimpinanDashboard() {
                                         className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-sibersih-primary/15 bg-white hover:bg-sibersih-bg text-sibersih-primary text-xs font-semibold shadow-2xs transition-colors"
                                     >
                                         <span>Lihat Lainnya</span>
-                                        <ArrowRight size={14} />
                                     </Link>
                                 </div>
                             </>
@@ -274,7 +273,7 @@ export default async function PimpinanDashboard() {
                     href="/executive/validations"
                     className="flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-sibersih-primary/90 active:scale-[0.99] transition shadow-sm"
                 >
-                    <CheckCircle size={17} /> Buka Panel Validasi ({pending})
+                    <CheckCircle size={17} /> Buka Panel Validasi
                 </Link>
                 <Link
                     href="/executive/staff-management"

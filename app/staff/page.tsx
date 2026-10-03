@@ -154,7 +154,7 @@ export default async function PetugasDashboard() {
                 href="/staff/tasks"
                 className="sm:hidden flex items-center justify-center gap-2 bg-sibersih-primary text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-sibersih-primary/90 active:scale-[0.99] transition shadow-sm mt-5"
             >
-                <ClipboardList size={17} /> Buka Seluruh Daftar Tugas ({newTasks})
+                <ClipboardList size={17} /> Buka Seluruh Daftar Tugas
             </Link>
         </div>
     );

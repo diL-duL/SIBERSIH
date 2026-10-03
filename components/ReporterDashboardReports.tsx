@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Inbox, ArrowRight } from "lucide-react";
+import { Inbox } from "lucide-react";
 import ReporterReportCard, { ReportCardData } from "@/components/ReporterReportCard";
 
 interface ReporterDashboardReportsProps {
@@ -69,7 +69,6 @@ export default function ReporterDashboardReports({
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-sibersih-primary/15 bg-white hover:bg-sibersih-bg text-sibersih-primary text-xs font-semibold shadow-2xs transition-colors"
               >
                 <span>Lihat Lainnya</span>
-                <ArrowRight size={14} />
               </Link>
             </div>
           </>
