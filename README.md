@@ -33,7 +33,7 @@ Sistem Informasi Kebersihan dan Sarana Prasarana Kampus berbasis web modern yang
 - **Kepatuhan Legalitas Google OAuth:** Dilengkapi halaman resmi Kebijakan Privasi (`/privacy`) dan Ketentuan Layanan (`/terms`) yang tertaut di footer autentikasi.
 
 ### 2. Publik & Beranda (Landing Page)
-- **Pintasan Aplikasi Resmi Untad (*Untad App Shortcuts*):** Kartu navigasi cepat ke 14 sistem informasi terintegrasi Universitas Tadulako dan Fakultas Teknik (SIGA-8, SIDAMPAK, SIPENA, SINEMA, LMS VIBEL, KASIDOI, SIMKEU, SISTER, KLIKPRESENSI, AMI, SIPENAEMAS, SANPARAMA, PELAYANAN/SIPANDU, dan DESK ON).
+- **Pintasan Aplikasi Resmi Untad (*Untad App Shortcuts*):** Kartu navigasi cepat ke 14 sistem informasi terintegrasi Universitas Tadulako dan Fakultas Teknik (SIGA-8, SIDAMPAK, SIPENA, SINEMA, LMS VIBEL, KASIDOI, REMUNERA, SISTER, KLIKPRESENSI, AMI, SIPENAEMAS, SANPARAMA, PELAYANAN/SIPANDU, dan DESK ON).
 - **Kontak Tanggap Darurat Pemadam Kebakaran (*Emergency Hotline*):** Kartu kontak siaga terintegrasi dengan akses panggilan cepat ke Posko Damkar Palu `(0451) 423113` dan tautan WhatsApp resmi `+62 821 8823 2113`, didesain selaras dengan palet hijau institusional Sibersih.
 - **Showcase Laporan Transparan:** Menampilkan hingga 50 laporan fasilitas kampus terkini mencakup seluruh status (`LAPORAN_MASUK`, `MENUNGGU_APPROVAL`, `SELESAI`) secara transparan kepada seluruh civitas.
 - **Tampilan Awal Ringkas & Toggle Interaktif:** Menampilkan 3 laporan awal dengan tombol toggle *"Lihat Semua Laporan"* / *"Tampilkan Lebih Sedikit"*.
@@ -151,16 +151,50 @@ npx prisma db push
 ```
 
 ### 5. Seeding Akun Default (Opsional)
-Jalankan query SQL berikut di SQL Editor Supabase untuk membuat 3 akun peran pengujian (Password: `password123`):
+Jalankan query SQL berikut di SQL Editor Supabase untuk membuat akun pimpinan dan petugas (Password seluruh akun: `password123`):
 ```sql
 INSERT INTO "User" ("id", "nama", "email", "password", "nomorHp", "role")
 VALUES 
-    (gen_random_uuid()::text, 'Andi Pelapor', 'pelapor@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567890', 'PELAPOR'::"Role"),
-    (gen_random_uuid()::text, 'Joko Petugas', 'petugas@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567891', 'PETUGAS'::"Role"),
-    (gen_random_uuid()::text, 'Budi Pimpinan', 'pimpinan@sibersih.com', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567892', 'PIMPINAN'::"Role");
+    (gen_random_uuid()::text, 'Dekan', 'dekan@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567890', 'PIMPINAN'::"Role"),
+    (gen_random_uuid()::text, 'Wakil Dekan', 'wadek@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567891', 'PIMPINAN'::"Role"),
+    (gen_random_uuid()::text, 'Petugas 1', 'petugas1@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567892', 'PETUGAS'::"Role"),
+    (gen_random_uuid()::text, 'Petugas 2', 'petugas2@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567893', 'PETUGAS'::"Role"),
+    (gen_random_uuid()::text, 'Petugas 3', 'petugas3@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567894', 'PETUGAS'::"Role"),
+    (gen_random_uuid()::text, 'Petugas 4', 'petugas4@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567895', 'PETUGAS'::"Role"),
+    (gen_random_uuid()::text, 'Petugas 5', 'petugas5@sibersih.my.id', '$2b$10$SMlPAl/6/7A4t28N4miYQuEk4L9N2.6yeR.6UDL.0dWVbRDGldIVC', '081234567896', 'PETUGAS'::"Role");
 ```
 
-### 6. Menjalankan Server Lokal
+| Akun | Email | No. HP | Peran / Role | Kata Sandi |
+| :--- | :--- | :--- | :--- | :--- |
+| **Dekan** | `dekan@sibersih.my.id` | `081234567890` | `PIMPINAN` | `password123` |
+| **Wakil Dekan** | `wadek@sibersih.my.id` | `081234567891` | `PIMPINAN` | `password123` |
+| **Petugas 1** | `petugas1@sibersih.my.id` | `081234567892` | `PETUGAS` | `password123` |
+| **Petugas 2** | `petugas2@sibersih.my.id` | `081234567893` | `PETUGAS` | `password123` |
+| **Petugas 3** | `petugas3@sibersih.my.id` | `081234567894` | `PETUGAS` | `password123` |
+| **Petugas 4** | `petugas4@sibersih.my.id` | `081234567895` | `PETUGAS` | `password123` |
+| **Petugas 5** | `petugas5@sibersih.my.id` | `081234567896` | `PETUGAS` | `password123` |
+
+### 6. Reset Database (Opsional & Berbahaya)
+> [!CAUTION]
+> **PERINGATAN: DATA AKAN TERHAPUS PERMANEN (DATA LOSS)**
+> Menjalankan perintah reset akan menghapus seluruh data pada database Supabase (tabel pengguna, riwayat laporan, serta bukti foto penanganan). Pastikan untuk tidak menjalankan perintah ini di lingkungan produksi (*production*) atau jika data penting belum dicadangkan (*backup*)!
+
+- **Opsi A: Reset Total Skema & Data via Prisma CLI**
+  Menghapus seluruh tabel dan membuat ulang struktur skema secara bersih:
+  ```bash
+  npx prisma db push --force-reset
+  ```
+  *(Atau jika menggunakan alur migrasi Prisma: `npx prisma migrate reset`)*
+
+- **Opsi B: Kosongkan Isi Data Saja (Tanpa Menghapus Tabel) via SQL Editor Supabase**
+  Jika hanya ingin mengosongkan seluruh baris data tetapi tetap mempertahankan struktur tabel dan relasinya:
+  ```sql
+  TRUNCATE TABLE "Report", "User" CASCADE;
+  ```
+
+> **Tips:** Setelah melakukan reset database, Anda dapat menjalankan kembali query SQL pada **Langkah 5 (Seeding Akun Default)** di atas untuk menginisialisasi kembali akun pengujian.
+
+### 7. Menjalankan Server Lokal
 ```bash
 npm run dev
 ```
