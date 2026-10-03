@@ -20,7 +20,7 @@ export default function EmergencyHotline() {
               </span>
             </div>
             <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
-              Pemadam Kebakaran (Damkar Kota Palu)
+              Pemadam Kebakaran Kota Palu
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
               Jika terjadi insiden kebakaran atau kondisi bahaya di lingkungan Fakultas Teknik Untad.
@@ -28,12 +28,12 @@ export default function EmergencyHotline() {
           </div>
         </div>
 
-        {/* Kolom Panggilan Cepat (Sesuai tema Sibersih: nomor 0451 dan nomor WhatsApp) */}
-        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap w-full md:w-auto">
+        {/* Kolom Panggilan Cepat (Tersusun secara vertikal) */}
+        <div className="flex flex-col gap-2 w-full md:w-auto shrink-0 min-w-[185px]">
           {/* Posko Damkar Palu (0451) 423113 */}
           <a
             href="tel:0451423113"
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition-colors"
             title="Telepon Posko Damkar Palu (0451) 423113"
           >
             <Phone size={14} className="text-sibersih-primary dark:text-emerald-400" />
@@ -45,11 +45,11 @@ export default function EmergencyHotline() {
             href="https://wa.me/6282188232113"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-sibersih-primary hover:bg-sibersih-primary/90 active:scale-95 text-white rounded-lg text-xs font-bold shadow-2xs transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition-colors"
             title="Hubungi WhatsApp Damkar Palu"
           >
             <svg
-              className="w-4 h-4 fill-current shrink-0"
+              className="w-4 h-4 fill-current shrink-0 text-slate-700 dark:text-slate-300"
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
