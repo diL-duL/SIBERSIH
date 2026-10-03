@@ -88,14 +88,8 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* Pemadam Kebakaran & Emergency Hotline */}
-        <EmergencyHotline />
-
-        {/* Untad Ecosystem Applications Shortcuts */}
-        <UntadAppShortcuts />
-
-        {/* All Reports Showcase */}
-        <section className="space-y-6 pb-16">
+        {/* All Reports Showcase (Daftar Laporan Terkini) */}
+        <section className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-sibersih-primary/10 pb-4">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-sibersih-primary">
@@ -116,6 +110,14 @@ export default async function LandingPage() {
           
           <LandingReportsList reports={allReports} />
         </section>
+
+        {/* Pemadam Kebakaran & Emergency Hotline */}
+        <EmergencyHotline />
+
+        {/* Untad Ecosystem Applications Shortcuts */}
+        <div className="pb-16">
+          <UntadAppShortcuts />
+        </div>
       </main>
 
       {/* Footer */}
