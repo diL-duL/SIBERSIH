@@ -68,10 +68,10 @@ const UNTAD_APPS: UntadApp[] = [
     icon: Wallet,
   },
   {
-    id: "simkeu",
-    name: "SIMKEU",
-    fullName: "SIMKEU UNTAD (Sistem Informasi Keuangan)",
-    url: "https://simkeuuntad.com/",
+    id: "remunera",
+    name: "REMUNERA",
+    fullName: "REMUNERA UNTAD (Sistem Informasi Remunerasi)",
+    url: "https://remunera.untad.ac.id/",
     icon: CreditCard,
   },
   {
